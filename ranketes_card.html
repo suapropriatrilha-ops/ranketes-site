@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Seu Nome · — Ranking · Ranketes</title>
+<!-- Open Graph -->
+<meta property="og:title" content="Seu Nome · — no Ranking · Arena Ranketes SP"/>
+<meta property="og:description" content="0 pts · 0V / 0D · — de aproveitamento · 0 partidas 🔥"/>
+<meta property="og:type" content="website"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:#07090F;--surf:#0E1018;--surf2:—41720;--surf3:—A1E2A;
+  --border:—E2435;--border2:#272F45;--text:#E8EDF8;--muted:#4E5E80;--dim:#2A3450;
+  --accent:#8DC63F;--accent-d:#6FA030;--accent-g:rgba(141,198,63,.10);
+  --warn:#FFB800;--blue:#3D8BFF;--danger:#FF4757;--orange:#FF7A2F;--purple:#9B59FF;
+  --f-display:'Bebas Neue',sans-serif;--f-body:'DM Sans',sans-serif;--f-mono:'Space Mono',monospace;
+  --r:12px;--rs:8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--f-body);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+
+/* animated bg */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:linear-gradient(rgba(141,198,63,.015) 1px,transparent 1px),linear-gradient(90deg,rgba(141,198,63,.015) 1px,transparent 1px);
+  background-size:36px 36px;pointer-events:none;z-index:0;
+}
+
+/* NAV */
+.nav{background:rgba(7,9,15,.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;padding:0 1.5rem;height:56px;display:flex;align-items:center;gap:1rem}
+.nav-logo{font-family:var(--f-display);font-size:1.35rem;letter-spacing:3px;color:var(--text);text-decoration:none}
+.nav-logo em{color:var(--accent);font-style:normal}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:.65rem}
+.btn-entrar{background:var(--accent);color:#000;font-size:.78rem;font-weight:700;padding:.36rem .85rem;border-radius:var(--rs);cursor:pointer;border:none;transition:.15s;white-space:nowrap}
+.btn-entrar:hover{background:var(--accent-d)}
+.btn-ghost-sm{background:none;color:var(--muted);font-size:.78rem;font-weight:600;padding:.36rem .8rem;border-radius:var(--rs);cursor:pointer;border:1px solid var(--border);transition:.15s;white-space:nowrap}
+.btn-ghost-sm:hover{border-color:var(--accent);color:var(--accent)}
+
+/* MAIN */
+.wrapper{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:2rem 1.2rem}
+
+/* ═══ THE CARD ═══ */
+.card-scene{
+  perspective:1000px;
+  margin-bottom:2rem;
+  cursor:pointer;
+}
+.card-3d{
+  width:100%;
+  border-radius:20px;
+  position:relative;
+  transform-style:preserve-3d;
+  transition:transform .6s;
+}
+.card-3d.flipped{transform:rotateY(180deg)}
+.card-front,.card-back{
+  backface-visibility:hidden;
+  border-radius:20px;
+  overflow:hidden;
+}
+.card-back{
+  position:absolute;inset:0;
+  transform:rotateY(180deg);
+}
+
+/* FRONT CARD */
+.card-front{
+  background:linear-gradient(145deg,#071210 0%,#0D1E0D 35%,#091508 65%,#060E06 100%);
+  border:1px solid rgba(141,198,63,.25);
+  padding:2rem;
+  position:relative;
+  min-height:340px;
+}
+.card-front::before{
+  content:'';position:absolute;
+  top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,transparent,var(--accent),var(--accent-d),var(--accent),transparent);
+  animation:shimmer 3s ease-in-out infinite;
+}
+@keyframes shimmer{0%,100%{opacity:.6}50%{opacity:1}}
+.card-front::after{
+  content:'R';font-family:var(--f-display);font-size:22rem;letter-spacing:0;
+  color:rgba(141,198,63,.025);position:absolute;right:-20px;bottom:-30px;line-height:1;
+  pointer-events:none;
+}
+
+/* radial glow on card */
+.card-glow{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:300px;height:300px;
+  background:radial-gradient(circle,rgba(141,198,63,.06) 0%,transparent 70%);
+  pointer-events:none;
+  animation:glowCard 4s ease-in-out infinite;
+}
+@keyframes glowCard{0%,100%{opacity:.5;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.2)}}
+
+.cf-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;position:relative;z-index:1}
+.cf-brand{font-family:var(--f-display);font-size:.8rem;letter-spacing:4px;color:rgba(141,198,63,.5)}
+.cf-season{font-family:var(--f-mono);font-size:.62rem;color:var(--dim)}
+
+.cf-avatar-area{display:flex;align-items:center;gap:1.2rem;margin-bottom:1.5rem;position:relative;z-index:1}
+.cf-avatar{
+  width:72px;height:72px;border-radius:18px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-d));
+  border:2px solid rgba(141,198,63,.5);
+  box-shadow:0 0 20px rgba(141,198,63,.2);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--f-display);font-size:1.8rem;color:#fff;
+  flex-shrink:0;
+}
+.cf-name{font-family:var(--f-display);font-size:1.8rem;letter-spacing:2px;line-height:.95}
+.cf-arena{font-size:.74rem;color:rgba(141,198,63,.6);margin-top:.3rem;letter-spacing:.5px}
+.cf-tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.5rem}
+.cf-tag{font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px}
+
+/* stats grid */
+.cf-stats{display:flex;gap:.6rem;margin-bottom:1.3rem;position:relative;z-index:1}
+.cf-stat{
+  flex:1;
+  background:rgba(0,0,0,.35);
+  border:1px solid rgba(141,198,63,.1);
+  border-radius:10px;padding:.7rem .4rem;text-align:center;
+  transition:.2s;
+}
+.cf-stat:hover{border-color:rgba(141,198,63,.3);background:rgba(141,198,63,.05)}
+.cs-val{font-family:var(--f-display);font-size:1.55rem;line-height:1}
+.cs-lab{font-size:.55rem;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.5px;margin-top:.12rem}
+
+/* sparkline mini */
+.cf-sparkline{display:flex;align-items:flex-end;gap:3px;height:28px;margin-bottom:1.1rem;position:relative;z-index:1}
+.cf-sparkline .sp{flex:1;border-radius:2px 2px 0 0;background:rgba(141,198,63,.2)}
+.cf-sparkline .sp.hi{background:var(--accent)}
+.cf-sparkline .sp.win{background:rgba(141,198,63,.5)}
+.cf-sparkline .sp.loss{background:rgba(255,71,87,.4)}
+
+/* achievement badges */
+.cf-achievements{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1.2rem;position:relative;z-index:1}
+
+/* card bottom */
+.cf-bottom{
+  display:flex;align-items:center;justify-content:space-between;
+  border-top:1px solid rgba(141,198,63,.1);padding-top:.85rem;
+  position:relative;z-index:1;
+}
+.cf-url{font-family:var(--f-mono);font-size:.62rem;color:rgba(141,198,63,.45)}
+.cf-qr{
+  width:32px;height:32px;
+  background:rgba(141,198,63,.1);border:1px solid rgba(141,198,63,.2);
+  border-radius:6px;display:flex;align-items:center;justify-content:center;
+  font-size:.65rem;color:rgba(141,198,63,.5);
+}
+
+/* BACK CARD */
+.card-back{
+  background:linear-gradient(145deg,#071210 0%,#0A1A0A 100%);
+  border:1px solid rgba(141,198,63,.2);
+  padding:1.8rem;
+}
+.back-title{font-family:var(--f-display);font-size:1.1rem;letter-spacing:2px;color:rgba(141,198,63,.6);margin-bottom:1.2rem;text-align:center}
+.h2h-list{display:flex;flex-direction:column;gap:.5rem;margin-bottom:1.2rem}
+.h2h-row{
+  display:flex;align-items:center;gap:.75rem;
+  background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:var(--rs);padding:.6rem .8rem;
+}
+.h2h-opp{flex:1;font-size:.82rem;font-weight:600}
+.h2h-bar-wrap{flex:2;display:flex;flex-direction:column;gap:3px}
+.h2h-bar{height:6px;background:var(--surf3);border-radius:20px;overflow:hidden;display:flex}
+.h2h-bar .w{background:var(--accent);border-radius:20px 0 0 20px}
+.h2h-bar .l{background:var(--danger);border-radius:0 20px 20px 0}
+.h2h-nums{display:flex;justify-content:space-between;font-size:.64rem}
+.h2h-record{font-family:var(--f-mono);font-size:.74rem;flex-shrink:0}
+
+/* SHARE SECTION */
+.share-section{margin-bottom:2rem}
+.share-title{font-family:var(--f-display);font-size:1.1rem;letter-spacing:2px;margin-bottom:.9rem;color:var(--text)}
+.share-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;margin-bottom:1rem}
+.share-btn{
+  background:var(--surf);border:1px solid var(--border2);border-radius:var(--r);
+  padding:.85rem .6rem;display:flex;flex-direction:column;align-items:center;gap:.4rem;
+  cursor:pointer;transition:.2s;
+}
+.share-btn:hover{border-color:var(--accent);background:var(--accent-g)}
+.sb-ico{font-size:1.4rem}
+.sb-label{font-size:.72rem;font-weight:600;color:var(--text)}
+.sb-sub{font-size:.62rem;color:var(--muted)}
+.share-url-bar{
+  background:var(--surf2);border:1px solid var(--border);border-radius:var(--rs);
+  padding:.65rem .9rem;display:flex;align-items:center;gap:.75rem;
+}
+.sub-url{font-family:var(--f-mono);font-size:.72rem;color:var(--accent);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.copy-btn{background:var(--accent);color:#000;font-size:.72rem;font-weight:700;padding:.3rem .7rem;border-radius:var(--rs);cursor:pointer;border:none;transition:.15s;flex-shrink:0}
+.copy-btn:hover{background:var(--accent-d)}
+.copy-btn.copied{background:var(--blue);color:#fff}
+
+/* HISTORY */
+.history-section{margin-bottom:2rem}
+.hs-title{font-family:var(--f-display);font-size:1.1rem;letter-spacing:2px;margin-bottom:.9rem}
+.match-row{display:flex;align-items:center;gap:.65rem;padding:.62rem .8rem;background:var(--surf);border-radius:var(--rs);margin-bottom:.38rem;border-left:3px solid var(--dim)}
+.match-row.win{border-left-color:var(--accent)}
+.match-row.loss{border-left-color:var(--danger)}
+.mr-result{font-family:var(--f-display);font-size:.9rem;width:16px;flex-shrink:0}
+.mr-result.win{color:var(--accent)}.mr-result.loss{color:var(--danger)}
+.mr-opp{flex:1;font-size:.81rem;font-weight:500}
+.mr-score{font-family:var(--f-mono);font-size:.74rem;color:var(--muted)}
+.mr-pts{font-size:.68rem;padding:.1rem .4rem;border-radius:10px;flex-shrink:0}
+.mr-pts.pos{background:rgba(141,198,63,.12);color:var(--accent)}
+.mr-pts.neg{background:rgba(255,71,87,.1);color:var(--danger)}
+.mr-date{font-size:.66rem;color:var(--dim);min-width:38px;text-align:right;flex-shrink:0}
+
+/* CTA */
+.cta-section{
+  background:linear-gradient(135deg,#0A1810,#0D2010);
+  border:1px solid rgba(141,198,63,.2);border-radius:var(--r);
+  padding:1.5rem;text-align:center;margin-bottom:2rem;
+  position:relative;overflow:hidden;
+}
+.cta-section::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
+.cta-title{font-family:var(--f-display);font-size:1.4rem;letter-spacing:2px;margin-bottom:.4rem}
+.cta-sub{font-size:.82rem;color:var(--muted);margin-bottom:1rem;line-height:1.5}
+.cta-actions{display:flex;gap:.65rem;justify-content:center;flex-wrap:wrap}
+.btn-cta-primary{background:var(--accent);color:#000;font-size:.85rem;font-weight:700;padding:.6rem 1.3rem;border-radius:var(--rs);cursor:pointer;border:none;transition:.15s}
+.btn-cta-primary:hover{background:var(--accent-d)}
+.btn-cta-ghost{background:none;color:var(--muted);font-size:.85rem;font-weight:600;padding:.6rem 1.2rem;border-radius:var(--rs);cursor:pointer;border:1px solid var(--border);transition:.15s}
+.btn-cta-ghost:hover{border-color:var(--accent);color:var(--accent)}
+
+/* FLIP HINT */
+.flip-hint{text-align:center;font-size:.72rem;color:var(--dim);margin-bottom:.6rem;cursor:pointer}
+.flip-hint:hover{color:var(--muted)}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+
+/* FOOTER */
+.page-footer{padding:1.5rem 0;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+.pf-logo{font-family:var(--f-display);font-size:.9rem;letter-spacing:2px;color:var(--muted)}
+.pf-logo em{color:var(--accent);font-style:normal}
+.pf-link{font-size:.72rem;color:var(--dim);cursor:pointer}
+.pf-link:hover{color:var(--muted)}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+  .cf-stats{gap:.4rem}
+  .cs-val{font-size:1.2rem}
+  .share-grid{grid-template-columns:1fr 1fr 1fr}
+  .wrapper{padding:1.5rem .9rem}
+}
+@media(max-width:380px){
+  .share-grid{grid-template-columns:1fr 1fr}
+  .cf-avatar{width:56px;height:56px;font-size:1.4rem}
+  .cf-name{font-size:1.4rem}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a class="nav-logo" href="ranketes_publico.html">RANK<em>•</em>ETES</a>
+  <div class="nav-right">
+    <button class="btn-ghost-sm" onclick="window.location.href='ranketes_publico.html'">Ver Ranking</button>
+    <button class="btn-entrar" onclick="window.location.href='ranketes_login.html'">Entrar</button>
+  </div>
+</nav>
+
+<div class="wrapper">
+
+  <!-- CARD SCENE -->
+  <p class="flip-hint" onclick="flipCard()">🔄 Clique no card para ver H2H</p>
+
+  <div class="card-scene" onclick="flipCard()">
+    <div class="card-3d" id="card3d">
+
+      <!-- FRONT -->
+      <div class="card-front">
+        <div class="card-glow"></div>
+
+        <div class="cf-top">
+          <span class="cf-brand">RANK•ETES</span>
+          <span class="cf-season">TEMPORADA 2025</span>
+        </div>
+
+        <div class="cf-avatar-area">
+          <div class="cf-avatar"><span data-user-initials>??</span></div>
+          <div>
+            <div class="cf-name">Lucas<br>Martins</div>
+            <div class="cf-arena">Arena Ranketes SP · São Paulo</div>
+            <div class="cf-tags">
+              <span class="cf-tag" style="background:rgba(255,184,0,.15);color:var(--warn);border:1px solid rgba(255,184,0,.3)">Cat. A</span>
+              <span class="cf-tag" style="background:rgba(141,198,63,.12);color:var(--accent);border:1px solid rgba(141,198,63,.25)">Tênis</span>
+              <span class="cf-tag" style="background:rgba(6,182,212,.12);color:#06B6D4;border:1px solid rgba(6,182,212,.25)">Beach Tennis</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cf-stats">
+          <div class="cf-stat">
+            <div class="cs-val" style="color:var(--warn)">—</div>
+            <div class="cs-lab">Ranking</div>
+          </div>
+          <div class="cf-stat">
+            <div class="cs-val" style="color:var(--accent)">0</div>
+            <div class="cs-lab">Pontos</div>
+          </div>
+          <div class="cf-stat">
+            <div class="cs-val">0</div>
+            <div class="cs-lab">Vitórias</div>
+          </div>
+          <div class="cf-stat">
+            <div class="cs-val">—</div>
+            <div class="cs-lab">Aproveit.</div>
+          </div>
+          <div class="cf-stat">
+            <div class="cs-val" style="color:var(--orange)">7🔥</div>
+            <div class="cs-lab">Sequência</div>
+          </div>
+        </div>
+
+        <!-- sparkline — V/D dos últimos 10 jogos -->
+        <div style="font-size:.6rem;color:var(--dim);margin-bottom:.3rem;letter-spacing:.5px;font-weight:700;text-transform:uppercase">Últimos 10 jogos</div>
+        <div class="cf-sparkline">
+          <div class="sp win" style="height:60%"></div>
+          <div class="sp win" style="height:70%"></div>
+          <div class="sp loss" style="height:40%"></div>
+          <div class="sp win" style="height:65%"></div>
+          <div class="sp win" style="height:—"></div>
+          <div class="sp win" style="height:90%"></div>
+          <div class="sp win" style="height:75%"></div>
+          <div class="sp win" style="height:85%"></div>
+          <div class="sp win" style="height:100%"></div>
+          <div class="sp win hi" style="height:100%"></div>
+        </div>
+
+        <div class="cf-achievements">
+          <span class="cf-tag" style="background:rgba(255,184,0,.12);color:var(--warn);border:1px solid rgba(255,184,0,.25)">🎾 Novo atleta</span>
+          <span class="cf-tag" style="background:rgba(255,122,47,.12);color:var(--orange);border:1px solid rgba(255,122,47,.25)">🔥 Em Chamas</span>
+          <span class="cf-tag" style="background:rgba(141,198,63,.1);color:var(--accent);border:1px solid rgba(141,198,63,.2)">⚔️ Veterano</span>
+          <span class="cf-tag" style="background:rgba(155,89,255,.1);color:var(--purple);border:1px solid rgba(155,89,255,.2)">⭐ Premium</span>
+        </div>
+
+        <div class="cf-bottom">
+          <span class="cf-url">ranketes.com.br/atleta/lucas-martins</span>
+          <div class="cf-qr">QR</div>
+        </div>
+      </div>
+
+      <!-- BACK -->
+      <div class="card-back">
+        <div class="back-title">H2H — DUELOS</div>
+        <div class="h2h-list">
+          <div class="h2h-row">
+            <div class="h2h-opp">Pedro H.</div>
+            <div class="h2h-bar-wrap">
+              <div class="h2h-bar"><div class="w" style="width:70%"></div><div class="l" style="width:30%"></div></div>
+              <div class="h2h-nums"><span style="color:var(--accent)">7V</span><span style="color:var(--danger)">3D</span></div>
+            </div>
+            <span class="h2h-record" style="color:var(--accent)">7–3</span>
+          </div>
+          <div class="h2h-row">
+            <div class="h2h-opp">Rafael S.</div>
+            <div class="h2h-bar-wrap">
+              <div class="h2h-bar"><div class="w" style="width:71%"></div><div class="l" style="width:29%"></div></div>
+              <div class="h2h-nums"><span style="color:var(--accent)">5V</span><span style="color:var(--danger)">2D</span></div>
+            </div>
+            <span class="h2h-record" style="color:var(--accent)">5–2</span>
+          </div>
+          <div class="h2h-row">
+            <div class="h2h-opp">Carlos T.</div>
+            <div class="h2h-bar-wrap">
+              <div class="h2h-bar"><div class="w" style="width:43%"></div><div class="l" style="width:57%"></div></div>
+              <div class="h2h-nums"><span style="color:var(--accent)">3V</span><span style="color:var(--danger)">4D</span></div>
+            </div>
+            <span class="h2h-record" style="color:var(--danger)">3–4</span>
+          </div>
+          <div class="h2h-row">
+            <div class="h2h-opp">Bruno F.</div>
+            <div class="h2h-bar-wrap">
+              <div class="h2h-bar"><div class="w" style="width:86%"></div><div class="l" style="width:14%"></div></div>
+              <div class="h2h-nums"><span style="color:var(--accent)">6V</span><span style="color:var(--danger)">1D</span></div>
+            </div>
+            <span class="h2h-record" style="color:var(--accent)">6–1</span>
+          </div>
+        </div>
+        <div style="text-align:center;font-size:.7rem;color:var(--dim);padding-top:.6rem;border-top:1px solid var(--border)">Clique para voltar</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SHARE SECTION -->
+  <div class="share-section">
+    <div class="share-title">COMPARTILHAR CARD</div>
+    <div class="share-grid">
+      <div class="share-btn" onclick="shareAction('whatsapp')">
+        <div class="sb-ico">💬</div>
+        <div class="sb-label">WhatsApp</div>
+        <div class="sb-sub">Enviar para grupo</div>
+      </div>
+      <div class="share-btn" onclick="shareAction('instagram')">
+        <div class="sb-ico">📸</div>
+        <div class="sb-label">Instagram</div>
+        <div class="sb-sub">Story / Feed</div>
+      </div>
+      <div class="share-btn" onclick="shareAction('copy')">
+        <div class="sb-ico">🔗</div>
+        <div class="sb-label">Copiar link</div>
+        <div class="sb-sub">Qualquer app</div>
+      </div>
+    </div>
+    <div class="share-url-bar">
+      <span class="sub-url">ranketes.com.br/atleta/lucas-martins</span>
+      <button class="copy-btn" id="copyBtn" onclick="copyUrl()">Copiar</button>
+    </div>
+  </div>
+
+  <!-- MATCH HISTORY -->
+  <div class="history-section">
+    <div class="hs-title">ÚLTIMAS PARTIDAS</div>
+    <div class="match-row win">
+      <div class="mr-result win">V</div>
+      <div class="mr-opp"><div>—</div><div style="font-size:.68rem;color:var(--muted)">Tênis Cat. A · Open de Abril QF</div></div>
+      <div class="mr-score">6/3 6/2</div>
+      <div class="mr-pts pos">+28</div>
+      <div class="mr-date">Hoje</div>
+    </div>
+    <div class="match-row win">
+      <div class="mr-result win">V</div>
+      <div class="mr-opp"><div>—</div><div style="font-size:.68rem;color:var(--muted)">Tênis Cat. A</div></div>
+      <div class="mr-score">7/5 6/4</div>
+      <div class="mr-pts pos">+24</div>
+      <div class="mr-date">22/04</div>
+    </div>
+    <div class="match-row win">
+      <div class="mr-result win">V</div>
+      <div class="mr-opp"><div>vs Bruno Ferreira</div><div style="font-size:.68rem;color:var(--muted)">Tênis Cat. B</div></div>
+      <div class="mr-score">6/1 6/3</div>
+      <div class="mr-pts pos">+18</div>
+      <div class="mr-date">20/04</div>
+    </div>
+    <div class="match-row loss">
+      <div class="mr-result loss">D</div>
+      <div class="mr-opp"><div>—</div><div style="font-size:.68rem;color:var(--muted)">Tênis Cat. A</div></div>
+      <div class="mr-score">4/6 6/7</div>
+      <div class="mr-pts neg">−22</div>
+      <div class="mr-date">15/04</div>
+    </div>
+    <div class="match-row win">
+      <div class="mr-result win">V</div>
+      <div class="mr-opp"><div>vs Marcela Oliveira</div><div style="font-size:.68rem;color:var(--muted)">Beach Tennis</div></div>
+      <div class="mr-score">7/5 6/3</div>
+      <div class="mr-pts pos">+16</div>
+      <div class="mr-date">12/04</div>
+    </div>
+    <div style="text-align:center;margin-top:.75rem">
+      <button style="background:none;border:1px solid var(--border);color:var(--muted);font-size:.78rem;padding:.45rem 1.1rem;border-radius:var(--rs);cursor:pointer" onclick="window.location.href='ranketes_login.html'">
+        Ver histórico completo → Login necessário
+      </button>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <div class="cta-title">VOCÊ TAMBÉM PODE TER UM CARD ASSIM</div>
+    <div class="cta-sub">Cadastre-se gratuitamente, registre suas partidas<br>e entre no ranking da sua arena.</div>
+    <div class="cta-actions">
+      <button class="btn-cta-primary" onclick="window.location.href='ranketes_login.html'">Criar conta grátis</button>
+      <button class="btn-cta-ghost" onclick="window.location.href='ranketes_publico.html'">Ver ranking público</button>
+    </div>
+    <div style="font-size:.72rem;color:var(--dim);margin-top:.75rem">Sem cartão de crédito · Free forever</div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="page-footer">
+    <span class="pf-logo">RANK<em>•</em>ETES</span>
+    <div style="display:flex;gap:1rem">
+      <span class="pf-link">Arena Ranketes SP</span>
+      <span class="pf-link">Tênis & Beach Tennis</span>
+      <span class="pf-link">© 2025</span>
+    </div>
+  </div>
+
+</div><!-- /wrapper -->
+
+<script>
+function flipCard() {
+  document.getElementById('card3d').classList.toggle('flipped');
+  const hint = document.querySelector('.flip-hint');
+  const isFlipped = document.getElementById('card3d').classList.contains('flipped');
+  hint.textContent = isFlipped ? '🔄 Clique para voltar ao card' : '🔄 Clique no card para ver H2H';
+}
+
+function shareAction(type) {
+  const url = 'ranketes.com.br/atleta/lucas-martins';
+  const text = 'Veja meu card no Ranketes! — do ranking, 0 pts, 0 partidas 🔥 | @ranketes';
+  if (type === 'whatsapp') {
+    window.open('https://wa.me/?text=' + encodeURIComponent(text + ' → https://' + url));
+  } else if (type === 'instagram') {
+    copyUrl();
+    alert('Link copiado! Cole no Instagram Stories.');
+  } else {
+    copyUrl();
+  }
+}
+
+function copyUrl() {
+  const btn = document.getElementById('copyBtn');
+  navigator.clipboard?.writeText('https://ranketes.com.br.br/atleta/lucas-martins').catch(() => {});
+  btn.textContent = '✓ Copiado!';
+  btn.classList.add('copied');
+  setTimeout(() => {
+    btn.textContent = 'Copiar';
+    btn.classList.remove('copied');
+  }, 2000);
+}
+
+// 3D tilt effect on card
+const scene = document.querySelector('.card-scene');
+scene.addEventListener('mousemove', (e) => {
+  if (document.getElementById('card3d').classList.contains('flipped')) return;
+  const rect = scene.getBoundingClientRect();
+  const x = (e.clientX - rect.left) / rect.width - 0.5;
+  const y = (e.clientY - rect.top) / rect.height - 0.5;
+  scene.style.transform = `perspective(1000px) rotateY(${x * 8}deg) rotateX(${-y * 8}deg)`;
+});
+scene.addEventListener('mouseleave', () => {
+  scene.style.transform = 'perspective(1000px) rotateY(0) rotateX(0)';
+  scene.style.transition = 'transform .4s ease';
+  setTimeout(() => scene.style.transition = '', 400);
+});
+</script>
+</body>
+</html>

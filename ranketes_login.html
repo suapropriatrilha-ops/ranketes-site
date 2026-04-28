@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0"/>
+<meta name="theme-color" content="#000000"/>
+<title>Ranketes · Entrar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#000000;--surf:#0C1018;--surf2:#121820;--surf3:#1A2030;
+  --border:#1E2840;--border2:#2A3450;--text:#F0F4FF;--muted:#6B7A99;--dim:#2A3450;
+  --blue:#2563EB;--blue-l:#3B82F6;--blue-g:rgba(37,99,235,.12);
+  --green:#22C55E;--green-l:#4ADE80;--green-g:rgba(34,197,94,.12);
+  --yellow:#F59E0B;--danger:#EF4444;
+  --f-display:'Bebas Neue',sans-serif;--f-body:'DM Sans',sans-serif;
+  --r:14px;--rs:10px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;font-family:var(--f-body);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+/* LAYOUT */
+.page{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem;position:relative}
+.page::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(37,99,235,.1),transparent 60%);pointer-events:none}
+
+/* LOGO */
+.logo-wrap{text-align:center;margin-bottom:2rem}
+.logo-img{height:52px;width:auto;margin-bottom:.5rem}
+.logo-text{font-family:var(--f-display);font-size:1.8rem;letter-spacing:4px;color:var(--text)}
+.logo-text em{color:var(--green-l);font-style:normal}
+.logo-sub{font-size:.78rem;color:var(--muted);margin-top:.25rem}
+
+/* CARD */
+.card{background:var(--surf);border:1px solid var(--border);border-radius:20px;padding:1.75rem 1.5rem;width:100%;max-width:400px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--blue),var(--green-l))}
+
+/* PERSONA TABS */
+.persona-tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.4rem;background:var(--surf2);border-radius:var(--rs);padding:.3rem;margin-bottom:1.5rem}
+.ptab{padding:.52rem .4rem;border-radius:8px;font-size:.75rem;font-weight:700;cursor:pointer;transition:.15s;text-align:center;color:var(--muted);border:none;background:none;font-family:var(--f-body)}
+.ptab.active{background:var(--blue);color:#fff}
+
+/* FORM */
+.form-group{margin-bottom:1rem}
+.form-label{display:block;font-size:.72rem;font-weight:700;color:var(--muted);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.5px}
+.form-input{width:100%;background:var(--surf2);border:1.5px solid var(--border2);border-radius:var(--rs);padding:.72rem 1rem;color:var(--text);font-family:var(--f-body);font-size:.95rem;transition:.2s;outline:none;-webkit-appearance:none}
+.form-input:focus{border-color:var(--blue-l);box-shadow:0 0 0 3px var(--blue-g)}
+.form-input::placeholder{color:var(--dim)}
+
+/* SENHA */
+.pass-wrap{position:relative}
+.pass-toggle{position:absolute;right:.85rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:.9rem;padding:.25rem}
+
+/* BTN */
+.btn{display:flex;align-items:center;justify-content:center;gap:.5rem;padding:.8rem 1.2rem;border-radius:var(--rs);font-family:var(--f-body);font-size:.95rem;font-weight:700;cursor:pointer;border:none;transition:.15s;width:100%;text-decoration:none}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:var(--blue-l)}
+.btn-ghost{background:none;border:1.5px solid var(--border2);color:var(--muted)}.btn-ghost:hover{border-color:var(--blue-l);color:var(--text)}
+.btn-green{background:var(--green);color:#000}.btn-green:hover{background:var(--green-l)}
+
+/* DIVIDER */
+.divider{display:flex;align-items:center;gap:.75rem;margin:1.1rem 0}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.divider span{font-size:.74rem;color:var(--muted);white-space:nowrap}
+
+/* FORGOT */
+.forgot{text-align:right;margin-bottom:1.1rem}
+.forgot a{font-size:.78rem;color:var(--blue-l);text-decoration:none;font-weight:600}
+
+/* BOTTOM LINKS */
+.bottom-links{text-align:center;margin-top:1.25rem;font-size:.82rem;color:var(--muted)}
+.bottom-links a{color:var(--blue-l);text-decoration:none;font-weight:600}
+
+/* BACK */
+.back-link{position:fixed;top:1.2rem;left:1.2rem;display:flex;align-items:center;gap:.35rem;font-size:.8rem;color:var(--muted);text-decoration:none;font-weight:600;z-index:10}
+.back-link:hover{color:var(--text)}
+
+/* ERROR */
+.error-msg{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:var(--danger);padding:.65rem .9rem;border-radius:var(--rs);font-size:.82rem;margin-bottom:.85rem;display:none}
+.error-msg.show{display:block}
+
+/* LOADING */
+.btn.loading{opacity:.7;pointer-events:none}
+.btn.loading::after{content:'';width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin-left:.4rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<a class="back-link" href="ranketes_landing.html">← Voltar</a>
+
+<div class="page">
+  <!-- Logo -->
+  <div class="logo-wrap">
+    <img class="logo-img" src="logo.png" alt="Ranketes" onerror="this.style.display='none'"/>
+    <div style="margin-bottom:.3rem"><img src="logo.PNG" alt="Ranketes" style="height:56px;width:auto;object-fit:contain;margin-bottom:.25rem" onerror="this.style.display='none'"/></div>
+    <div class="logo-sub">Sua plataforma de esportes de raquete</div>
+  </div>
+
+  <!-- Card de login -->
+  <div class="card">
+
+    <!-- Tabs de persona -->
+    <div class="persona-tabs">
+      <button class="ptab active" onclick="selTab('club',this)">🏟️ Clube</button>
+      <button class="ptab" onclick="selTab('prof',this)">🎓 Professor</button>
+      <button class="ptab" onclick="selTab('athlete',this)">🎾 Atleta</button>
+    </div>
+
+    <!-- Erro -->
+    <div class="error-msg" id="errorMsg"></div>
+
+    <!-- Email -->
+    <div class="form-group">
+      <label class="form-label">E-mail</label>
+      <input class="form-input" id="emailInput" type="email" placeholder="seu@email.com"
+        onkeydown="if(event.key==='Enter')document.getElementById('passInput').focus()"/>
+    </div>
+
+    <!-- Senha -->
+    <div class="form-group">
+      <label class="form-label">Senha</label>
+      <div class="pass-wrap">
+        <input class="form-input" id="passInput" type="password" placeholder="••••••••"
+          onkeydown="if(event.key==='Enter')doLogin()"/>
+        <button class="pass-toggle" onclick="togglePass()" type="button">👁</button>
+      </div>
+    </div>
+
+    <!-- Esqueci -->
+    <div class="forgot"><a href="#" onclick="recuperar()">Esqueci minha senha</a></div>
+
+    <!-- Botão entrar -->
+    <button class="btn btn-primary" id="btnLogin" onclick="doLogin()">Entrar</button>
+
+    <div class="divider"><span>ou</span></div>
+
+    <!-- Criar conta -->
+    <a class="btn btn-ghost" href="ranketes_onboarding.html">Criar conta gratuita</a>
+
+  </div>
+
+  <div class="bottom-links">
+    Problemas para entrar? <a href="mailto:suporte@ranketes.com.br">Falar com suporte</a>
+  </div>
+</div>
+
+<script src="supabase.js"></script>
+<script>
+let tipoSelecionado = 'club'
+
+function selTab(tipo, btn) {
+  tipoSelecionado = tipo
+  document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active'))
+  btn.classList.add('active')
+  document.getElementById('errorMsg').classList.remove('show')
+}
+
+function togglePass() {
+  const inp = document.getElementById('passInput')
+  inp.type = inp.type === 'password' ? 'text' : 'password'
+}
+
+function mostrarErroLocal(msg) {
+  const el = document.getElementById('errorMsg')
+  el.textContent = msg
+  el.classList.add('show')
+}
+
+document.addEventListener('supabase:ready', async () => {
+  // Verifica se já está logado
+  const u = await usuarioLogado()
+  if (u) {
+    const tipo = u.user_metadata?.tipo
+    redirecionarPorTipo(tipo)
+  }
+})
+
+async function doLogin() {
+  const email = document.getElementById('emailInput').value.trim()
+  const senha = document.getElementById('passInput').value
+  const btn = document.getElementById('btnLogin')
+
+  if (!email || !senha) { mostrarErroLocal('Preencha e-mail e senha.'); return }
+
+  btn.classList.add('loading')
+  btn.textContent = 'Entrando...'
+  document.getElementById('errorMsg').classList.remove('show')
+
+  try {
+    const data = await login(email, senha)
+    const tipo = data.user?.user_metadata?.tipo || tipoSelecionado
+    redirecionarPorTipo(tipo)
+  } catch(e) {
+    mostrarErroLocal(mostrarErro(e.message))
+    btn.classList.remove('loading')
+    btn.textContent = 'Entrar'
+  }
+}
+
+function redirecionarPorTipo(tipo) {
+  const destinos = {
+    club: 'ranketes_arena_v2.html',
+    prof: 'ranketes_professor_v2.html',
+    athlete: 'ranketes_atleta_v1.html',
+  }
+  window.location.href = destinos[tipo] || 'ranketes_atleta_v1.html'
+}
+
+async function recuperar() {
+  const email = document.getElementById('emailInput').value.trim()
+  if (!email) { mostrarErroLocal('Digite seu e-mail primeiro.'); return }
+  try {
+    await recuperarSenha(email)
+    mostrarErroLocal('✓ Link de recuperação enviado para ' + email)
+    document.getElementById('errorMsg').style.background = 'rgba(34,197,94,.1)'
+    document.getElementById('errorMsg').style.borderColor = 'rgba(34,197,94,.25)'
+    document.getElementById('errorMsg').style.color = 'var(--green-l)'
+  } catch(e) {
+    mostrarErroLocal(mostrarErro(e.message))
+  }
+}
+</script>
+</body>
+</html>

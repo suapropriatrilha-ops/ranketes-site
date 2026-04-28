@@ -1,0 +1,1681 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Ranketes — Admin Master</title>
+<meta name="theme-color" content="#0A0E14"/>
+<meta name="robots" content="noindex,nofollow"/>
+<link rel="icon" type="image/png" href="icon-192.png"/>
+<link rel="apple-touch-icon" href="apple-touch-icon.png"/>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0A0E14; --bg2:#0C1018; --surf:#121820; --surf2:#1A2030;
+  --border:#1E2840; --border2:#2B3552;
+  --text:#F0F4FF; --muted:#6B7A99; --muted2:#A4AECD;
+  --primary:#FCD34D; --primary-d:#F59E0B;
+  --purple:#8B5CF6; --purple-l:#A78BFA;
+  --blue:#2563EB; --blue-l:#3B82F6;
+  --green:#22C55E; --green-l:#4ADE80;
+  --orange:#F97316; --pink:#EC4899;
+  --danger:#EF4444; --danger-l:#F87171;
+  --r:18px; --rs:12px;
+  --f-display:'Bebas Neue',sans-serif;
+  --f-body:'Inter',sans-serif;
+  --f-num:'Plus Jakarta Sans',sans-serif;
+}
+html,body{background:var(--bg);color:var(--text);font-family:var(--f-body);font-size:14px;line-height:1.5;min-height:100vh}
+button,input,select,textarea{font-family:inherit}
+button{cursor:pointer;border:none;outline:none}
+a{color:inherit;text-decoration:none}
+
+/* Login */
+.login-screen{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:2rem;background:linear-gradient(180deg,#000 0%,#0A0E14 60%)}
+.login-card{background:var(--surf);border:1px solid var(--border);border-radius:var(--r);padding:2rem;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.login-logo{font-family:var(--f-display);font-size:2.5rem;letter-spacing:3px;text-align:center;margin-bottom:.4rem}
+.login-logo span{color:var(--primary)}
+.login-sub{text-align:center;color:var(--muted);font-size:.85rem;margin-bottom:1.8rem;letter-spacing:1px;text-transform:uppercase}
+.lock-icon{display:flex;justify-content:center;margin-bottom:1.5rem;font-size:2.5rem}
+.fg{margin-bottom:1rem}
+.fl{display:block;font-size:.7rem;color:var(--muted);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:1px;font-weight:600}
+.fi{width:100%;background:var(--surf2);border:1px solid var(--border2);border-radius:var(--rs);padding:.85rem 1rem;color:var(--text);font-size:.95rem;outline:none;transition:border-color .2s}
+.fi:focus{border-color:var(--primary)}
+.btn{padding:.9rem 1.4rem;border-radius:var(--rs);font-weight:700;font-size:.9rem;letter-spacing:.5px;display:inline-flex;align-items:center;justify-content:center;gap:.5rem;transition:.2s;width:100%}
+.btn-primary{background:var(--primary);color:#000}
+.btn-primary:hover{background:var(--primary-d);transform:translateY(-1px)}
+.btn-ghost{background:var(--surf2);color:var(--text);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--border);color:var(--text)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-danger:hover{background:var(--danger-l)}
+.btn-sm{padding:.5rem .9rem;font-size:.8rem}
+
+/* Layout */
+.app{display:none;min-height:100vh}
+.topbar{position:sticky;top:0;height:72px;background:rgba(10,14,20,.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 1.5rem;gap:1rem;z-index:100}
+.tb-logo{display:flex;align-items:center;gap:.7rem;flex:1}
+.tb-logo-img{height:36px;width:auto}
+.tb-logo-fallback{font-family:var(--f-display);font-size:1.3rem;letter-spacing:2px;display:none}
+.tb-logo-fallback span{color:var(--primary)}
+.tb-badge{display:inline-flex;align-items:center;background:var(--surf2);color:var(--text);font-size:.7rem;padding:.4rem .8rem;border-radius:8px;letter-spacing:1.5px;font-weight:700;font-family:var(--f-body);border:1px solid var(--border2)}
+.tb-actions{display:flex;gap:.55rem;align-items:center}
+.tb-user{font-size:.8rem;color:var(--muted)}
+.btn-tb-icon{background:var(--surf);border:1px solid var(--border);color:var(--text);width:42px;height:42px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;font-size:1rem;cursor:pointer;transition:.15s;position:relative;padding:0}
+.btn-tb-icon:hover{border-color:var(--purple-l);background:var(--surf2)}
+.btn-sair-novo{background:var(--surf);border:1px solid var(--border);color:var(--text);padding:.55rem 1rem;border-radius:10px;font-weight:600;cursor:pointer;font-size:.85rem;display:flex;align-items:center;gap:.5rem;transition:.15s}
+.btn-sair-novo:hover{border-color:var(--danger);color:var(--danger-l)}
+
+/* Tabs com underline */
+.tabs{display:flex;gap:0;padding:0 1.5rem;border-bottom:1px solid var(--border);overflow-x:auto;background:var(--bg2)}
+.tab{padding:1rem 1.5rem;font-size:.92rem;font-weight:600;color:var(--muted);background:transparent;white-space:nowrap;border:none;border-bottom:3px solid transparent;cursor:pointer;display:flex;align-items:center;gap:.5rem;transition:.15s;margin-bottom:-1px}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--text);border-bottom-color:var(--green-l)}
+
+.content{padding:1.5rem;max-width:1400px;margin:0 auto}
+
+/* Cards */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:1.5rem}
+.kpi-card{background:var(--surf);border:1px solid var(--border);border-radius:var(--r);padding:1.2rem;transition:transform .2s,box-shadow .2s}
+.kpi-card:hover{transform:translateY(-2px);border-color:var(--border2)}
+.kpi-card.kpi-purple{background:linear-gradient(135deg,rgba(139,92,246,.10),rgba(139,92,246,.02));border-color:rgba(139,92,246,.25)}
+.kpi-card.kpi-purple:hover{border-color:rgba(139,92,246,.5);box-shadow:0 4px 18px rgba(139,92,246,.15)}
+.kpi-card.kpi-amber{background:linear-gradient(135deg,rgba(245,158,11,.10),rgba(245,158,11,.02));border-color:rgba(245,158,11,.25)}
+.kpi-card.kpi-amber:hover{border-color:rgba(245,158,11,.5);box-shadow:0 4px 18px rgba(245,158,11,.15)}
+.kpi-card.kpi-blue{background:linear-gradient(135deg,rgba(59,130,246,.10),rgba(59,130,246,.02));border-color:rgba(59,130,246,.25)}
+.kpi-card.kpi-blue:hover{border-color:rgba(59,130,246,.5);box-shadow:0 4px 18px rgba(59,130,246,.15)}
+.kpi-card.kpi-green{background:linear-gradient(135deg,rgba(34,197,94,.10),rgba(34,197,94,.02));border-color:rgba(34,197,94,.25)}
+.kpi-card.kpi-danger{background:linear-gradient(135deg,rgba(239,68,68,.08),rgba(239,68,68,.02));border-color:rgba(239,68,68,.20)}
+.kpi-label{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem}
+.kpi-value{font-family:var(--f-num);font-size:2.2rem;font-weight:800;line-height:1;letter-spacing:-1px}
+.kpi-value.purple{color:var(--purple-l)}
+.kpi-value.amber{color:var(--primary)}
+.kpi-value.blue{color:var(--blue-l)}
+.kpi-value.green{color:var(--green-l)}
+.kpi-trend{font-size:.7rem;color:var(--muted);margin-top:.45rem;display:flex;align-items:center;gap:.4rem}
+.kpi-trend .trend-up{color:var(--green-l);font-weight:700}
+.kpi-trend .trend-down{color:var(--danger-l);font-weight:700}
+.kpi-trend .trend-flat{color:var(--muted);font-weight:600}
+
+/* Ações rápidas */
+.quick-actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.85rem;margin-top:1.5rem}
+.qa-btn{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:1rem 1.2rem;cursor:pointer;display:flex;align-items:center;gap:.85rem;text-align:left;transition:.2s;color:var(--text)}
+.qa-btn:hover{transform:translateY(-2px);border-color:var(--purple-l);box-shadow:0 6px 18px rgba(139,92,246,.15)}
+.qa-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;background:rgba(139,92,246,.15);color:var(--purple-l);flex-shrink:0}
+.qa-icon.amber{background:rgba(245,158,11,.15);color:var(--primary)}
+.qa-icon.green{background:rgba(34,197,94,.15);color:var(--green-l)}
+.qa-icon.blue{background:rgba(59,130,246,.15);color:var(--blue-l)}
+.qa-info{flex:1;min-width:0}
+.qa-title{font-weight:700;font-size:.92rem;margin-bottom:.15rem}
+.qa-sub{font-size:.72rem;color:var(--muted)}
+.qa-arrow{color:var(--muted);font-size:1rem;flex-shrink:0}
+
+.section-title{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin:1.5rem 0 .8rem;display:flex;align-items:center;gap:.5rem}
+.kpi-trend{font-size:.7rem;color:var(--muted);margin-top:.4rem}
+.kpi-trend.up{color:var(--green-l)}
+.kpi-trend.down{color:var(--danger-l)}
+
+/* Section */
+.section{background:var(--surf);border:1px solid var(--border);border-radius:var(--r);padding:1.4rem;margin-bottom:1.5rem}
+.section-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.8rem}
+.section-title{font-size:1rem;font-weight:700}
+.section-sub{font-size:.75rem;color:var(--muted)}
+
+/* Search */
+.search-bar{display:flex;gap:.5rem;align-items:center;margin-bottom:1rem;flex-wrap:wrap}
+.search-input{flex:1;min-width:200px;background:var(--surf2);border:1px solid var(--border2);border-radius:var(--rs);padding:.7rem 1rem;color:var(--text);font-size:.85rem;outline:none}
+.search-input:focus{border-color:var(--primary)}
+.filter-toggle{display:flex;align-items:center;gap:.4rem;font-size:.75rem;color:var(--muted);background:var(--surf2);padding:.6rem .9rem;border-radius:var(--rs);border:1px solid var(--border2);cursor:pointer}
+.filter-toggle.active{color:var(--text);background:var(--border)}
+
+/* Table */
+.user-list{display:flex;flex-direction:column;gap:.5rem}
+.user-item{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:1.2rem 1.4rem;display:grid;grid-template-columns:auto 1fr auto;gap:1.2rem;align-items:start;transition:.2s;margin-bottom:.85rem;position:relative}
+.user-item:hover{border-color:var(--border2);transform:translateY(-1px)}
+.user-item.excluido{opacity:.55}
+.user-ava{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--purple-l));display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden;font-size:1.1rem;border:2px solid rgba(74,222,128,.3)}
+.user-ava img{width:100%;height:100%;object-fit:cover}
+.user-ava.amber{background:linear-gradient(135deg,var(--primary-d),var(--primary));border-color:rgba(245,158,11,.3)}
+.user-ava.blue{background:linear-gradient(135deg,var(--blue),var(--blue-l));border-color:rgba(59,130,246,.3)}
+.user-info{flex:1;min-width:0}
+.user-name{font-weight:700;font-size:1.15rem;margin-bottom:.55rem;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;color:var(--text)}
+.user-meta{font-size:.85rem;color:var(--muted);display:flex;flex-direction:column;gap:.35rem}
+.user-meta .row{display:flex;align-items:center;gap:.5rem}
+.user-meta .row svg, .user-meta .row .ico{color:var(--muted);font-size:.95rem;flex-shrink:0}
+.user-divider{height:1px;background:var(--border);margin:.85rem 0}
+.user-fields-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.user-field{display:flex;align-items:flex-start;gap:.5rem}
+.user-field-ico{color:var(--purple-l);font-size:1rem;margin-top:.05rem}
+.user-field-lbl{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin-bottom:.15rem}
+.user-field-val{font-weight:700;font-size:.9rem;color:var(--green-l);font-family:var(--f-num)}
+.user-field-val.normal{color:var(--text);font-family:var(--f-body);font-weight:500}
+
+.user-actions{display:flex;gap:.4rem;align-items:center}
+
+/* Menu de 3 pontinhos */
+.menu-trigger{background:var(--surf2);border:1px solid var(--border);color:var(--muted);width:36px;height:36px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:.15s;padding:0}
+.menu-trigger:hover{border-color:var(--purple-l);color:var(--text)}
+.menu-dropdown{position:absolute;right:0;top:42px;background:var(--surf);border:1px solid var(--border2);border-radius:12px;min-width:240px;z-index:50;box-shadow:0 12px 32px rgba(0,0,0,.5);overflow:hidden;display:none}
+.menu-dropdown.open{display:block}
+.menu-item{padding:.75rem 1rem;display:flex;align-items:center;gap:.75rem;cursor:pointer;font-size:.85rem;font-weight:500;color:var(--text);transition:.1s;border:none;background:transparent;width:100%;text-align:left}
+.menu-item:hover{background:var(--surf2)}
+.menu-item.danger{color:var(--danger-l)}
+.menu-item.danger:hover{background:rgba(239,68,68,.1)}
+.menu-ico{width:24px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.menu-ico.purple{color:var(--purple-l)}
+.menu-ico.green{color:var(--green-l)}
+.menu-ico.blue{color:var(--blue-l)}
+.menu-ico.amber{color:var(--primary)}
+.menu-ico.danger{color:var(--danger-l)}
+
+.tag{display:inline-flex;align-items:center;gap:.25rem;padding:.25rem .55rem;border-radius:6px;font-size:.65rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.tag-active{background:rgba(34,197,94,.15);color:var(--green-l);border:1px solid rgba(34,197,94,.3)}
+.tag-active::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green-l);display:inline-block}
+.tag-deleted{background:rgba(239,68,68,.15);color:var(--danger-l);border:1px solid rgba(239,68,68,.3)}
+.tag-info{background:rgba(59,130,246,.15);color:var(--blue-l);border:1px solid rgba(59,130,246,.3)}
+
+/* Section header (banner com ícone) */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;gap:1rem;flex-wrap:wrap}
+.section-header-info{display:flex;align-items:center;gap:1rem}
+.section-header-icon{width:54px;height:54px;border-radius:14px;background:rgba(74,222,128,.15);display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0}
+.section-header-icon.purple{background:rgba(139,92,246,.15)}
+.section-header-icon.amber{background:rgba(245,158,11,.15)}
+.section-header-icon.blue{background:rgba(59,130,246,.15)}
+.section-header-title{font-family:var(--f-display);font-size:1.7rem;font-weight:700;color:var(--text);letter-spacing:.5px;line-height:1}
+.section-header-sub{font-size:.85rem;color:var(--muted);margin-top:.3rem}
+.section-header-count{background:var(--surf);border:1px solid var(--border);padding:.7rem 1.1rem;border-radius:12px;display:flex;align-items:center;gap:.7rem;flex-shrink:0}
+.section-count-ico{color:var(--green-l);font-size:1.3rem}
+.section-count-num{font-family:var(--f-num);font-size:1.3rem;font-weight:700;color:var(--text);line-height:1}
+.section-count-lbl{font-size:.7rem;color:var(--green-l);font-weight:600;margin-top:.15rem}
+
+/* Banner segurança */
+.security-banner{background:rgba(74,222,128,.05);border:1px solid rgba(74,222,128,.2);border-radius:12px;padding:1rem 1.2rem;display:flex;align-items:center;gap:.85rem;margin-top:1.5rem}
+.security-banner-ico{width:42px;height:42px;border-radius:50%;background:rgba(74,222,128,.15);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.security-banner-title{font-weight:700;font-size:.92rem;margin-bottom:.2rem}
+.security-banner-sub{font-size:.78rem;color:var(--muted);line-height:1.4}
+
+/* Chart */
+.chart-wrap{height:200px;position:relative;margin-top:1rem}
+
+/* Toast */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:var(--surf);border:1px solid var(--border2);color:var(--text);padding:.8rem 1.4rem;border-radius:var(--rs);font-size:.85rem;z-index:1000;box-shadow:0 8px 24px rgba(0,0,0,.4);max-width:90%;text-align:center;display:none}
+.toast.show{display:block;animation:slideUp .3s}
+.toast.error{background:#dc2626;color:#fff}
+.toast.success{background:var(--green);color:#000;font-weight:600}
+@keyframes slideUp{from{transform:translate(-50%,30px);opacity:0}to{transform:translate(-50%,0);opacity:1}}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{width:24px;height:24px;border:3px solid rgba(252,211,77,.3);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}
+
+.empty{text-align:center;padding:3rem 1rem;color:var(--muted);font-size:.9rem}
+
+/* Filtros de status */
+.filtro-status{white-space:nowrap;flex-shrink:0}
+.filtro-status.active{background:var(--primary);color:#000;border-color:var(--primary)}
+
+/* Status badges */
+.status-trial{background:rgba(59,130,246,.15);color:var(--blue-l);border:1px solid rgba(59,130,246,.3)}
+.status-ativa{background:rgba(34,197,94,.15);color:var(--green-l);border:1px solid rgba(34,197,94,.3)}
+.status-pendente{background:rgba(252,211,77,.15);color:var(--primary);border:1px solid rgba(252,211,77,.3)}
+.status-atrasada{background:rgba(239,68,68,.15);color:var(--danger-l);border:1px solid rgba(239,68,68,.3)}
+.status-cancelada{background:rgba(107,122,153,.15);color:var(--muted2);border:1px solid rgba(107,122,153,.3)}
+
+/* Mobile */
+@media (max-width:600px){
+  .topbar{padding:0 1rem}
+  .content{padding:1rem}
+  .kpi-value{font-size:1.8rem}
+  .tb-user{display:none}
+}
+
+/* Modal alertas */
+.alert-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:flex-start;justify-content:center;z-index:200;padding:2rem 1rem}
+.alert-overlay.open{display:flex}
+.alert-modal{background:var(--surf);border:1px solid var(--border);border-radius:12px;width:100%;max-width:480px;max-height:80vh;display:flex;flex-direction:column}
+.alert-head{padding:1rem 1.2rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.alert-head h3{margin:0;font-size:1.1rem}
+.alert-head button{background:transparent;border:none;color:var(--muted);font-size:1.5rem;cursor:pointer;line-height:1}
+.alert-body{flex:1;overflow-y:auto}
+.alert-item{padding:.85rem 1.2rem;border-bottom:1px solid var(--border);display:flex;gap:.75rem;cursor:pointer;transition:.15s}
+.alert-item:hover{background:rgba(255,255,255,.03)}
+.alert-ico{font-size:1.4rem;flex-shrink:0;line-height:1}
+.alert-content{flex:1;min-width:0}
+.alert-title-txt{font-weight:700;font-size:.85rem;color:var(--text);margin-bottom:.15rem}
+.alert-msg{font-size:.78rem;color:var(--muted);line-height:1.3}
+.alert-time{font-size:.7rem;color:var(--muted);margin-top:.3rem}
+</style>
+</head>
+<body>
+
+<!-- TELA DE LOGIN COM SENHA MASTER -->
+<div id="login-screen" class="login-screen">
+  <div class="login-card">
+    <div class="lock-icon">🔐</div>
+    <div class="login-logo">RANK<span>·</span>ETES</div>
+    <div class="login-sub">Admin Master</div>
+    
+    <div id="step-master" style="display:block">
+      <div class="fg">
+        <label class="fl">Senha master</label>
+        <input class="fi" id="masterPass" type="password" placeholder="Digite a senha master" autofocus/>
+      </div>
+      <button class="btn btn-primary" onclick="verificarMaster()">Continuar →</button>
+      <div style="margin-top:.8rem;font-size:.7rem;color:var(--muted);text-align:center">Acesso restrito ao administrador da plataforma.</div>
+    </div>
+    
+    <div id="step-login" style="display:none">
+      <div style="text-align:center;margin-bottom:1.2rem;color:var(--green-l);font-size:.85rem">✓ Senha master OK</div>
+      <div class="fg">
+        <label class="fl">Email</label>
+        <input class="fi" id="adminEmail" type="email" placeholder="seu@email.com"/>
+      </div>
+      <div class="fg">
+        <label class="fl">Senha</label>
+        <input class="fi" id="adminPass" type="password" placeholder="Sua senha"/>
+      </div>
+      <button class="btn btn-primary" onclick="fazerLogin()" id="btnLogin">Entrar</button>
+      <button class="btn btn-ghost" onclick="voltarMaster()" style="margin-top:.5rem">← Voltar</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="app">
+  <div class="topbar">
+    <div class="tb-logo">
+      <img src="logo.PNG" alt="Ranketes" class="tb-logo-img" onerror="this.style.display='none';document.getElementById('tbLogoFallback').style.display='inline-block'"/>
+      <span class="tb-logo-fallback" id="tbLogoFallback">RANK<span>·</span>ETES</span>
+      <span class="tb-badge">ADMIN</span>
+    </div>
+    <div class="tb-actions">
+      <span class="tb-user" id="adminUserEmail">--</span>
+      <button class="btn-tb-icon" onclick="abrirAlertasAdmin()" title="Alertas">
+        🔔
+        <div id="alertaDot" style="display:none;position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;border-radius:9px;background:#ef4444;border:2px solid var(--bg);color:#fff;font-size:.6rem;font-weight:700;align-items:center;justify-content:center;padding:0 4px;line-height:1"></div>
+      </button>
+      <button class="btn-tb-icon" onclick="atualizarTudo()" title="Atualizar">🔄</button>
+      <button class="btn-sair-novo" onclick="sair()">Sair <span style="font-size:.85rem">↗</span></button>
+    </div>
+  </div>
+  
+  <div class="tabs">
+    <div class="tab active" onclick="trocarTab('dash')" id="tab-dash">📊 Dashboard</div>
+    <div class="tab" onclick="trocarTab('financeiro')" id="tab-financeiro">💰 Financeiro</div>
+    <div class="tab" onclick="trocarTab('atletas')" id="tab-atletas">🎾 Atletas</div>
+    <div class="tab" onclick="trocarTab('profs')" id="tab-profs">🎓 Professores</div>
+    <div class="tab" onclick="trocarTab('arenas')" id="tab-arenas">🏟️ Arenas/Clubes</div>
+  </div>
+  
+  <div class="content">
+    
+    <!-- TAB: DASHBOARD -->
+    <div id="screen-dash">
+      <div class="kpi-grid" id="kpiGrid">
+        <div class="kpi-card kpi-purple" style="cursor:pointer" onclick="trocarTab('atletas')" title="Ver atletas">
+          <div class="kpi-label">🎾 Atletas</div>
+          <div class="kpi-value purple" id="kpiAtletas">--</div>
+          <div class="kpi-trend" id="kpiAtletasTrend">—</div>
+        </div>
+        <div class="kpi-card kpi-amber" style="cursor:pointer" onclick="trocarTab('professores')" title="Ver professores">
+          <div class="kpi-label">🎓 Professores</div>
+          <div class="kpi-value amber" id="kpiProfs">--</div>
+          <div class="kpi-trend" id="kpiProfsTrend">—</div>
+        </div>
+        <div class="kpi-card kpi-blue" style="cursor:pointer" onclick="trocarTab('arenas')" title="Ver arenas">
+          <div class="kpi-label">🏟️ Arenas/Clubes</div>
+          <div class="kpi-value blue" id="kpiArenas">--</div>
+          <div class="kpi-trend" id="kpiArenasTrend">—</div>
+        </div>
+        <div class="kpi-card kpi-green">
+          <div class="kpi-label">👥 Total Usuários</div>
+          <div class="kpi-value green" id="kpiTotal">--</div>
+          <div class="kpi-trend" id="kpiTotalTrend">—</div>
+        </div>
+      </div>
+      
+      <div class="kpi-grid" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">
+        <div class="kpi-card">
+          <div class="kpi-label">🆕 Novos hoje</div>
+          <div class="kpi-value" id="kpiHoje" style="font-size:1.6rem">--</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">📅 Últimos 7 dias</div>
+          <div class="kpi-value" id="kpi7d" style="font-size:1.6rem">--</div>
+          <div class="kpi-trend" id="kpi7dTrend" style="margin-top:.3rem"></div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">📈 Últimos 30 dias</div>
+          <div class="kpi-value" id="kpi30d" style="font-size:1.6rem">--</div>
+        </div>
+        <div class="kpi-card kpi-danger">
+          <div class="kpi-label">🗑️ Excluídos</div>
+          <div class="kpi-value" id="kpiExcluidos" style="font-size:1.6rem;color:var(--danger-l)">--</div>
+        </div>
+      </div>
+      
+      <div class="section">
+        <div class="section-h">
+          <div>
+            <div class="section-title">📈 Crescimento — últimos 30 dias</div>
+            <div class="section-sub">Cadastros por dia</div>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="chartCrescimento"></canvas>
+        </div>
+      </div>
+      
+      <!-- AÇÕES RÁPIDAS -->
+      <div class="section-title">⚡ Ações rápidas</div>
+      <div class="quick-actions">
+        <button class="qa-btn" onclick="abrirCriarAtletaTeste()">
+          <div class="qa-icon">🧪</div>
+          <div class="qa-info">
+            <div class="qa-title">Criar atleta de teste</div>
+            <div class="qa-sub">Cadastra conta com senha pronta</div>
+          </div>
+          <div class="qa-arrow">→</div>
+        </button>
+        <button class="qa-btn" onclick="atualizarTudo()">
+          <div class="qa-icon green">🔄</div>
+          <div class="qa-info">
+            <div class="qa-title">Atualizar dados</div>
+            <div class="qa-sub">Recarrega todas as estatísticas</div>
+          </div>
+          <div class="qa-arrow">→</div>
+        </button>
+        <button class="qa-btn" onclick="abrirAlertasAdmin()">
+          <div class="qa-icon amber">🔔</div>
+          <div class="qa-info">
+            <div class="qa-title">Ver alertas</div>
+            <div class="qa-sub">Pagamentos, trials, novos cadastros</div>
+          </div>
+          <div class="qa-arrow">→</div>
+        </button>
+        <button class="qa-btn" onclick="trocarTab('financeiro')">
+          <div class="qa-icon blue">💰</div>
+          <div class="qa-info">
+            <div class="qa-title">Financeiro</div>
+            <div class="qa-sub">Ver assinaturas e pagamentos</div>
+          </div>
+          <div class="qa-arrow">→</div>
+        </button>
+      </div>
+    </div>
+    
+    <!-- TAB: FINANCEIRO -->
+    <div id="screen-financeiro" style="display:none">
+      <!-- KPIs principais -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">💰 MRR</div>
+          <div class="kpi-value green" id="finMrr">R$ 0</div>
+          <div class="kpi-trend" id="finMrrTrend">Receita recorrente mensal</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">📅 Receita do mês</div>
+          <div class="kpi-value amber" id="finReceitaMes">R$ 0</div>
+          <div class="kpi-trend" id="finReceitaMesTrend">Confirmado este mês</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">⏳ A receber</div>
+          <div class="kpi-value" id="finPendente" style="color:var(--orange)">R$ 0</div>
+          <div class="kpi-trend" id="finPendenteTrend">Pendentes + atrasados</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">🎯 Receita total</div>
+          <div class="kpi-value blue" id="finReceitaTotal">R$ 0</div>
+          <div class="kpi-trend">Histórico completo</div>
+        </div>
+      </div>
+      
+      <!-- KPIs por status -->
+      <div class="kpi-grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
+        <div class="kpi-card">
+          <div class="kpi-label">🟢 Ativas</div>
+          <div class="kpi-value" id="finAtivas" style="font-size:1.6rem;color:var(--green-l)">0</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">🔵 Em trial</div>
+          <div class="kpi-value" id="finTrial" style="font-size:1.6rem;color:var(--blue-l)">0</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">🟡 Pendentes</div>
+          <div class="kpi-value" id="finPendentes" style="font-size:1.6rem;color:var(--primary)">0</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">🔴 Atrasadas</div>
+          <div class="kpi-value" id="finAtrasadas" style="font-size:1.6rem;color:var(--danger-l)">0</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">⚠️ Trial vencendo (7d)</div>
+          <div class="kpi-value" id="finTrialVencendo" style="font-size:1.6rem;color:var(--orange)">0</div>
+        </div>
+      </div>
+      
+      <!-- Gráfico de receita -->
+      <div class="section">
+        <div class="section-h">
+          <div>
+            <div class="section-title">📈 Receita — últimos 12 meses</div>
+            <div class="section-sub">Pagamentos aprovados por mês</div>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="chartReceita"></canvas>
+        </div>
+      </div>
+      
+      <!-- Lista de assinaturas -->
+      <div class="section">
+        <div class="section-h">
+          <div>
+            <div class="section-title">📋 Assinaturas</div>
+            <div class="section-sub" id="assinCount">--</div>
+          </div>
+        </div>
+        
+        <!-- Filtros de status -->
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem;overflow-x:auto;padding-bottom:.4rem">
+          <button class="btn btn-ghost btn-sm filtro-status active" data-status="todas" onclick="filtrarAssinaturas('todas')">📋 Todas</button>
+          <button class="btn btn-ghost btn-sm filtro-status" data-status="atrasada" onclick="filtrarAssinaturas('atrasada')">🔴 Atrasadas</button>
+          <button class="btn btn-ghost btn-sm filtro-status" data-status="pendente" onclick="filtrarAssinaturas('pendente')">🟡 Pendentes</button>
+          <button class="btn btn-ghost btn-sm filtro-status" data-status="trial" onclick="filtrarAssinaturas('trial')">🔵 Em trial</button>
+          <button class="btn btn-ghost btn-sm filtro-status" data-status="ativa" onclick="filtrarAssinaturas('ativa')">🟢 Ativas</button>
+          <button class="btn btn-ghost btn-sm filtro-status" data-status="cancelada" onclick="filtrarAssinaturas('cancelada')">⚫ Canceladas</button>
+        </div>
+        
+        <div class="search-bar">
+          <input class="search-input" id="searchAssin" placeholder="Buscar por nome ou email..." oninput="debounce('searchAssin', () => carregarAssinaturas())"/>
+        </div>
+        <div class="user-list" id="listaAssinaturas">
+          <div class="empty">Carregando...</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- TAB: ATLETAS -->
+    <div id="screen-atletas" style="display:none">
+      <div class="section-header">
+        <div class="section-header-info">
+          <div class="section-header-icon">🎾</div>
+          <div>
+            <div class="section-header-title">Atletas</div>
+            <div class="section-header-sub">Gerencie os atletas cadastrados</div>
+          </div>
+        </div>
+        <div class="section-header-count">
+          <div class="section-count-ico">👥</div>
+          <div>
+            <div class="section-count-num" id="atletasCount">0</div>
+            <div class="section-count-lbl" id="atletasCountSub">resultados</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="section">
+        <div class="search-bar">
+          <input class="search-input" id="searchAtletas" placeholder="🔍 Buscar por nome, email ou telefone..." oninput="debounce('searchAtletas', () => carregarAtletas())"/>
+          <div class="filter-toggle" id="toggleAtletasExc" onclick="toggleExcluidos('atletas')">
+            <input type="checkbox" id="chkAtletasExc"/> Mostrar excluídos
+          </div>
+        </div>
+        <div class="user-list" id="listaAtletas">
+          <div class="empty">Carregando...</div>
+        </div>
+        
+        <div class="security-banner">
+          <div class="security-banner-ico">🛡️</div>
+          <div>
+            <div class="security-banner-title">Segurança em primeiro lugar</div>
+            <div class="security-banner-sub">O link de redefinição de senha expira em 1 hora e pode ser usado apenas uma vez.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- TAB: PROFS -->
+    <div id="screen-profs" style="display:none">
+      <div class="section-header">
+        <div class="section-header-info">
+          <div class="section-header-icon amber">🎓</div>
+          <div>
+            <div class="section-header-title">Professores</div>
+            <div class="section-header-sub">Gerencie os professores cadastrados</div>
+          </div>
+        </div>
+        <div class="section-header-count">
+          <div class="section-count-ico" style="color:var(--primary)">🎓</div>
+          <div>
+            <div class="section-count-num" id="profsCount">0</div>
+            <div class="section-count-lbl" style="color:var(--primary)">resultados</div>
+          </div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="search-bar">
+          <input class="search-input" id="searchProfs" placeholder="🔍 Buscar por nome, email ou ID público..." oninput="debounce('searchProfs', () => carregarProfs())"/>
+          <div class="filter-toggle" onclick="toggleExcluidos('profs')">
+            <input type="checkbox" id="chkProfsExc"/> Mostrar excluídos
+          </div>
+        </div>
+        <div class="user-list" id="listaProfs">
+          <div class="empty">Carregando...</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- TAB: ARENAS -->
+    <div id="screen-arenas" style="display:none">
+      <div class="section-header">
+        <div class="section-header-info">
+          <div class="section-header-icon blue">🏟️</div>
+          <div>
+            <div class="section-header-title">Arenas / Clubes</div>
+            <div class="section-header-sub">Gerencie as arenas e clubes cadastrados</div>
+          </div>
+        </div>
+        <div class="section-header-count">
+          <div class="section-count-ico" style="color:var(--blue-l)">🏟️</div>
+          <div>
+            <div class="section-count-num" id="arenasCount">0</div>
+            <div class="section-count-lbl" style="color:var(--blue-l)">resultados</div>
+          </div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="search-bar">
+          <input class="search-input" id="searchArenas" placeholder="🔍 Buscar por nome, ID, cidade..." oninput="debounce('searchArenas', () => carregarArenas())"/>
+          <div class="filter-toggle" onclick="toggleExcluidos('arenas')">
+            <input type="checkbox" id="chkArenasExc"/> Mostrar excluídos
+          </div>
+        </div>
+        <div class="user-list" id="listaArenas">
+          <div class="empty">Carregando...</div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script>
+// ════════════════════════════════════════════
+// CONFIGURAÇÕES
+// ════════════════════════════════════════════
+const SENHA_MASTER = 'Bhkwtgrs83!!' // ⚠️ Senha do admin master
+const EMAIL_ADMIN = 'wexleyrs@gmail.com'
+
+// ════════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════════
+function showToast(msg, isError = false, type = '') {
+  const t = document.getElementById('toast')
+  t.textContent = msg
+  t.className = 'toast show ' + (isError ? 'error' : type)
+  setTimeout(() => t.classList.remove('show'), 3500)
+}
+
+const debounceTimers = {}
+function debounce(key, fn, delay = 400) {
+  clearTimeout(debounceTimers[key])
+  debounceTimers[key] = setTimeout(fn, delay)
+}
+
+function getIniciais(nome) {
+  if (!nome) return '?'
+  const partes = nome.trim().split(/\s+/).filter(Boolean)
+  if (partes.length === 0) return '?'
+  if (partes.length === 1) return partes[0][0]?.toUpperCase() || '?'
+  return (partes[0][0] + partes[partes.length-1][0]).toUpperCase()
+}
+
+function formatarData(d) {
+  if (!d) return '—'
+  const dt = new Date(d)
+  return dt.toLocaleDateString('pt-BR') + ' ' + dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})
+}
+
+function formatarTel(t) {
+  if (!t) return '—'
+  const s = String(t).replace(/\D/g,'')
+  if (s.length === 11) return `(${s.slice(0,2)}) ${s.slice(2,7)}-${s.slice(7)}`
+  if (s.length === 10) return `(${s.slice(0,2)}) ${s.slice(2,6)}-${s.slice(6)}`
+  return t
+}
+
+function diasAtras(d) {
+  if (!d) return '?'
+  const ms = Date.now() - new Date(d).getTime()
+  const dias = Math.floor(ms / 86400000)
+  if (dias === 0) return 'hoje'
+  if (dias === 1) return 'ontem'
+  if (dias < 30) return dias + 'd atrás'
+  if (dias < 365) return Math.floor(dias/30) + 'mes atrás'
+  return Math.floor(dias/365) + 'a atrás'
+}
+
+// ════════════════════════════════════════════
+// LOGIN COM SENHA MASTER
+// ════════════════════════════════════════════
+function verificarMaster() {
+  const pass = document.getElementById('masterPass').value
+  if (pass !== SENHA_MASTER) {
+    showToast('Senha master incorreta', true)
+    return
+  }
+  document.getElementById('step-master').style.display = 'none'
+  document.getElementById('step-login').style.display = 'block'
+  document.getElementById('adminEmail').focus()
+}
+
+function voltarMaster() {
+  document.getElementById('step-master').style.display = 'block'
+  document.getElementById('step-login').style.display = 'none'
+  document.getElementById('masterPass').value = ''
+  document.getElementById('adminEmail').value = ''
+  document.getElementById('adminPass').value = ''
+}
+
+async function fazerLogin() {
+  const email = document.getElementById('adminEmail').value.trim()
+  const senha = document.getElementById('adminPass').value
+  if (!email || !senha) { showToast('Preencha email e senha', true); return }
+  
+  if (email !== EMAIL_ADMIN) {
+    showToast('Email não autorizado', true)
+    return
+  }
+  
+  document.getElementById('btnLogin').textContent = 'Entrando...'
+  
+  try {
+    const { data, error } = await window._sb.auth.signInWithPassword({ email, password: senha })
+    if (error) { showToast('Erro: ' + error.message, true); document.getElementById('btnLogin').textContent = 'Entrar'; return }
+    
+    sessionStorage.setItem('admin_master_ok', '1')
+    iniciarApp()
+  } catch(e) {
+    showToast('Erro: '+e.message, true)
+    document.getElementById('btnLogin').textContent = 'Entrar'
+  }
+}
+
+async function sair() {
+  sessionStorage.removeItem('admin_master_ok')
+  await window._sb.auth.signOut()
+  window.location.reload()
+}
+
+// ════════════════════════════════════════════
+// INIT APP
+// ════════════════════════════════════════════
+async function iniciarApp() {
+  document.getElementById('login-screen').style.display = 'none'
+  document.getElementById('app').style.display = 'block'
+  
+  const { data: { user } } = await window._sb.auth.getUser()
+  document.getElementById('adminUserEmail').textContent = user?.email || ''
+  
+  await atualizarTudo()
+  iniciarPollingAlertas()
+}
+
+async function atualizarTudo() {
+  await carregarStats()
+  await carregarCrescimento()
+  await carregarFinStats()
+  await carregarReceita12m()
+  await carregarAtletas()
+  await carregarProfs()
+  await carregarArenas()
+  await carregarAssinaturas()
+  await atualizarBadgeAlertas()
+  showToast('✓ Dados atualizados', false, 'success')
+}
+
+// ════════════════════════════════════════════
+// ALERTAS ADMIN
+// ════════════════════════════════════════════
+
+let _alertasCache = null
+let _alertasPollTimer = null
+
+async function atualizarBadgeAlertas() {
+  try {
+    const { data, error } = await window._sb.rpc('admin_alertas')
+    if (error) { console.warn('alertas:', error); return }
+    
+    _alertasCache = data
+    const total = Number(data?.total || 0)
+    
+    const dot = document.getElementById('alertaDot')
+    if (!dot) return
+    
+    if (total > 0) {
+      dot.textContent = total > 9 ? '9+' : total
+      dot.style.display = 'flex'
+    } else {
+      dot.style.display = 'none'
+    }
+  } catch(e) { console.warn(e) }
+}
+
+async function abrirAlertasAdmin() {
+  document.getElementById('alertOverlay').classList.add('open')
+  
+  const body = document.getElementById('alertBody')
+  body.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--muted)">Carregando...</div>'
+  
+  try {
+    // Recarrega sempre que abrir
+    const { data, error } = await window._sb.rpc('admin_alertas')
+    if (error) {
+      body.innerHTML = `<div style="padding:2rem;text-align:center;color:var(--danger)">Erro: ${error.message}</div>`
+      return
+    }
+    
+    _alertasCache = data
+    const alertas = data?.alertas || []
+    
+    if (alertas.length === 0) {
+      body.innerHTML = `
+        <div style="padding:3rem 1.5rem;text-align:center">
+          <div style="font-size:3rem;margin-bottom:.5rem">✅</div>
+          <div style="font-weight:700;color:var(--text);margin-bottom:.3rem">Tudo em dia!</div>
+          <div style="font-size:.85rem;color:var(--muted)">Nenhum alerta no momento.</div>
+        </div>
+      `
+      return
+    }
+    
+    // Ordena por prioridade (pagamentos > trials expirando > etc)
+    alertas.sort((a, b) => (b.prioridade || 0) - (a.prioridade || 0))
+    
+    body.innerHTML = alertas.map(a => `
+      <div class="alert-item" onclick="acaoAlerta('${a.link}')">
+        <div class="alert-ico">${a.icone}</div>
+        <div class="alert-content">
+          <div class="alert-title-txt">${escapeHtmlAdmin(a.titulo)}</div>
+          <div class="alert-msg">${escapeHtmlAdmin(a.mensagem)}</div>
+          <div class="alert-time">${tempoRelAdmin(a.tempo)}</div>
+        </div>
+      </div>
+    `).join('')
+  } catch(e) {
+    body.innerHTML = `<div style="padding:2rem;text-align:center;color:var(--danger)">Erro: ${e.message}</div>`
+  }
+}
+
+function fecharAlertasAdmin() {
+  document.getElementById('alertOverlay').classList.remove('open')
+}
+
+function acaoAlerta(link) {
+  fecharAlertasAdmin()
+  if (link && link !== 'undefined') {
+    trocarTab(link)
+  }
+}
+
+function escapeHtmlAdmin(s) {
+  if (!s) return ''
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
+}
+
+function tempoRelAdmin(d) {
+  if (!d) return ''
+  const dt = new Date(d).getTime()
+  const ms = Date.now() - dt
+  const futuro = ms < 0
+  const abs = Math.abs(ms)
+  const min = Math.floor(abs / 60000)
+  
+  if (min < 60) return futuro ? 'em ' + min + ' min' : min + ' min atrás'
+  const h = Math.floor(min / 60)
+  if (h < 24) return futuro ? 'em ' + h + 'h' : h + 'h atrás'
+  const dias = Math.floor(h / 24)
+  return futuro ? 'em ' + dias + 'd' : dias + 'd atrás'
+}
+
+// Fechar modal ao clicar fora
+document.addEventListener('click', e => {
+  if (e.target?.id === 'alertOverlay') fecharAlertasAdmin()
+})
+
+// Polling: atualiza badge a cada 2 minutos
+function iniciarPollingAlertas() {
+  if (_alertasPollTimer) clearInterval(_alertasPollTimer)
+  atualizarBadgeAlertas()
+  _alertasPollTimer = setInterval(atualizarBadgeAlertas, 120000)
+}
+
+// ════════════════════════════════════════════
+// DETALHE DE USUÁRIO
+// ════════════════════════════════════════════
+
+let _userIdAtual = null
+
+async function abrirDetalheUsuario(userId) {
+  if (!userId) return
+  _userIdAtual = userId
+  
+  document.getElementById('userOverlay').classList.add('open')
+  const body = document.getElementById('userBody')
+  body.innerHTML = '<div style="text-align:center;color:var(--muted);padding:1rem">Carregando...</div>'
+  
+  try {
+    const { data, error } = await window._sb.rpc('admin_detalhes_usuario', { p_user_id: userId })
+    if (error) {
+      body.innerHTML = `<div style="color:var(--danger);text-align:center">Erro: ${error.message}</div>`
+      return
+    }
+    if (data?.erro) {
+      body.innerHTML = `<div style="color:var(--danger);text-align:center">${data.erro}</div>`
+      return
+    }
+    
+    const u = data.usuario
+    const a = data.atleta
+    const p = data.professor
+    const ar = data.arena
+    
+    document.getElementById('userTitle').textContent = '👤 ' + (u.nome || u.email)
+    
+    let perfis = []
+    if (a) perfis.push(`<span class="tag tag-info">🎾 Atleta${a.id_publico ? ' · '+a.id_publico : ''}${a.excluido_em ? ' (excluído)' : ''}</span>`)
+    if (p) perfis.push(`<span class="tag tag-info" style="background:rgba(245,158,11,.15);color:#f59e0b">🎓 Professor${p.id_publico ? ' · '+p.id_publico : ''}${p.excluido_em ? ' (excluído)' : ''}</span>`)
+    if (ar) perfis.push(`<span class="tag tag-info" style="background:rgba(59,130,246,.15);color:#60a5fa">🏟️ ${(ar.tipo || 'arena').toUpperCase()}${ar.id_publico ? ' · '+ar.id_publico : ''}${ar.excluido_em ? ' (excluído)' : ''}</span>`)
+    
+    body.innerHTML = `
+      <div style="margin-bottom:1.2rem">
+        <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:.4rem">Perfis</div>
+        <div style="display:flex;gap:.4rem;flex-wrap:wrap">${perfis.join('') || '<span style="color:var(--muted);font-size:.85rem">Sem perfil cadastrado</span>'}</div>
+      </div>
+      
+      <div style="display:grid;gap:.85rem;margin-bottom:1.2rem">
+        <div>
+          <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Nome</div>
+          <div style="font-weight:600">${escapeHtmlAdmin(u.nome) || '<span style="color:var(--muted)">—</span>'}</div>
+        </div>
+        <div>
+          <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px">E-mail</div>
+          <div>${escapeHtmlAdmin(u.email)} ${u.email_confirmado ? '<span style="color:var(--green-l);font-size:.75rem">✓ confirmado</span>' : '<span style="color:var(--danger-l);font-size:.75rem">✗ não confirmado</span>'}</div>
+        </div>
+        <div>
+          <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Telefone</div>
+          <div>${escapeHtmlAdmin(formatarTel(u.telefone)) || '<span style="color:var(--muted)">—</span>'}</div>
+        </div>
+        <div>
+          <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Cadastrado em</div>
+          <div style="font-size:.85rem">${new Date(u.created_at).toLocaleString('pt-BR')}</div>
+        </div>
+        ${u.last_sign_in ? `
+        <div>
+          <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Último login</div>
+          <div style="font-size:.85rem">${new Date(u.last_sign_in).toLocaleString('pt-BR')}</div>
+        </div>` : ''}
+      </div>
+      
+      <div style="border-top:1px solid var(--border);padding-top:1rem">
+        <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:.6rem">🔒 Ações administrativas</div>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-sm" onclick="resetarSenhaUsuario()">🔑 Resetar senha</button>
+          ${u.telefone ? `<button class="btn btn-ghost btn-sm" onclick="window.open('https://wa.me/55${(u.telefone||'').replace(/\\D/g,'')}', '_blank')">💬 WhatsApp</button>` : ''}
+          <button class="btn btn-ghost btn-sm" onclick="window.open('mailto:${u.email}', '_blank')">📧 E-mail</button>
+        </div>
+      </div>
+    `
+  } catch(e) {
+    body.innerHTML = `<div style="color:var(--danger);text-align:center">Erro: ${e.message}</div>`
+  }
+}
+
+function fecharDetalheUsuario() {
+  document.getElementById('userOverlay').classList.remove('open')
+  _userIdAtual = null
+}
+
+async function resetarSenhaUsuario() {
+  if (!_userIdAtual) return
+  
+  const novaSenha = prompt('Nova senha (mínimo 6 caracteres):')
+  if (!novaSenha) return
+  if (novaSenha.length < 6) { showToast('Senha muito curta', true); return }
+  
+  if (!confirm(`Confirma redefinir senha para "${novaSenha}"?`)) return
+  
+  try {
+    const { data, error } = await window._sb.rpc('admin_resetar_senha', {
+      p_user_id: _userIdAtual,
+      p_nova_senha: novaSenha
+    })
+    
+    if (error) { showToast('Erro: '+error.message, true); return }
+    if (data && data.ok === false) { showToast(data.erro || 'Erro', true); return }
+    
+    showToast('✓ Senha redefinida com sucesso', false, 'success')
+  } catch(e) { showToast('Erro: '+e.message, true) }
+}
+
+// Fechar modal de usuário ao clicar fora
+document.addEventListener('click', e => {
+  if (e.target?.id === 'userOverlay') fecharDetalheUsuario()
+})
+
+// ════════════════════════════════════════════
+// TABS
+// ════════════════════════════════════════════
+function trocarTab(tab) {
+  ['dash','financeiro','atletas','profs','arenas'].forEach(t => {
+    document.getElementById('tab-'+t).classList.toggle('active', t === tab)
+    document.getElementById('screen-'+t).style.display = (t === tab) ? 'block' : 'none'
+  })
+  if (tab === 'financeiro') {
+    carregarFinStats()
+    carregarReceita12m()
+    carregarAssinaturas()
+  }
+}
+
+// ════════════════════════════════════════════
+// STATS
+// ════════════════════════════════════════════
+async function carregarStats() {
+  try {
+    const { data, error } = await window._sb.rpc('admin_stats')
+    if (error) { showToast('Erro stats: '+error.message, true); return }
+    
+    document.getElementById('kpiAtletas').textContent = data.total_atletas || 0
+    document.getElementById('kpiProfs').textContent = data.total_professores || 0
+    document.getElementById('kpiArenas').textContent = data.total_arenas || 0
+    document.getElementById('kpiTotal').textContent = data.total_usuarios || 0
+    
+    document.getElementById('kpiHoje').textContent = data.novos_hoje || 0
+    document.getElementById('kpi7d').textContent = data.novos_7d || 0
+    document.getElementById('kpi30d').textContent = data.novos_30d || 0
+    document.getElementById('kpiExcluidos').textContent = data.excluidos || 0
+    
+    // Trends comparando 7d atual vs 7d anteriores
+    document.getElementById('kpiAtletasTrend').innerHTML = montarTrend(data.atletas_7d, data.atletas_7d_ant, 'novos /7d')
+    document.getElementById('kpiProfsTrend').innerHTML = montarTrend(data.profs_7d, data.profs_7d_ant, 'novos /7d')
+    document.getElementById('kpiArenasTrend').innerHTML = montarTrend(data.arenas_7d, data.arenas_7d_ant, 'novas /7d')
+    document.getElementById('kpiTotalTrend').innerHTML = `<span class="trend-flat">${data.novos_30d || 0}</span> novos /30d`
+    
+    // Trend nos novos 7 dias (vs 7d anterior)
+    const trend7dEl = document.getElementById('kpi7dTrend')
+    if (trend7dEl) trend7dEl.innerHTML = montarTrend(data.novos_7d, data.novos_7d_anterior, 'vs anterior')
+  } catch(e) { showToast('Erro: '+e.message, true) }
+}
+
+// Helper: monta texto "↗ 5 novos /7d" colorido
+function montarTrend(atual, anterior, label) {
+  atual = Number(atual || 0)
+  anterior = Number(anterior || 0)
+  const diff = atual - anterior
+  if (diff > 0) {
+    return `<span class="trend-up">↗ ${atual}</span> ${label}`
+  } else if (diff < 0) {
+    return `<span class="trend-down">↘ ${atual}</span> ${label}`
+  }
+  return `<span class="trend-flat">${atual}</span> ${label}`
+}
+
+// ════════════════════════════════════════════
+// CRIAR ATLETA DE TESTE
+// ════════════════════════════════════════════
+async function abrirCriarAtletaTeste() {
+  const email = prompt('Email do atleta de teste:', 'teste' + Date.now() + '@ranketes.com.br')
+  if (!email) return
+  if (!email.includes('@')) { showToast('Email inválido', true); return }
+  
+  const senha = prompt('Senha (mín 6 chars):', 'teste123')
+  if (!senha) return
+  if (senha.length < 6) { showToast('Senha muito curta', true); return }
+  
+  const nome = prompt('Nome (opcional):', '')
+  
+  try {
+    const { data, error } = await window._sb.rpc('admin_criar_atleta_teste', {
+      p_email: email,
+      p_senha: senha,
+      p_nome: nome || null
+    })
+    
+    if (error) { showToast('Erro: '+error.message, true); return }
+    if (data && data.ok === false) { showToast(data.erro, true); return }
+    
+    // Mostra info pra usuário
+    alert(
+      `✓ Atleta criado com sucesso!\n\n` +
+      `Email: ${data.email}\n` +
+      `Senha: ${data.senha}\n` +
+      `Nome: ${data.nome}\n` +
+      `ID público: ${data.id_publico || '(será gerado)'}\n\n` +
+      `Pode logar no app atleta agora!`
+    )
+    
+    showToast('✓ Atleta criado!', false, 'success')
+    await atualizarTudo()
+  } catch(e) { showToast('Erro: '+e.message, true) }
+}
+
+// ════════════════════════════════════════════
+// CRESCIMENTO (gráfico)
+// ════════════════════════════════════════════
+let chartCresc = null
+async function carregarCrescimento() {
+  try {
+    const { data, error } = await window._sb.rpc('admin_crescimento_30d')
+    if (error) { console.warn('crescimento err:', error); return }
+    
+    const labels = data.map(d => {
+      const dt = new Date(d.data)
+      return `${dt.getDate()}/${dt.getMonth()+1}`
+    })
+    const dsAtletas = data.map(d => d.atletas)
+    const dsProfs = data.map(d => d.professores)
+    const dsArenas = data.map(d => d.arenas)
+    
+    const ctx = document.getElementById('chartCrescimento').getContext('2d')
+    if (chartCresc) chartCresc.destroy()
+    chartCresc = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { label:'Atletas', data:dsAtletas, borderColor:'#A78BFA', backgroundColor:'rgba(167,139,250,.15)', tension:.4, fill:true },
+          { label:'Professores', data:dsProfs, borderColor:'#FCD34D', backgroundColor:'rgba(252,211,77,.15)', tension:.4, fill:true },
+          { label:'Arenas', data:dsArenas, borderColor:'#3B82F6', backgroundColor:'rgba(59,130,246,.15)', tension:.4, fill:true },
+        ]
+      },
+      options: {
+        responsive:true, maintainAspectRatio:false,
+        plugins: {
+          legend: { labels: { color:'#A4AECD' } }
+        },
+        scales: {
+          x: { ticks:{color:'#6B7A99', font:{size:10}}, grid:{color:'#1E2840'} },
+          y: { ticks:{color:'#6B7A99', font:{size:10}, precision:0}, grid:{color:'#1E2840'}, beginAtZero:true }
+        }
+      }
+    })
+  } catch(e) { console.warn(e) }
+}
+
+// ════════════════════════════════════════════
+// ATLETAS
+// ════════════════════════════════════════════
+const filtros = { atletas:false, profs:false, arenas:false }
+
+async function carregarAtletas() {
+  const busca = document.getElementById('searchAtletas').value.trim()
+  const incluirExc = filtros.atletas
+  
+  try {
+    const { data, error } = await window._sb.rpc('admin_listar_atletas', {
+      p_busca: busca || null,
+      p_excluidos: incluirExc,
+      p_limit: 200
+    })
+    if (error) { showToast('Erro: '+error.message, true); return }
+    
+    const ativos = data.filter(a => !a.excluido_em).length
+    document.getElementById('atletasCount').textContent = data.length
+    document.getElementById('atletasCountSub').textContent = data.length === 1 ? `${ativos} ativo` : `${ativos} ativos`
+    
+    const cont = document.getElementById('listaAtletas')
+    if (data.length === 0) {
+      cont.innerHTML = '<div class="empty">Nenhum atleta encontrado</div>'
+      return
+    }
+    
+    cont.innerHTML = data.map(a => renderUserCardNovo(a, 'atleta')).join('')
+  } catch(e) { showToast('Erro: '+e.message, true) }
+}
+
+// ════════════════════════════════════════════
+// RENDER CARD NOVO (atleta/prof/arena)
+// ════════════════════════════════════════════
+function renderUserCardNovo(u, tipo) {
+  const usuarioId = u.usuario_id || u.responsavel_id
+  const isExc = !!u.excluido_em
+  const avaClass = tipo === 'professor' ? 'amber' : (tipo === 'arena' ? 'blue' : '')
+  const lastAccess = u.ultimo_login ? diasAtras(u.ultimo_login) : 'hoje'
+  
+  // Formata data cadastro
+  const dtCadastro = u.created_at 
+    ? new Date(u.created_at).toLocaleDateString('pt-BR') 
+    : '—'
+  
+  return `
+    <div class="user-item ${isExc ? 'excluido' : ''}" id="user-${usuarioId}">
+      <div class="user-ava ${avaClass}">
+        ${u.foto_url ? `<img src="${u.foto_url}"/>` : getIniciais(u.nome || u.email)}
+      </div>
+      <div class="user-info">
+        <div class="user-name">
+          <span>${escapeHtmlAdmin(u.nome || u.email?.split('@')[0] || 'Sem nome')}</span>
+          ${isExc 
+            ? '<span class="tag tag-deleted">EXCLUÍDO</span>' 
+            : '<span class="tag tag-active">ATIVO</span>'}
+        </div>
+        <div class="user-meta">
+          <div class="row"><span class="ico">📧</span><span>${escapeHtmlAdmin(u.email || '—')}</span></div>
+          <div class="row"><span class="ico">📞</span><span>${formatarTel(u.telefone) || '—'}</span></div>
+          <div class="row"><span class="ico">📅</span><span>Cadastrado em: ${dtCadastro}</span></div>
+        </div>
+        ${u.id_publico ? `
+          <div class="user-divider"></div>
+          <div class="user-fields-grid">
+            <div class="user-field">
+              <span class="user-field-ico">🔑</span>
+              <div>
+                <div class="user-field-lbl">ID do ${tipo === 'arena' ? 'arena' : (tipo === 'professor' ? 'professor' : 'atleta')}</div>
+                <div class="user-field-val">${u.id_publico}</div>
+              </div>
+            </div>
+            <div class="user-field">
+              <span class="user-field-ico">📅</span>
+              <div>
+                <div class="user-field-lbl">Cadastro</div>
+                <div class="user-field-val normal">${dtCadastro}</div>
+              </div>
+            </div>
+          </div>
+        ` : ''}
+      </div>
+      <div class="user-actions" style="position:relative">
+        <button class="menu-trigger" onclick="event.stopPropagation();toggleMenuUser('${usuarioId}')" title="Mais opções">⋮</button>
+        <div class="menu-dropdown" id="menu-${usuarioId}">
+          <button class="menu-item" onclick="resetarSenhaUsuarioCard('${usuarioId}')"><span class="menu-ico green">🔑</span>Resetar senha</button>
+          <button class="menu-item" onclick="enviarLinkAcesso('${u.email || ''}')"><span class="menu-ico blue">📧</span>Enviar link de acesso</button>
+          <button class="menu-item" onclick="abrirDetalheUsuario('${usuarioId}')"><span class="menu-ico purple">👁️</span>Ver detalhes</button>
+          ${isExc 
+            ? `<button class="menu-item" onclick="reativarUsuarioCard('${usuarioId}')"><span class="menu-ico green">↩️</span>Reativar</button>`
+            : `<button class="menu-item" onclick="desativarUsuarioCard('${usuarioId}')"><span class="menu-ico amber">🔒</span>Desativar ${tipo}</button>`}
+          <button class="menu-item danger" onclick="excluirDefinitivoCard('${usuarioId}','${escapeHtmlAdmin(u.nome || u.email)}')"><span class="menu-ico danger">🗑️</span>Excluir ${tipo}</button>
+        </div>
+      </div>
+    </div>
+  `
+}
+
+// Toggle menu (fecha outros antes)
+function toggleMenuUser(userId) {
+  document.querySelectorAll('.menu-dropdown.open').forEach(m => {
+    if (m.id !== `menu-${userId}`) m.classList.remove('open')
+  })
+  document.getElementById(`menu-${userId}`)?.classList.toggle('open')
+}
+
+// Fechar menus ao clicar fora
+document.addEventListener('click', e => {
+  if (!e.target.closest('.user-actions')) {
+    document.querySelectorAll('.menu-dropdown.open').forEach(m => m.classList.remove('open'))
+  }
+})
+
+// Ações do menu
+async function resetarSenhaUsuarioCard(userId) {
+  document.querySelectorAll('.menu-dropdown.open').forEach(m => m.classList.remove('open'))
+  
+  const novaSenha = prompt('Nova senha (mínimo 6 caracteres):')
+  if (!novaSenha) return
+  if (novaSenha.length < 6) { showToast('Senha muito curta', true); return }
+  if (!confirm(`Confirma redefinir senha para "${novaSenha}"?`)) return
+  
+  try {
+    const { data, error } = await window._sb.rpc('admin_resetar_senha', {
+      p_user_id: userId,
+      p_nova_senha: novaSenha
+    })
+    if (error) { showToast('Erro: '+error.message, true); return }
+    if (data && data.ok === false) { showToast(data.erro, true); return }
+    showToast('✓ Senha redefinida', false, 'success')
+  } catch(e) { showToast('Erro: '+e.message, true) }
+}
+
+async function enviarLinkAcesso(email) {
+  document.querySelectorAll('.menu-dropdown.open').forEach(m => m.classList.remove('open'))
+  if (!email) { showToast('Email não disponível', true); return }
+  if (!confirm(`Enviar link de redefinição pra ${email}?\n\nO usuário vai receber um email com link válido por 1h.`)) return
+  
+  try {
+    const { error } = await window._sb.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + '/ranketes_atleta_v1.html'
+    })
+    if (error) { showToast('Erro: '+error.message, true); return }
+    showToast('✓ Link enviado pra '+email, false, 'success')
+  } catch(e) { showToast('Erro: '+e.message, true) }
+}
+
+async function desativarUsuarioCard(userId) {
+  document.querySelectorAll('.menu-dropdown.open').forEach(m => m.classList.remove('open'))
+  if (!confirm('Desativar esse usuário?\n\nEle ainda existirá no sistema mas marcado como inativo. Pode reativar depois.')) return
+  
+  try {
+    const { data, error } = await window._sb.rpc('admin_desativar_usuario', { p_usuario_id: userId })
+    if (error) { showToast('Erro: '+error.message, true); return }
+    showToast('✓ Usuário desativado', false, 'success')
+    await atualizarTudo()
+  } catch(e) { showToast('Erro: '+e.message, true) }
+}
+
+async function reativarUsuarioCard(userId) {
+  document.querySelectorAll('.menu-dropdown.open').forEach(m => m.classList.remove('open'))
+  
+  try {
+    const { data, error } = await window._sb.rpc('admin_reativar_usuario', { p_usuario_id: userId })
+    if (error) { showToast('Erro: '+error.message, true); return }
+    showToast('✓ Usuário reativado', false, 'success')
+    await atualizarTudo()
+  } catch(e) { showToast('Erro: '+e.message, true) }
+}
+
+async function excluirDefinitivoCard(userId, nome) {
+  document.querySelectorAll('.menu-dropdown.open').forEach(m => m.classList.remove('open'))
+  if (!confirm(`⚠️ EXCLUIR DEFINITIVAMENTE "${nome}"?\n\nEsta ação NÃO pode ser desfeita. O usuário e todos os dados dele serão apagados.`)) return
+  if (!confirm(`Tem certeza absoluta? Última chance!`)) return
+  
+  try {
+    const { data, error } = await window._sb.rpc('admin_excluir_definitivo', { p_usuario_id: userId })
+    if (error) { showToast('Erro: '+error.message, true); return }
+    if (data && data.ok === false) { showToast(data.erro, true); return }
+    showToast('✓ Usuário excluído', false, 'success')
+    await atualizarTudo()
+  } catch(e) { showToast('Erro: '+e.message, true) }
+}
+
+// ════════════════════════════════════════════
+// PROFS
+// ════════════════════════════════════════════
+async function carregarProfs() {
+  const busca = document.getElementById('searchProfs').value.trim()
+  const incluirExc = filtros.profs
+  
+  try {
+    const { data, error } = await window._sb.rpc('admin_listar_professores', {
+      p_busca: busca || null,
+      p_excluidos: incluirExc,
+      p_limit: 200
+    })
+    if (error) { showToast('Erro: '+error.message, true); return }
+    
+    document.getElementById('profsCount').textContent = `${data.length} resultados`
+    
+    const cont = document.getElementById('listaProfs')
+    if (data.length === 0) {
+      cont.innerHTML = '<div class="empty">Nenhum professor encontrado</div>'
+      return
+    }
+    
+    cont.innerHTML = data.map(p => renderUserCardNovo(p, 'professor')).join('')
+  } catch(e) { showToast('Erro: '+e.message, true) }
+}
+
+// ════════════════════════════════════════════
+// ARENAS
+// ════════════════════════════════════════════
+async function carregarArenas() {
+  const busca = document.getElementById('searchArenas').value.trim()
+  const incluirExc = filtros.arenas
+  
+  try {
+    const { data, error } = await window._sb.rpc('admin_listar_arenas', {
+      p_busca: busca || null,
+      p_excluidos: incluirExc,
+      p_limit: 200
+    })
+    if (error) { showToast('Erro: '+error.message, true); return }
+    
+    document.getElementById('arenasCount').textContent = `${data.length} resultados`
+    
+    const cont = document.getElementById('listaArenas')
+    if (data.length === 0) {
+      cont.innerHTML = '<div class="empty">Nenhuma arena encontrada</div>'
+      return
+    }
+    
+    // Adaptar pra renderUserCardNovo (arena tem responsavel_id em vez de usuario_id)
+    const adaptados = data.map(a => ({
+      ...a,
+      usuario_id: a.responsavel_id,
+      foto_url: a.logo_url
+    }))
+    cont.innerHTML = adaptados.map(a => renderUserCardNovo(a, 'arena')).join('')
+  } catch(e) { showToast('Erro: '+e.message, true) }
+}
+
+// ════════════════════════════════════════════
+// FINANCEIRO
+// ════════════════════════════════════════════
+function fmtBrl(v) {
+  return 'R$ ' + Number(v || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
+
+async function carregarFinStats() {
+  try {
+    const { data, error } = await window._sb.rpc('admin_financeiro_stats')
+    if (error) { showToast('Erro: '+error.message, true); return }
+    
+    document.getElementById('finMrr').textContent = fmtBrl(data.mrr)
+    document.getElementById('finReceitaMes').textContent = fmtBrl(data.receita_mes)
+    document.getElementById('finPendente').textContent = fmtBrl(data.pendente_total)
+    document.getElementById('finReceitaTotal').textContent = fmtBrl(data.receita_total)
+    
+    document.getElementById('finAtivas').textContent = data.total_ativas || 0
+    document.getElementById('finTrial').textContent = data.total_trial || 0
+    document.getElementById('finPendentes').textContent = data.total_pendentes || 0
+    document.getElementById('finAtrasadas').textContent = data.total_atrasadas || 0
+    document.getElementById('finTrialVencendo').textContent = data.trial_expira_7d || 0
+    
+    document.getElementById('finMrrTrend').textContent = `${data.profs_pagantes || 0} profs + ${data.arenas_pagantes || 0} arenas`
+    document.getElementById('finPendenteTrend').textContent = `${(data.total_pendentes || 0) + (data.total_atrasadas || 0)} clientes`
+  } catch(e) { showToast('Erro: '+e.message, true) }
+}
+
+let chartReceita = null
+async function carregarReceita12m() {
+  try {
+    const { data, error } = await window._sb.rpc('admin_receita_12m')
+    if (error) { console.warn(error); return }
+    
+    const labels = data.map(d => d.mes_label)
+    const valores = data.map(d => Number(d.receita))
+    
+    const ctx = document.getElementById('chartReceita').getContext('2d')
+    if (chartReceita) chartReceita.destroy()
+    chartReceita = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Receita (R$)',
+          data: valores,
+          backgroundColor: 'rgba(34,197,94,.6)',
+          borderColor: '#22C55E',
+          borderWidth: 1,
+          borderRadius: 6
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: ctx => 'R$ ' + Number(ctx.parsed.y).toLocaleString('pt-BR', { minimumFractionDigits: 2 })
+            }
+          }
+        },
+        scales: {
+          x: { ticks:{color:'#6B7A99', font:{size:10}}, grid:{display:false} },
+          y: { 
+            ticks:{
+              color:'#6B7A99', font:{size:10},
+              callback: v => 'R$ ' + Number(v).toLocaleString('pt-BR')
+            }, 
+            grid:{color:'#1E2840'}, 
+            beginAtZero:true 
+          }
+        }
+      }
+    })
+  } catch(e) { console.warn(e) }
+}
+
+let filtroStatus = null
+function filtrarAssinaturas(status) {
+  filtroStatus = (status === 'todas') ? null : status
+  document.querySelectorAll('.filtro-status').forEach(b => {
+    b.classList.toggle('active', b.dataset.status === status)
+  })
+  carregarAssinaturas()
+}
+
+async function carregarAssinaturas() {
+  const busca = document.getElementById('searchAssin').value.trim()
+  
+  try {
+    const { data, error } = await window._sb.rpc('admin_listar_assinaturas', {
+      p_status: filtroStatus,
+      p_busca: busca || null,
+      p_limit: 200
+    })
+    if (error) { showToast('Erro: '+error.message, true); return }
+    
+    document.getElementById('assinCount').textContent = `${data.length} assinaturas`
+    
+    const cont = document.getElementById('listaAssinaturas')
+    if (data.length === 0) {
+      cont.innerHTML = '<div class="empty">Nenhuma assinatura encontrada</div>'
+      return
+    }
+    
+    cont.innerHTML = data.map(a => {
+      const ehProf = a.tipo === 'professor'
+      const avaCor = ehProf ? 'amber' : 'blue'
+      const avaIco = ehProf ? '🎓' : (a.tipo === 'arena' ? '🏟️' : '?')
+      
+      // Status visual
+      const statusLabels = {
+        trial: '🔵 EM TRIAL',
+        ativa: '🟢 ATIVA',
+        pendente: '🟡 PENDENTE',
+        atrasada: '🔴 ATRASADA',
+        cancelada: '⚫ CANCELADA'
+      }
+      
+      // Dias info
+      let diasInfo = ''
+      if (a.status === 'trial' && a.dias_pra_vencer != null) {
+        if (a.dias_pra_vencer > 0) {
+          diasInfo = `⏱️ Trial: ${a.dias_pra_vencer}d restantes`
+        } else {
+          diasInfo = `⚠️ Trial vencido há ${Math.abs(a.dias_pra_vencer)}d`
+        }
+      } else if (a.proxima_cobranca && a.dias_pra_vencer != null) {
+        if (a.dias_pra_vencer > 0) {
+          diasInfo = `📅 Vence em ${a.dias_pra_vencer}d`
+        } else if (a.dias_pra_vencer === 0) {
+          diasInfo = `📅 Vence hoje`
+        } else {
+          diasInfo = `🔴 Atrasada há ${Math.abs(a.dias_pra_vencer)}d`
+        }
+      }
+      
+      // Botão WhatsApp se tem telefone
+      const tel = (a.telefone || '').replace(/\D/g,'')
+      const msgZap = encodeURIComponent(
+        `Olá ${a.nome?.split(' ')[0] || ''}! 👋\n\n` +
+        `Sou da Ranketes! Seu plano "${a.plano_nome}" está com vencimento. ` +
+        `O valor é ${fmtBrl(a.valor_mensal)}.\n\n` +
+        `Pra renovar, basta fazer um PIX e me mandar o comprovante! 🎾\n\n` +
+        `Qualquer dúvida, é só responder. 🏟️`
+      )
+      const linkZap = tel ? `https://wa.me/55${tel}?text=${msgZap}` : null
+      
+      const acoes = []
+      if (a.status === 'pendente' || a.status === 'atrasada' || a.status === 'trial') {
+        acoes.push(`<button class="btn btn-primary btn-sm" onclick="aprovarPagamento('${a.assinatura_id}', ${a.valor_mensal}, '${(a.nome || '').replace(/'/g,"\\'")}')">✓ Aprovar pgto</button>`)
+      }
+      if (linkZap) {
+        acoes.push(`<a href="${linkZap}" target="_blank" class="btn btn-ghost btn-sm">💬 WhatsApp</a>`)
+      }
+      if (a.status === 'trial') {
+        acoes.push(`<button class="btn btn-ghost btn-sm" onclick="estenderTrial('${a.assinatura_id}')">⏱️ +30d</button>`)
+      }
+      if (a.status === 'cancelada') {
+        acoes.push(`<button class="btn btn-ghost btn-sm" onclick="reativarAssinatura('${a.assinatura_id}')">↩️ Reativar</button>`)
+      } else {
+        acoes.push(`<button class="btn btn-ghost btn-sm" onclick="cancelarAssinatura('${a.assinatura_id}')">❌</button>`)
+      }
+      
+      return `
+        <div class="user-item">
+          <div class="user-ava ${avaCor}">${avaIco}</div>
+          <div class="user-info">
+            <div class="user-name">
+              ${a.nome || a.email?.split('@')[0] || 'Sem nome'}
+              <span class="tag status-${a.status}">${statusLabels[a.status] || a.status.toUpperCase()}</span>
+              <span class="tag tag-info">${a.plano_nome}</span>
+            </div>
+            <div class="user-meta">
+              <span>💰 ${fmtBrl(a.valor_mensal)}/mês</span>
+              ${diasInfo ? `<span>${diasInfo}</span>` : ''}
+              <span>📧 ${a.email || '—'}</span>
+              <span>📱 ${formatarTel(a.telefone)}</span>
+              ${a.total_pago > 0 ? `<span>💵 Total pago: ${fmtBrl(a.total_pago)}</span>` : ''}
+              ${a.ultimo_pagamento_em ? `<span>✓ Último pgto: ${diasAtras(a.ultimo_pagamento_em)}</span>` : ''}
+            </div>
+          </div>
+          <div class="user-actions">
+            ${acoes.join('')}
+          </div>
+        </div>
+      `
+    }).join('')
+  } catch(e) { showToast('Erro: '+e.message, true) }
+}
+
+async function aprovarPagamento(assinaturaId, valor, nome) {
+  if (!confirm(`Confirmar que você recebeu o PIX de ${fmtBrl(valor)} de ${nome}?\n\nIsso vai:\n• Marcar pagamento como aprovado\n• Estender vencimento por 30 dias\n• Reativar a conta`)) return
+  
+  try {
+    const { data, error } = await window._sb.rpc('admin_aprovar_pagamento', {
+      p_assinatura_id: assinaturaId,
+      p_valor: valor,
+      p_metodo: 'pix'
+    })
+    if (error) { showToast('Erro: '+error.message, true); return }
+    showToast(`✓ Pagamento aprovado! Conta de ${nome} reativada por +30 dias`, false, 'success')
+    await Promise.all([carregarFinStats(), carregarReceita12m(), carregarAssinaturas()])
+  } catch(e) { showToast('Erro: '+e.message, true) }
+}
+
+async function estenderTrial(assinaturaId) {
+  const dias = parseInt(prompt('Quantos dias estender o trial?', '30'))
+  if (!dias || dias < 1) return
+  
+  try {
+    const { error } = await window._sb.rpc('admin_estender_trial', { 
+      p_assinatura_id: assinaturaId,
+      p_dias: dias
+    })
+    if (error) { showToast('Erro: '+error.message, true); return }
+    showToast(`✓ Trial estendido por ${dias} dias`, false, 'success')
+    await Promise.all([carregarFinStats(), carregarAssinaturas()])
+  } catch(e) { showToast('Erro: '+e.message, true) }
+}
+
+async function cancelarAssinatura(assinaturaId) {
+  const motivo = prompt('Motivo do cancelamento (opcional):', '')
+  if (motivo === null) return
+  
+  try {
+    const { error } = await window._sb.rpc('admin_cancelar_assinatura', { 
+      p_assinatura_id: assinaturaId,
+      p_motivo: motivo || null
+    })
+    if (error) { showToast('Erro: '+error.message, true); return }
+    showToast('✓ Assinatura cancelada', false, 'success')
+    await Promise.all([carregarFinStats(), carregarAssinaturas()])
+  } catch(e) { showToast('Erro: '+e.message, true) }
+}
+
+async function reativarAssinatura(assinaturaId) {
+  if (!confirm('Reativar essa assinatura? Vai voltar pro status pendente — o cliente precisa pagar pra ficar ativo de novo.')) return
+  
+  try {
+    const { error } = await window._sb.rpc('admin_reativar_assinatura', { p_assinatura_id: assinaturaId })
+    if (error) { showToast('Erro: '+error.message, true); return }
+    showToast('✓ Assinatura reativada', false, 'success')
+    await Promise.all([carregarFinStats(), carregarAssinaturas()])
+  } catch(e) { showToast('Erro: '+e.message, true) }
+}
+
+// ════════════════════════════════════════════
+// AÇÕES
+// ════════════════════════════════════════════
+function toggleExcluidos(tipo) {
+  filtros[tipo] = !filtros[tipo]
+  document.getElementById('chk' + tipo.charAt(0).toUpperCase() + tipo.slice(1) + 'Exc').checked = filtros[tipo]
+  if (tipo === 'atletas') carregarAtletas()
+  if (tipo === 'profs') carregarProfs()
+  if (tipo === 'arenas') carregarArenas()
+}
+
+async function excluir(usuarioId) {
+  if (!confirm('Excluir esse usuário? (soft delete — pode reativar depois)')) return
+  
+  try {
+    const { error } = await window._sb.rpc('admin_excluir_usuario', { p_usuario_id: usuarioId })
+    if (error) { showToast('Erro: '+error.message, true); return }
+    showToast('✓ Excluído', false, 'success')
+    await Promise.all([carregarStats(), carregarAtletas(), carregarProfs(), carregarArenas()])
+  } catch(e) { showToast('Erro: '+e.message, true) }
+}
+
+async function reativar(usuarioId) {
+  try {
+    const { error } = await window._sb.rpc('admin_reativar_usuario', { p_usuario_id: usuarioId })
+    if (error) { showToast('Erro: '+error.message, true); return }
+    showToast('✓ Reativado', false, 'success')
+    await Promise.all([carregarStats(), carregarAtletas(), carregarProfs(), carregarArenas()])
+  } catch(e) { showToast('Erro: '+e.message, true) }
+}
+
+// ════════════════════════════════════════════
+// AUTO-CHECK ao abrir
+// ════════════════════════════════════════════
+document.addEventListener('supabase:ready', async () => {
+  // Se já tinha sessão master + login Supabase, vai direto pro app
+  const masterOk = sessionStorage.getItem('admin_master_ok') === '1'
+  const { data: { user } } = await window._sb.auth.getUser()
+  
+  if (masterOk && user && user.email === EMAIL_ADMIN) {
+    iniciarApp()
+  }
+})
+
+// Enter ativa o botão correspondente
+document.getElementById('masterPass').addEventListener('keypress', e => { if (e.key === 'Enter') verificarMaster() })
+document.getElementById('adminPass').addEventListener('keypress', e => { if (e.key === 'Enter') fazerLogin() })
+
+</script>
+
+<!-- MODAL DE ALERTAS -->
+<div class="alert-overlay" id="alertOverlay">
+  <div class="alert-modal">
+    <div class="alert-head">
+      <h3>🔔 Alertas administrativos</h3>
+      <button onclick="fecharAlertasAdmin()">×</button>
+    </div>
+    <div class="alert-body" id="alertBody">
+      <div style="padding:2rem;text-align:center;color:var(--muted)">Carregando...</div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DE DETALHE DE USUÁRIO -->
+<div class="alert-overlay" id="userOverlay">
+  <div class="alert-modal" style="max-width:520px">
+    <div class="alert-head">
+      <h3 id="userTitle">👤 Detalhes do usuário</h3>
+      <button onclick="fecharDetalheUsuario()">×</button>
+    </div>
+    <div class="alert-body" id="userBody" style="padding:1.2rem">
+      <div style="text-align:center;color:var(--muted)">Carregando...</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

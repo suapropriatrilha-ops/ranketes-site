@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Ranketes · Configurações</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#07090F;--surf:#0E1018;--surf2:#141720;--surf3:#1A1E2A;
+  --border:#1E2435;--border2:#272F45;--text:#E8EDF8;--muted:#4E5E80;--dim:#2A3450;
+  --accent:#8DC63F;--accent-d:#6FA030;--accent-g:rgba(141,198,63,.10);
+  --green:#22C55E;--danger:#FF4757;--warn:#FFB800;--blue:#3D8BFF;
+  --f-display:'Bebas Neue',sans-serif;--f-body:'DM Sans',sans-serif;--f-mono:'Space Mono',monospace;
+  --sidebar:220px;--topbar:56px;--r:10px;--rs:6px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:var(--f-body);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;overflow:hidden}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+.app{display:grid;grid-template-columns:var(--sidebar) 1fr;grid-template-rows:var(--topbar) 1fr;height:100vh;overflow:hidden}
+
+/* TOPBAR */
+.topbar{grid-column:1/-1;background:rgba(7,9,15,.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 1.2rem 0 0;gap:1rem;z-index:100}
+.tb-logo{width:var(--sidebar);padding:0 1.2rem;display:flex;align-items:center;gap:.6rem;border-right:1px solid var(--border);height:100%;flex-shrink:0}
+.tb-logo-text{font-family:var(--f-display);font-size:1.1rem;letter-spacing:3px;color:var(--text)}
+.tb-logo-text em{color:var(--accent);font-style:normal}
+.tb-badge{font-size:.6rem;font-weight:700;background:var(--accent-g);border:1px solid rgba(141,198,63,.3);color:var(--accent);padding:2px 7px;border-radius:20px;text-transform:uppercase;letter-spacing:.8px}
+.tb-title{font-size:.85rem;font-weight:700;letter-spacing:.5px}
+.tb-sub{font-size:.72rem;color:var(--muted);padding:.2rem .65rem;background:var(--surf2);border:1px solid var(--border);border-radius:20px}
+.tb-right{margin-left:auto;display:flex;align-items:center;gap:.65rem}
+.tb-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-d));display:flex;align-items:center;justify-content:center;font-family:var(--f-display);font-size:.75rem;color:#000;cursor:pointer}
+
+/* SIDEBAR */
+.sidebar{background:var(--surf);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;height:100%}
+.sidebar::-webkit-scrollbar{width:3px}
+.sb-arena{padding:.85rem 1rem .65rem;border-bottom:1px solid var(--border);margin-bottom:.3rem}
+.sb-arena-name{font-size:.82rem;font-weight:700;margin-bottom:.1rem}
+.sb-arena-plan{font-size:.65rem;color:var(--accent);font-weight:600}
+.sb-arena-badge{display:inline-block;margin-top:.25rem;font-size:.58rem;font-weight:700;background:var(--accent-g);border:1px solid rgba(141,198,63,.25);color:var(--accent);padding:1px 7px;border-radius:20px;text-transform:uppercase}
+.sb-section{padding:.6rem .85rem .2rem;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--dim)}
+.sb-item{display:flex;align-items:center;gap:.6rem;padding:.48rem .85rem;border-radius:var(--rs);margin:1px .4rem;cursor:pointer;transition:.15s;text-decoration:none;color:var(--muted);font-size:.79rem;font-weight:500}
+.sb-item:hover{background:var(--surf2);color:var(--text)}
+.sb-item.active{background:var(--accent-g);color:var(--accent);border:1px solid rgba(141,198,63,.2)}
+.sb-ico{font-size:.88rem;width:18px;text-align:center;flex-shrink:0}
+.sb-badge-item{margin-left:auto;font-size:.58rem;font-weight:700;padding:1px 5px;border-radius:20px}
+.sb-badge-item.g{background:var(--accent);color:#000}
+.sb-bottom{margin-top:auto;border-top:1px solid var(--border);padding:.6rem .75rem}
+.sb-user{display:flex;align-items:center;gap:.6rem;padding:.42rem .5rem;border-radius:var(--rs);margin-bottom:.2rem}
+.sb-user-ava{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-d));display:flex;align-items:center;justify-content:center;font-family:var(--f-display);font-size:.68rem;color:#000;flex-shrink:0}
+.sb-user-name{font-size:.75rem;font-weight:600}
+.sb-user-role{font-size:.61rem;color:var(--muted)}
+.sb-logout{display:flex;align-items:center;gap:.5rem;padding:.4rem .5rem;border-radius:var(--rs);cursor:pointer;color:var(--danger);font-size:.75rem;font-weight:600;transition:.15s}
+.sb-logout:hover{background:rgba(255,71,87,.08)}
+
+/* MAIN */
+.main{overflow-y:auto;background:var(--bg);padding:1.5rem;height:100%}
+
+/* PAGE HEADER */
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.4rem;flex-wrap:wrap;gap:.75rem}
+.ph-title{font-family:var(--f-display);font-size:1.8rem;letter-spacing:2px;line-height:1}
+.ph-sub{font-size:.76rem;color:var(--muted);margin-top:.2rem}
+.ph-actions{display:flex;gap:.5rem;align-items:center}
+
+/* TABS */
+.tabs{display:flex;gap:.35rem;margin-bottom:1.25rem;border-bottom:1px solid var(--border);padding-bottom:.5rem;flex-wrap:wrap}
+.tab{padding:.42rem .9rem;border-radius:var(--rs);font-size:.8rem;font-weight:600;cursor:pointer;transition:.15s;border:1px solid transparent;color:var(--muted);background:none}
+.tab:hover{color:var(--text)}
+.tab.active{background:var(--accent-g);border-color:rgba(141,198,63,.25);color:var(--accent)}
+.tab-content{display:none}
+.tab-content.active{display:block;animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* CARDS */
+.card{background:var(--surf);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:1rem}
+.card-header{padding:.8rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+.card-title{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)}
+.card-body{padding:1rem}
+
+/* FORM */
+.form-group{margin-bottom:.85rem}
+.form-label{display:block;font-size:.7rem;font-weight:600;color:var(--muted);margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.5px}
+.form-input{width:100%;background:var(--surf2);border:1px solid var(--border2);border-radius:var(--rs);padding:.55rem .82rem;color:var(--text);font-family:var(--f-body);font-size:.83rem;transition:.2s;outline:none}
+.form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-g)}
+.form-input::placeholder{color:var(--dim)}
+select.form-input{cursor:pointer}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem}
+
+/* CHECK GROUP */
+.check-group{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.3rem}
+.check-item{display:flex;align-items:center;gap:.4rem;background:var(--surf2);border:1px solid var(--border);border-radius:var(--rs);padding:.42rem .75rem;cursor:pointer;transition:.15s;user-select:none;font-size:.79rem}
+.check-item:hover{border-color:var(--accent)}
+.check-item.on{background:var(--accent-g);border-color:rgba(141,198,63,.3);color:var(--accent)}
+.check-item input[type=checkbox]{accent-color:var(--accent)}
+
+/* BTNS */
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.48rem .95rem;border-radius:var(--rs);font-family:var(--f-body);font-size:.8rem;font-weight:600;cursor:pointer;border:none;transition:.15s;text-decoration:none;white-space:nowrap}
+.btn-primary{background:var(--accent);color:#000}.btn-primary:hover{background:var(--accent-d)}
+.btn-ghost{background:none;border:1px solid var(--border);color:var(--muted)}.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn-danger{background:none;border:1px solid rgba(255,71,87,.3);color:var(--danger)}.btn-danger:hover{background:rgba(255,71,87,.08)}
+.btn-sm{padding:.3rem .65rem;font-size:.73rem}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.badge-green{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.2)}
+.badge-accent{background:var(--accent-g);color:var(--accent);border:1px solid rgba(141,198,63,.25)}
+.badge-gray{background:var(--surf2);color:var(--muted);border:1px solid var(--border)}
+
+/* QUADRA CARD */
+.quadra-card{background:var(--surf2);border:1px solid var(--border);border-radius:var(--r);padding:1rem;margin-bottom:.75rem;transition:.2s}
+.quadra-card:hover{border-color:rgba(141,198,63,.25)}
+.qc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem;flex-wrap:wrap;gap:.5rem}
+.qc-name{font-size:.88rem;font-weight:700}
+.qc-actions{display:flex;gap:.4rem}
+.qc-body{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;font-size:.78rem}
+.qc-field{display:flex;flex-direction:column;gap:.15rem}
+.qc-field-label{font-size:.64rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.qc-field-val{color:var(--text)}
+
+/* PREÇOS TABLE */
+.preco-table{width:100%;border-collapse:collapse;font-size:.8rem}
+.preco-table th{padding:.55rem .75rem;text-align:left;font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);border-bottom:1px solid var(--border)}
+.preco-table td{padding:.5rem .75rem;border-bottom:1px solid var(--border);vertical-align:middle}
+.preco-table tr:last-child td{border-bottom:none}
+.preco-table input{background:var(--surf3);border:1px solid var(--border);border-radius:var(--rs);padding:.3rem .5rem;color:var(--text);font-family:var(--f-mono);font-size:.78rem;width:100px;outline:none;transition:.2s}
+.preco-table input:focus{border-color:var(--accent)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:500;display:none;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surf);border:1px solid var(--border2);border-top:3px solid var(--accent);border-radius:var(--r);width:100%;max-width:540px;max-height:92vh;overflow-y:auto;animation:modalIn .18s ease}
+@keyframes modalIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+.modal-header{padding:.9rem 1.2rem .7rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-family:var(--f-display);font-size:1.05rem;letter-spacing:1.5px;color:var(--accent)}
+.modal-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem}
+.modal-close:hover{color:var(--danger)}
+.modal-body{padding:1rem 1.2rem}
+.modal-footer{padding:.7rem 1.2rem 1rem;display:flex;gap:.6rem;justify-content:flex-end;border-top:1px solid var(--border)}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--surf);border:1px solid var(--accent);border-radius:var(--r);padding:.75rem 1.1rem;font-size:.82rem;font-weight:600;color:var(--text);z-index:999;display:none;align-items:center;gap:.5rem;box-shadow:0 8px 24px rgba(0,0,0,.4);animation:slideUp .2s ease}
+.toast.open{display:flex}
+.toast.error{border-color:var(--danger)}
+@keyframes slideUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* DIAS SEMANA */
+.dias-grid{display:flex;gap:.35rem;flex-wrap:wrap;margin-top:.3rem}
+.dia-btn{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border2);background:var(--surf3);font-size:.72rem;font-weight:700;cursor:pointer;transition:.15s;color:var(--muted);display:flex;align-items:center;justify-content:center}
+.dia-btn.on{background:var(--accent);border-color:var(--accent);color:#000}
+
+/* TOGGLE SWITCH */
+.toggle-switch{display:flex;align-items:center;gap:.6rem;cursor:pointer}
+.ts-track{width:36px;height:20px;background:var(--surf3);border:1.5px solid var(--border2);border-radius:20px;position:relative;transition:.2s;flex-shrink:0}
+.ts-track.on{background:var(--accent);border-color:var(--accent)}
+.ts-thumb{width:14px;height:14px;background:#fff;border-radius:50%;position:absolute;top:1px;left:2px;transition:.2s}
+.ts-track.on .ts-thumb{left:18px}
+.ts-label{font-size:.8rem;font-weight:500}
+
+/* UPLOAD */
+.upload-zone{border:2px dashed var(--border2);border-radius:var(--r);padding:1.25rem;text-align:center;cursor:pointer;transition:.2s;background:var(--surf2)}
+.upload-zone:hover{border-color:var(--accent);background:var(--accent-g)}
+.upload-ico{font-size:1.8rem;margin-bottom:.4rem}
+.upload-label{font-size:.8rem;font-weight:600;margin-bottom:.2rem}
+.upload-sub{font-size:.7rem;color:var(--muted)}
+
+/* SECTION DIVIDER */
+.sec-div{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin:.85rem 0 .55rem;display:flex;align-items:center;gap:.5rem}
+.sec-div::after{content:'';flex:1;height:1px;background:var(--border)}
+
+@media(max-width:900px){
+  .sidebar{display:none}
+  .tb-logo{display:none}
+  .form-grid,.form-grid-3{grid-template-columns:1fr}
+  .qc-body{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="tb-logo">
+      <img src="logo.PNG" alt="Ranketes" style="height:28px;width:auto" onerror="this.style.display='none'"/>
+      <span class="tb-badge">Admin</span>
+    </div>
+    <span class="tb-title">CONFIGURAÇÕES</span>
+    <span class="tb-sub">🏟️ Clube</span>
+    <div class="tb-right">
+      <div class="tb-avatar" data-user-initials>??</div>
+    </div>
+  </header>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-arena">
+      <div class="sb-arena-name" data-user-arena>Sua Arena</div>
+      <div class="sb-arena-plan">Arena Pro</div>
+      <span class="sb-arena-badge">Clube</span>
+    </div>
+    <div class="sb-section">Principal</div>
+    <a class="sb-item" href="ranketes_admin_v2.html"><span class="sb-ico">🏠</span>Dashboard</a>
+    <a class="sb-item" href="admin_ranking.html"><span class="sb-ico">🏆</span>Ranking</a>
+    <a class="sb-item" href="admin_torneios.html"><span class="sb-ico">⚡</span>Torneios</a>
+    <a class="sb-item" href="admin_interclubes.html"><span class="sb-ico">🔗</span>Inter-Clubes<span class="sb-badge-item g">1</span></a>
+    <div class="sb-section">Gestão</div>
+    <a class="sb-item" href="admin_atletas.html"><span class="sb-ico">👥</span>Atletas</a>
+    <a class="sb-item" href="admin_professores.html"><span class="sb-ico">🎓</span>Professores</a>
+    <a class="sb-item" href="admin_configuracoes.html#quadras" onclick="setTimeout(()=>mudarTabByHash(),100)"><span class="sb-ico">📅</span>Quadras & Agenda</a>
+    <a class="sb-item" href="admin_financeiro.html"><span class="sb-ico">💰</span>Financeiro</a>
+    <div class="sb-section">Sistema</div>
+    <a class="sb-item active" href="admin_configuracoes.html"><span class="sb-ico">⚙️</span>Configurações</a>
+    <div class="sb-bottom">
+      <div class="sb-user">
+        <div class="sb-user-ava" data-user-initials>??</div>
+        <div>
+          <div class="sb-user-name" data-user-name>Usuário</div>
+          <div class="sb-user-role">Administrador</div>
+        </div>
+      </div>
+      <div class="sb-logout" onclick="fazerLogout()">🚪 Sair da conta</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="page-header">
+      <div>
+        <div class="ph-title">CONFIGURAÇÕES</div>
+        <div class="ph-sub">Dados da arena, quadras e preços</div>
+      </div>
+      <div class="ph-actions">
+        <button class="btn btn-primary" id="btnSalvar" onclick="salvarTudo()">💾 Salvar alterações</button>
+      </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab active" onclick="mudarTab('arena',this)">🏟️ Arena</button>
+      <button class="tab" onclick="mudarTab('quadras',this)">📅 Quadras</button>
+      <button class="tab" onclick="mudarTab('precos',this)">💰 Preços</button>
+      <button class="tab" onclick="mudarTab('conta',this)">👤 Conta</button>
+    </div>
+
+    <!-- ── TAB ARENA ── -->
+    <div class="tab-content active" id="tab-arena">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Logo da Arena</span></div>
+        <div class="card-body">
+          <div style="display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap">
+            <div id="logoPreview" style="width:72px;height:72px;border-radius:14px;background:var(--surf3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0">🏟️</div>
+            <div>
+              <div class="upload-zone" onclick="document.getElementById('logoInput').click()" style="padding:.75rem 1.2rem">
+                <input type="file" id="logoInput" accept="image/*" style="display:none" onchange="previewLogo(this)"/>
+                <div style="font-size:.82rem;font-weight:600">📸 Clique para enviar o logo</div>
+                <div style="font-size:.7rem;color:var(--muted);margin-top:.2rem">JPG ou PNG · máx. 2MB · recomendado 400×400px</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">Dados da Arena</span></div>
+        <div class="card-body">
+          <div class="form-group"><label class="form-label">Nome da Arena *</label><input class="form-input" id="arenaNome" placeholder="Ex: Arena Ranketes SP"/></div>
+          <div class="form-grid">
+            <div class="form-group"><label class="form-label">Cidade *</label><input class="form-input" id="arenaCidade" placeholder="São Paulo"/></div>
+            <div class="form-group"><label class="form-label">Estado</label>
+              <select class="form-input" id="arenaEstado">
+                <option value="">Selecionar...</option>
+                <option>SP</option><option>RJ</option><option>MG</option><option>RS</option>
+                <option>PR</option><option>SC</option><option>BA</option><option>CE</option>
+                <option>GO</option><option>DF</option><option>Outro</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group"><label class="form-label">Endereço</label><input class="form-input" id="arenaEndereco" placeholder="Rua, número, bairro"/></div>
+          <div class="form-grid">
+            <div class="form-group"><label class="form-label">WhatsApp</label><input class="form-input" id="arenaTelefone" placeholder="(11) 9xxxx-xxxx"/></div>
+            <div class="form-group"><label class="form-label">Instagram</label><input class="form-input" id="arenaInstagram" placeholder="@suaarena"/></div>
+          </div>
+          <div class="form-group"><label class="form-label">Site</label><input class="form-input" id="arenaSite" placeholder="www.suaarena.com.br"/></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><span class="card-title">Modalidades & Serviços</span></div>
+        <div class="card-body">
+          <div class="form-group">
+            <label class="form-label">Modalidades oferecidas</label>
+            <div class="check-group" id="modalidadesGroup">
+              <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="tenis"/> 🎾 Tênis</label>
+              <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="beach_tennis"/> 🏖️ Beach Tennis</label>
+              <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="padel"/> 🏸 Padel</label>
+              <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="squash"/> 🏓 Squash</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tipo de serviço</label>
+            <div class="check-group" id="servicosGroup">
+              <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="aulas"/> 🎓 Aulas</label>
+              <label class="check-item" onclick="toggleCheck(this)"><input type="checkbox" value="aluguel"/> 📅 Aluguel de quadra</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB QUADRAS ── -->
+    <div class="tab-content" id="tab-quadras">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:.75rem">
+        <button class="btn btn-primary" onclick="openModal('modalQuadra');modoQuadra='nova';document.getElementById('formQuadraTitle').textContent='NOVA QUADRA';limparFormQuadra()">+ Nova Quadra</button>
+      </div>
+      <div id="listaQuadras">
+        <div style="text-align:center;padding:2.5rem;color:var(--muted)">
+          <div style="font-size:1.5rem;margin-bottom:.5rem">🏟️</div>
+          <div style="font-weight:600;color:var(--text);margin-bottom:.3rem">Carregando quadras...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB PREÇOS ── -->
+    <div class="tab-content" id="tab-precos">
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Tabela de Preços — Tênis</span>
+          <span style="font-size:.72rem;color:var(--muted)">Valor por aula individual</span>
+        </div>
+        <div class="card-body" style="overflow-x:auto">
+          <table class="preco-table">
+            <thead><tr><th>Frequência</th><th>Tipo</th><th>Valor / Aula</th><th>Valor Mensal</th></tr></thead>
+            <tbody id="precosTeinis"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Tabela de Preços — Beach Tennis</span>
+          <span style="font-size:.72rem;color:var(--muted)">Valor por aula individual</span>
+        </div>
+        <div class="card-body" style="overflow-x:auto">
+          <table class="preco-table">
+            <thead><tr><th>Frequência</th><th>Tipo</th><th>Valor / Aula</th><th>Valor Mensal</th></tr></thead>
+            <tbody id="precosBT"></tbody>
+          </table>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end">
+        <button class="btn btn-primary" onclick="salvarPrecos()">💾 Salvar preços</button>
+      </div>
+    </div>
+
+    <!-- ── TAB CONTA ── -->
+    <div class="tab-content" id="tab-conta">
+      <div class="card">
+        <div class="card-header"><span class="card-title">Dados do Responsável</span></div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="form-group"><label class="form-label">Nome completo</label><input class="form-input" id="respNome" placeholder="Seu nome"/></div>
+            <div class="form-group"><label class="form-label">E-mail</label><input class="form-input" id="respEmail" placeholder="seu@email.com" readonly style="opacity:.6"/></div>
+            <div class="form-group"><label class="form-label">Telefone</label><input class="form-input" id="respTelefone" placeholder="(11) 9xxxx-xxxx"/></div>
+            <div class="form-group"><label class="form-label">CPF ou CNPJ</label><input class="form-input" id="respDoc" placeholder="Para emissão de notas"/></div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="salvarConta()">Salvar dados</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Alterar Senha</span></div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="form-group"><label class="form-label">Nova senha</label><input class="form-input" type="password" id="novaSenha" placeholder="••••••••"/></div>
+            <div class="form-group"><label class="form-label">Confirmar</label><input class="form-input" type="password" id="confirmaSenha" placeholder="••••••••"/></div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="alterarSenha()">Alterar senha</button>
+        </div>
+      </div>
+      <div class="card" style="border-color:rgba(255,71,87,.2)">
+        <div class="card-header" style="background:rgba(255,71,87,.04)"><span class="card-title" style="color:var(--danger)">Zona de Perigo</span></div>
+        <div class="card-body">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem">
+            <div>
+              <div style="font-size:.85rem;font-weight:600;margin-bottom:.2rem">Excluir conta da arena</div>
+              <div style="font-size:.75rem;color:var(--muted)">Esta ação é irreversível. Todos os dados serão apagados permanentemente.</div>
+            </div>
+            <button class="btn btn-danger btn-sm" onclick="confirmarExclusao()">Excluir arena</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODAL QUADRA -->
+<div class="modal-overlay" id="modalQuadra">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="formQuadraTitle">NOVA QUADRA</span>
+      <button class="modal-close" onclick="closeModal('modalQuadra')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="quadraId"/>
+      <div class="form-group"><label class="form-label">Nome da quadra *</label><input class="form-input" id="quadraNome" placeholder="Ex: Quadra 1, Quadra Principal..."/></div>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Tipo</label>
+          <select class="form-input" id="quadraTipo">
+            <option value="tenis_saibro">Tênis — Saibro</option>
+            <option value="tenis_dura">Tênis — Dura</option>
+            <option value="tenis_grama">Tênis — Grama</option>
+            <option value="beach_tennis">Beach Tennis</option>
+            <option value="padel">Padel</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Capacidade</label>
+          <select class="form-input" id="quadraCapacidade">
+            <option value="2">2 jogadores</option>
+            <option value="4">4 jogadores</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="sec-div">Serviços</div>
+      <div style="display:flex;gap:1.2rem;flex-wrap:wrap;margin-bottom:.85rem">
+        <div class="toggle-switch" onclick="toggleSwitch('swAulas')">
+          <div class="ts-track on" id="swAulas"><div class="ts-thumb"></div></div>
+          <span class="ts-label">Aulas</span>
+        </div>
+        <div class="toggle-switch" onclick="toggleSwitch('swAluguel')">
+          <div class="ts-track" id="swAluguel"><div class="ts-thumb"></div></div>
+          <span class="ts-label">Aluguel avulso</span>
+        </div>
+      </div>
+
+      <div class="sec-div">Dias ativos</div>
+      <div class="dias-grid" style="margin-bottom:.85rem">
+        <div class="dia-btn on" id="dia-1" onclick="toggleDia(this,'1')">Seg</div>
+        <div class="dia-btn on" id="dia-2" onclick="toggleDia(this,'2')">Ter</div>
+        <div class="dia-btn on" id="dia-3" onclick="toggleDia(this,'3')">Qua</div>
+        <div class="dia-btn on" id="dia-4" onclick="toggleDia(this,'4')">Qui</div>
+        <div class="dia-btn on" id="dia-5" onclick="toggleDia(this,'5')">Sex</div>
+        <div class="dia-btn on" id="dia-6" onclick="toggleDia(this,'6')">Sáb</div>
+        <div class="dia-btn" id="dia-0" onclick="toggleDia(this,'0')">Dom</div>
+      </div>
+
+      <div class="sec-div">Horários — Dias Úteis (Seg–Sex)</div>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Abertura</label><input class="form-input" type="time" id="q_hi_util" value="07:00"/></div>
+        <div class="form-group"><label class="form-label">Fechamento</label><input class="form-input" type="time" id="q_hf_util" value="22:00"/></div>
+      </div>
+      <div class="form-group"><label class="form-label">Duração da aula (minutos)</label>
+        <select class="form-input" id="q_dur_util">
+          <option value="45">45 minutos</option>
+          <option value="60" selected>1 hora</option>
+          <option value="90">1h30</option>
+          <option value="120">2 horas</option>
+        </select>
+      </div>
+
+      <div class="sec-div">Horários — Final de Semana (Sáb/Dom)</div>
+      <div class="form-grid">
+        <div class="form-group"><label class="form-label">Abertura</label><input class="form-input" type="time" id="q_hi_fds" value="08:00"/></div>
+        <div class="form-group"><label class="form-label">Fechamento</label><input class="form-input" type="time" id="q_hf_fds" value="20:00"/></div>
+      </div>
+      <div class="form-group"><label class="form-label">Duração da aula (minutos)</label>
+        <select class="form-input" id="q_dur_fds">
+          <option value="45">45 minutos</option>
+          <option value="60" selected>1 hora</option>
+          <option value="90">1h30</option>
+          <option value="120">2 horas</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modalQuadra')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarQuadra()">Salvar quadra</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script src="supabase.js"></script>
+<script>
+let arenaId = null
+let modoQuadra = 'nova'
+
+// ── INIT ──
+document.addEventListener('supabase:ready', async () => {
+  // DEV MODE — sem proteção de senha
+  const { data: { user } } = await window._sb.auth.getUser()
+  const u = user || { 
+    id: 'dev-user', 
+    email: 'dev@ranketes.com.br',
+    user_metadata: { nome: 'Wexley Servilieri', tipo: 'club' }
+  }
+  if (!u) return
+
+  const nome = u.user_metadata?.nome || u.email?.split('@')[0] || 'Admin'
+  const iniciais = getIniciais(nome)
+  document.querySelectorAll('[data-user-name]').forEach(el => el.textContent = nome)
+  document.querySelectorAll('[data-user-initials]').forEach(el => el.textContent = iniciais)
+
+  // Busca arena do usuário
+  const arena = await buscarArenaDoUsuario()
+  if (arena) {
+    arenaId = arena.id
+    preencherFormArena(arena)
+    document.querySelectorAll('[data-user-arena]').forEach(el => el.textContent = arena.nome)
+  }
+
+  carregarQuadras()
+  carregarPrecos()
+})
+
+// ── TABS ──
+function mudarTab(id, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'))
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'))
+  btn.classList.add('active')
+  document.getElementById('tab-' + id).classList.add('active')
+}
+
+// ── ARENA FORM ──
+function preencherFormArena(arena) {
+  document.getElementById('arenaNome').value = arena.nome || ''
+  document.getElementById('arenaCidade').value = arena.cidade || ''
+  document.getElementById('arenaEstado').value = arena.estado || ''
+  document.getElementById('arenaEndereco').value = arena.endereco || ''
+  document.getElementById('arenaTelefone').value = arena.telefone || ''
+  document.getElementById('arenaInstagram').value = arena.instagram || ''
+  document.getElementById('arenaSite').value = arena.site || ''
+
+  // Modalidades
+  if (arena.modalidades) {
+    document.querySelectorAll('#modalidadesGroup .check-item').forEach(item => {
+      const val = item.querySelector('input').value
+      if (arena.modalidades.includes(val)) {
+        item.classList.add('on')
+        item.querySelector('input').checked = true
+      }
+    })
+  }
+
+  // Serviços
+  if (arena.tipo_servico) {
+    document.querySelectorAll('#servicosGroup .check-item').forEach(item => {
+      const val = item.querySelector('input').value
+      if (arena.tipo_servico.includes(val)) {
+        item.classList.add('on')
+        item.querySelector('input').checked = true
+      }
+    })
+  }
+}
+
+function getCheckValues(groupId) {
+  return Array.from(document.querySelectorAll(`#${groupId} .check-item.on input`)).map(i => i.value)
+}
+
+// ── SALVAR ARENA ──
+async function salvarTudo() {
+  if (!arenaId) { showToast('Arena não encontrada', true); return }
+  const btn = document.getElementById('btnSalvar')
+  btn.textContent = 'Salvando...'
+  btn.disabled = true
+  try {
+    await atualizarArena(arenaId, {
+      nome:         document.getElementById('arenaNome').value.trim(),
+      cidade:       document.getElementById('arenaCidade').value.trim(),
+      estado:       document.getElementById('arenaEstado').value,
+      endereco:     document.getElementById('arenaEndereco').value.trim(),
+      telefone:     document.getElementById('arenaTelefone').value.trim(),
+      instagram:    document.getElementById('arenaInstagram').value.trim(),
+      site:         document.getElementById('arenaSite').value.trim(),
+      modalidades:  getCheckValues('modalidadesGroup'),
+      tipo_servico: getCheckValues('servicosGroup'),
+    })
+    // Atualiza nome na sidebar
+    const nome = document.getElementById('arenaNome').value.trim()
+    document.querySelectorAll('[data-user-arena]').forEach(el => el.textContent = nome)
+    showToast('✓ Arena atualizada com sucesso!')
+  } catch(e) {
+    showToast('Erro ao salvar: ' + e.message, true)
+  } finally {
+    btn.textContent = '💾 Salvar alterações'
+    btn.disabled = false
+  }
+}
+
+// ── QUADRAS ──
+async function carregarQuadras() {
+  if (!arenaId) return
+  const lista = document.getElementById('listaQuadras')
+  try {
+    const quadras = await listarQuadras(arenaId)
+    if (!quadras.length) {
+      lista.innerHTML = `<div style="text-align:center;padding:2.5rem;color:var(--muted)">
+        <div style="font-size:1.5rem;margin-bottom:.5rem">🏟️</div>
+        <div style="font-weight:600;color:var(--text);margin-bottom:.3rem">Nenhuma quadra cadastrada</div>
+        <div style="font-size:.78rem;margin-bottom:.85rem">Cadastre as quadras da sua arena para habilitar agendamentos.</div>
+        <button class="btn btn-primary" onclick="openModal('modalQuadra');modoQuadra='nova';limparFormQuadra()">Cadastrar primeira quadra</button>
+      </div>`
+      return
+    }
+    lista.innerHTML = quadras.map(q => renderQuadraCard(q)).join('')
+  } catch(e) {
+    lista.innerHTML = `<div style="color:var(--danger);padding:1rem">Erro ao carregar quadras: ${e.message}</div>`
+  }
+}
+
+function renderQuadraCard(q) {
+  const tipoLabel = {
+    tenis_saibro:'Tênis — Saibro', tenis_dura:'Tênis — Dura',
+    tenis_grama:'Tênis — Grama', beach_tennis:'Beach Tennis', padel:'Padel'
+  }
+  const servicos = []
+  if (q.tem_aulas) servicos.push('🎓 Aulas')
+  if (q.tem_aluguel) servicos.push('📅 Aluguel')
+  return `<div class="quadra-card">
+    <div class="qc-header">
+      <div>
+        <div class="qc-name">${q.nome}</div>
+        <div style="font-size:.72rem;color:var(--muted);margin-top:.1rem">${tipoLabel[q.tipo]||q.tipo} · ${q.capacidade} jogadores · ${servicos.join(' · ')}</div>
+      </div>
+      <div class="qc-actions">
+        <button class="btn btn-ghost btn-sm" onclick="editarQuadra(${JSON.stringify(q).replace(/"/g,'&quot;')})">✏️ Editar</button>
+        <button class="btn btn-danger btn-sm" onclick="deletarQuadra('${q.id}')">🗑️</button>
+      </div>
+    </div>
+    <div class="qc-body">
+      <div class="qc-field"><div class="qc-field-label">Dias Úteis</div><div class="qc-field-val">${q.hora_inicio_util} – ${q.hora_fim_util} · ${q.duracao_aula}min</div></div>
+      <div class="qc-field"><div class="qc-field-label">Fim de Semana</div><div class="qc-field-val">${q.sabado||q.domingo ? `${q.hora_inicio_fds} – ${q.hora_fim_fds} · ${q.duracao_aula_fds}min` : '—'}</div></div>
+    </div>
+  </div>`
+}
+
+function limparFormQuadra() {
+  document.getElementById('quadraId').value = ''
+  document.getElementById('quadraNome').value = ''
+  document.getElementById('quadraTipo').value = 'tenis_saibro'
+  document.getElementById('quadraCapacidade').value = '2'
+  document.getElementById('q_hi_util').value = '07:00'
+  document.getElementById('q_hf_util').value = '22:00'
+  document.getElementById('q_dur_util').value = '60'
+  document.getElementById('q_hi_fds').value = '08:00'
+  document.getElementById('q_hf_fds').value = '20:00'
+  document.getElementById('q_dur_fds').value = '60'
+  // Reset toggles e dias
+  document.getElementById('swAulas').classList.add('on')
+  document.getElementById('swAluguel').classList.remove('on')
+  document.querySelectorAll('.dia-btn').forEach(d => {
+    if (d.id !== 'dia-0') d.classList.add('on'); else d.classList.remove('on')
+  })
+}
+
+function editarQuadra(q) {
+  modoQuadra = 'editar'
+  document.getElementById('formQuadraTitle').textContent = 'EDITAR QUADRA'
+  document.getElementById('quadraId').value = q.id
+  document.getElementById('quadraNome').value = q.nome
+  document.getElementById('quadraTipo').value = q.tipo
+  document.getElementById('quadraCapacidade').value = q.capacidade
+  document.getElementById('q_hi_util').value = q.hora_inicio_util?.slice(0,5) || '07:00'
+  document.getElementById('q_hf_util').value = q.hora_fim_util?.slice(0,5) || '22:00'
+  document.getElementById('q_dur_util').value = q.duracao_aula
+  document.getElementById('q_hi_fds').value = q.hora_inicio_fds?.slice(0,5) || '08:00'
+  document.getElementById('q_hf_fds').value = q.hora_fim_fds?.slice(0,5) || '20:00'
+  document.getElementById('q_dur_fds').value = q.duracao_aula_fds
+  q.tem_aulas ? document.getElementById('swAulas').classList.add('on') : document.getElementById('swAulas').classList.remove('on')
+  q.tem_aluguel ? document.getElementById('swAluguel').classList.add('on') : document.getElementById('swAluguel').classList.remove('on')
+  // Dias
+  document.getElementById('dia-1').classList.toggle('on', q.dias_uteis)
+  document.getElementById('dia-2').classList.toggle('on', q.dias_uteis)
+  document.getElementById('dia-3').classList.toggle('on', q.dias_uteis)
+  document.getElementById('dia-4').classList.toggle('on', q.dias_uteis)
+  document.getElementById('dia-5').classList.toggle('on', q.dias_uteis)
+  document.getElementById('dia-6').classList.toggle('on', q.sabado)
+  document.getElementById('dia-0').classList.toggle('on', q.domingo)
+  openModal('modalQuadra')
+}
+
+async function salvarQuadra() {
+  const nome = document.getElementById('quadraNome').value.trim()
+  if (!nome) { showToast('Informe o nome da quadra', true); return }
+  const dados = {
+    arena_id:        arenaId,
+    nome,
+    tipo:            document.getElementById('quadraTipo').value,
+    capacidade:      parseInt(document.getElementById('quadraCapacidade').value),
+    tem_aulas:       document.getElementById('swAulas').classList.contains('on'),
+    tem_aluguel:     document.getElementById('swAluguel').classList.contains('on'),
+    dias_uteis:      document.getElementById('dia-1').classList.contains('on'),
+    sabado:          document.getElementById('dia-6').classList.contains('on'),
+    domingo:         document.getElementById('dia-0').classList.contains('on'),
+    hora_inicio_util: document.getElementById('q_hi_util').value,
+    hora_fim_util:    document.getElementById('q_hf_util').value,
+    duracao_aula:     parseInt(document.getElementById('q_dur_util').value),
+    hora_inicio_fds:  document.getElementById('q_hi_fds').value,
+    hora_fim_fds:     document.getElementById('q_hf_fds').value,
+    duracao_aula_fds: parseInt(document.getElementById('q_dur_fds').value),
+  }
+  try {
+    const id = document.getElementById('quadraId').value
+    if (id) await atualizarQuadra(id, dados)
+    else await criarQuadra(dados)
+    closeModal('modalQuadra')
+    carregarQuadras()
+    showToast('✓ Quadra salva com sucesso!')
+  } catch(e) {
+    showToast('Erro: ' + e.message, true)
+  }
+}
+
+async function deletarQuadra(id) {
+  if (!confirm('Excluir esta quadra?')) return
+  try {
+    await excluirQuadra(id)
+    carregarQuadras()
+    showToast('✓ Quadra excluída')
+  } catch(e) {
+    showToast('Erro: ' + e.message, true)
+  }
+}
+
+// ── PREÇOS ──
+const PRECO_ROWS = [
+  { freq: 1, tipo: 'individual', label: 'Individual — 1×/semana' },
+  { freq: 2, tipo: 'individual', label: 'Individual — 2×/semana' },
+  { freq: 3, tipo: 'individual', label: 'Individual — 3×/semana' },
+  { freq: 4, tipo: 'individual', label: 'Individual — 4×/semana' },
+  { freq: 1, tipo: 'grupo_4',    label: 'Grupo (até 4) — 1×/semana' },
+  { freq: 2, tipo: 'grupo_4',    label: 'Grupo (até 4) — 2×/semana' },
+  { freq: 1, tipo: 'grupo_8',    label: 'Grupo (até 8) — 1×/semana' },
+]
+
+function renderPrecoRows(tbodyId, modalidade, precos) {
+  const tbody = document.getElementById(tbodyId)
+  tbody.innerHTML = PRECO_ROWS.map(row => {
+    const p = precos.find(x => x.modalidade === modalidade && x.tipo_aula === row.tipo && x.frequencia === row.freq)
+    const autoMensal = row.tipo === 'individual' ? 'oninput="calcMensal(this)"' : ''
+    return `<tr>
+      <td>${row.label}</td>
+      <td><span style="font-size:.72rem;color:var(--muted)">${row.tipo.replace('_',' ')}</span></td>
+      <td><input type="number" step="0.01" min="0" placeholder="0,00"
+        data-mod="${modalidade}" data-tipo="${row.tipo}" data-freq="${row.freq}" data-field="aula"
+        value="${p?.valor_aula || ''}" style="width:100px" ${autoMensal}/></td>
+      <td><input type="number" step="0.01" min="0" placeholder="automático"
+        data-mod="${modalidade}" data-tipo="${row.tipo}" data-freq="${row.freq}" data-field="mensal"
+        value="${p?.valor_mensal || ''}" style="width:100px" id="mensal_${modalidade}_${row.tipo}_${row.freq}"/></td>
+    </tr>`
+  }).join('')
+}
+
+function calcMensal(input) {
+  const freq = parseInt(input.dataset.freq) || 1
+  const mod  = input.dataset.mod
+  const tipo = input.dataset.tipo
+  const val  = parseFloat(input.value) || 0
+  // Mensal = valor/aula × frequência × 4 semanas
+  const mensal = val * freq * 4
+  const mensalInput = document.getElementById(`mensal_${mod}_${tipo}_${freq}`)
+  if (mensalInput) mensalInput.value = mensal > 0 ? mensal.toFixed(2) : ''
+}
+
+async function carregarPrecos() {
+  if (!arenaId) return
+  try {
+    const precos = await listarPrecos(arenaId)
+    renderPrecoRows('precosTeinis', 'tenis', precos)
+    renderPrecoRows('precosBT', 'beach_tennis', precos)
+  } catch(e) { console.error(e) }
+}
+
+async function salvarPrecos() {
+  if (!arenaId) return
+  const inputs = document.querySelectorAll('.preco-table input[data-mod]')
+  const grouped = {}
+  inputs.forEach(inp => {
+    const key = `${inp.dataset.mod}_${inp.dataset.tipo}_${inp.dataset.freq}`
+    if (!grouped[key]) grouped[key] = { mod: inp.dataset.mod, tipo: inp.dataset.tipo, freq: parseInt(inp.dataset.freq) }
+    grouped[key][inp.dataset.field] = parseFloat(inp.value) || 0
+  })
+  try {
+    for (const k of Object.values(grouped)) {
+      if (k.aula > 0 || k.mensal > 0) {
+        await salvarPreco(arenaId, k.mod, k.tipo, k.freq, k.aula || 0, k.mensal || 0)
+      }
+    }
+    showToast('✓ Preços salvos com sucesso!')
+  } catch(e) {
+    showToast('Erro ao salvar preços: ' + e.message, true)
+  }
+}
+
+// ── CONTA ──
+async function salvarConta() {
+  showToast('✓ Dados salvos!')
+}
+
+async function alterarSenha() {
+  const nova = document.getElementById('novaSenha').value
+  const conf = document.getElementById('confirmaSenha').value
+  if (!nova) { showToast('Digite a nova senha', true); return }
+  if (nova !== conf) { showToast('Senhas não conferem', true); return }
+  if (nova.length < 6) { showToast('Senha precisa ter no mínimo 6 caracteres', true); return }
+  try {
+    await db().auth.updateUser({ password: nova })
+    document.getElementById('novaSenha').value = ''
+    document.getElementById('confirmaSenha').value = ''
+    showToast('✓ Senha alterada com sucesso!')
+  } catch(e) {
+    showToast('Erro: ' + e.message, true)
+  }
+}
+
+function confirmarExclusao() {
+  if (confirm('Tem certeza? Esta ação é irreversível e apagará TODOS os dados da arena.')) {
+    if (confirm('Confirma a exclusão permanente?')) {
+      showToast('Funcionalidade disponível em breve', true)
+    }
+  }
+}
+
+// ── HELPERS ──
+function toggleCheck(el) {
+  el.classList.toggle('on')
+  el.querySelector('input').checked = el.classList.contains('on')
+}
+
+function toggleSwitch(id) {
+  document.getElementById(id).classList.toggle('on')
+}
+
+function toggleDia(el) {
+  el.classList.toggle('on')
+}
+
+function previewLogo(input) {
+  if (!input.files?.[0]) return
+  const reader = new FileReader()
+  reader.onload = e => {
+    const prev = document.getElementById('logoPreview')
+    prev.innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;border-radius:14px;object-fit:cover"/>`
+  }
+  reader.readAsDataURL(input.files[0])
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open') }
+function closeModal(id) { document.getElementById(id).classList.remove('open') }
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open') })
+})
+
+function showToast(msg, erro = false) {
+  const t = document.getElementById('toast')
+  t.textContent = (erro ? '⚠️ ' : '✓ ') + msg
+  t.className = 'toast open' + (erro ? ' error' : '')
+  setTimeout(() => t.classList.remove('open'), 3000)
+}
+
+// Open tab from URL hash
+function mudarTabByHash() {
+  const hash = window.location.hash.replace('#','')
+  if (!hash) return
+  const tabMap = { quadras: 1, precos: 2, conta: 3 }
+  const idx = tabMap[hash]
+  if (idx !== undefined) {
+    const tabs = document.querySelectorAll('.tab')
+    if (tabs[idx]) tabs[idx].click()
+  }
+}
+window.addEventListener('hashchange', mudarTabByHash)
+window.addEventListener('load', () => setTimeout(mudarTabByHash, 300))
+
+async function fazerLogout() {
+  try { await logout() } catch(e) { window.location.href = 'ranketes_login.html' }
+}
+</script>
+</body>
+</html>

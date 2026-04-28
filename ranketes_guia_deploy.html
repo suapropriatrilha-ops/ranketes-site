@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Ranketes · Guia de Deploy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:#07090F;--surf:#0E1018;--surf2:#141720;--surf3:#1A1E2A;
+  --border:#1E2435;--border2:#272F45;--text:#E8EDF8;--muted:#4E5E80;--dim:#2A3450;
+  --accent:#8DC63F;--accent-d:#6FA030;--accent-g:rgba(141,198,63,.10);
+  --blue:#3D8BFF;--warn:#FFB800;--danger:#FF4757;--green:#22C55E;--purple:#9B59FF;
+  --f-display:'Bebas Neue',sans-serif;--f-body:'DM Sans',sans-serif;--f-mono:'Space Mono',monospace;
+  --r:10px;--rs:6px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--f-body);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(141,198,63,.013) 1px,transparent 1px),linear-gradient(90deg,rgba(141,198,63,.013) 1px,transparent 1px);background-size:36px 36px;pointer-events:none;z-index:0}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+
+/* NAV */
+.nav{background:rgba(7,9,15,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;padding:0 1.5rem;height:54px;display:flex;align-items:center;gap:1rem}
+.nav-logo{font-family:var(--f-display);font-size:1.3rem;letter-spacing:3px;color:var(--text);text-decoration:none}
+.nav-logo em{color:var(--accent);font-style:normal}
+.nav-title{font-size:.8rem;color:var(--muted);padding-left:1rem;border-left:1px solid var(--border)}
+.nav-right{margin-left:auto;display:flex;gap:.5rem}
+.nav-btn{font-size:.75rem;color:var(--muted);background:var(--surf2);border:1px solid var(--border);padding:.3rem .75rem;border-radius:var(--rs);cursor:pointer;text-decoration:none;transition:.15s}
+.nav-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* WRAPPER */
+.wrapper{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:2.5rem 1.2rem 4rem}
+
+/* HERO */
+.guide-hero{text-align:center;margin-bottom:3rem}
+.gh-badge{display:inline-flex;align-items:center;gap:.4rem;background:var(--accent-g);border:1px solid rgba(141,198,63,.25);color:var(--accent);font-size:.68rem;font-weight:700;padding:.25rem .8rem;border-radius:20px;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:.85rem}
+.gh-title{font-family:var(--f-display);font-size:2.8rem;letter-spacing:3px;line-height:.95;margin-bottom:.65rem}
+.gh-title span{color:var(--accent)}
+.gh-sub{font-size:.88rem;color:var(--muted);line-height:1.7;max-width:520px;margin:0 auto 1.5rem}
+
+/* OVERVIEW CARDS */
+.overview{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:3rem}
+.ov-card{background:var(--surf);border:1px solid var(--border);border-radius:var(--r);padding:1rem;text-align:center;position:relative;overflow:hidden;transition:.2s}
+.ov-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.ov-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--ov-clr,var(--accent))}
+.ov-num{font-family:var(--f-display);font-size:1.8rem;color:var(--ov-clr,var(--accent));line-height:1;margin-bottom:.3rem}
+.ov-label{font-size:.72rem;font-weight:700;color:var(--text);margin-bottom:.2rem}
+.ov-sub{font-size:.66rem;color:var(--muted)}
+.ov-price{font-family:var(--f-mono);font-size:.72rem;color:var(--green);margin-top:.4rem}
+
+/* PROGRESS SIDEBAR */
+.layout{display:grid;grid-template-columns:220px 1fr;gap:2rem;align-items:start}
+.sidebar{position:sticky;top:70px}
+.sidebar-title{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--dim);margin-bottom:.75rem;padding-left:.5rem}
+.sidebar-steps{display:flex;flex-direction:column;gap:.15rem}
+.ss-item{
+  display:flex;align-items:center;gap:.65rem;
+  padding:.5rem .7rem;border-radius:var(--rs);cursor:pointer;transition:.15s;
+  border:1px solid transparent;text-decoration:none;
+}
+.ss-item:hover{background:var(--surf2)}
+.ss-item.active{background:var(--accent-g);border-color:rgba(141,198,63,.2)}
+.ss-ico{
+  width:26px;height:26px;border-radius:50%;flex-shrink:0;
+  background:var(--surf2);border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.65rem;font-weight:700;color:var(--muted);transition:.2s;
+}
+.ss-item.active .ss-ico{background:var(--accent);border-color:var(--accent);color:#000}
+.ss-item.done .ss-ico{background:var(--green);border-color:var(--green);color:#000}
+.ss-label{font-size:.78rem;font-weight:500;color:var(--muted);line-height:1.3}
+.ss-item.active .ss-label{color:var(--accent);font-weight:700}
+.ss-item.done .ss-label{color:var(--green)}
+.ss-phase{font-size:.6rem;color:var(--dim);text-transform:uppercase;letter-spacing:.6px;margin-top:.05rem}
+
+/* PROGRESS BAR */
+.progress-track{height:4px;background:var(--surf3);border-radius:20px;margin:.75rem .5rem;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:20px;transition:width .4s ease}
+
+/* STEPS CONTENT */
+.steps-content{display:flex;flex-direction:column;gap:2.5rem}
+
+/* STEP BLOCK */
+.step-block{opacity:.5;transition:opacity .3s;scroll-margin-top:80px}
+.step-block.active{opacity:1}
+.step-block.done{opacity:.75}
+
+.step-header{display:flex;align-items:center;gap:.9rem;margin-bottom:1.2rem}
+.step-badge{
+  width:38px;height:38px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--f-display);font-size:1.1rem;
+  border:2px solid var(--border2);color:var(--muted);background:var(--surf2);
+  transition:.3s;
+}
+.step-block.active .step-badge{background:var(--accent);border-color:var(--accent);color:#000}
+.step-block.done .step-badge{background:var(--green);border-color:var(--green);color:#000}
+.step-title-wrap{}
+.step-phase{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted)}
+.step-title{font-family:var(--f-display);font-size:1.3rem;letter-spacing:2px;line-height:1}
+.step-block.active .step-title{color:var(--accent)}
+
+.step-body{background:var(--surf);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.step-block.active .step-body{border-color:rgba(141,198,63,.2)}
+
+/* INSTRUCTION ROWS */
+.instr{display:flex;gap:.85rem;padding:1rem 1.2rem;border-bottom:1px solid var(--border);align-items:flex-start}
+.instr:last-child{border-bottom:none}
+.instr-num{
+  width:24px;height:24px;border-radius:50%;flex-shrink:0;
+  background:var(--accent-g);border:1px solid rgba(141,198,63,.25);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.7rem;font-weight:700;color:var(--accent);margin-top:.05rem;
+}
+.instr-content{flex:1;min-width:0}
+.instr-text{font-size:.85rem;line-height:1.6;margin-bottom:.4rem}
+.instr-text strong{color:var(--accent);font-weight:700}
+.instr-text a{color:var(--blue);text-decoration:none}
+.instr-text a:hover{text-decoration:underline}
+
+/* MOCK BROWSER */
+.mock-browser{background:var(--surf2);border:1px solid var(--border2);border-radius:var(--rs);overflow:hidden;margin-top:.6rem}
+.mb-bar{height:30px;background:var(--surf3);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.4rem;padding:0 .75rem}
+.mb-dot{width:8px;height:8px;border-radius:50%}
+.mb-url{flex:1;background:var(--surf2);border:1px solid var(--border);border-radius:3px;padding:.2rem .55rem;font-family:var(--f-mono);font-size:.65rem;color:var(--muted);margin:0 .5rem}
+.mb-body{padding:.85rem}
+
+/* CODE BLOCK */
+.code-block{
+  background:var(--surf3);border:1px solid var(--border2);border-radius:var(--rs);
+  padding:.75rem 1rem;font-family:var(--f-mono);font-size:.76rem;
+  color:var(--text);line-height:1.6;margin-top:.5rem;position:relative;
+  overflow-x:auto;
+}
+.code-block .keyword{color:var(--accent)}
+.code-block .string{color:var(--warn)}
+.code-block .comment{color:var(--dim);font-style:italic}
+.copy-code{
+  position:absolute;top:.5rem;right:.5rem;
+  background:var(--surf2);border:1px solid var(--border);
+  color:var(--muted);font-size:.65rem;padding:.2rem .5rem;
+  border-radius:3px;cursor:pointer;transition:.15s;font-family:var(--f-body);
+}
+.copy-code:hover{border-color:var(--accent);color:var(--accent)}
+
+/* TIP BOX */
+.tip{
+  display:flex;align-items:flex-start;gap:.65rem;
+  background:var(--accent-g);border:1px solid rgba(141,198,63,.2);border-left:3px solid var(--accent);
+  border-radius:var(--rs);padding:.75rem .9rem;margin-top:.6rem;
+}
+.tip-ico{font-size:1rem;flex-shrink:0;margin-top:.05rem}
+.tip-text{font-size:.79rem;color:var(--muted);line-height:1.55}
+.tip-text strong{color:var(--text)}
+
+.warn-box{
+  display:flex;align-items:flex-start;gap:.65rem;
+  background:rgba(255,184,0,.07);border:1px solid rgba(255,184,0,.2);border-left:3px solid var(--warn);
+  border-radius:var(--rs);padding:.75rem .9rem;margin-top:.6rem;
+}
+.warn-ico{font-size:1rem;flex-shrink:0}
+.warn-text{font-size:.79rem;color:var(--muted);line-height:1.55}
+.warn-text strong{color:var(--warn)}
+
+/* STEP FOOTER — mark done */
+.step-footer{
+  padding:.85rem 1.2rem;
+  background:var(--surf2);border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem;
+}
+.btn-done{
+  background:var(--accent);color:#000;
+  font-family:var(--f-display);font-size:.9rem;letter-spacing:1px;
+  padding:.45rem 1.2rem;border-radius:var(--rs);cursor:pointer;border:none;transition:.15s;
+}
+.btn-done:hover{background:var(--accent-d)}
+.btn-done.done-state{background:var(--green);cursor:default}
+.step-time{font-size:.72rem;color:var(--dim)}
+
+/* LINK PILL */
+.link-pill{
+  display:inline-flex;align-items:center;gap:.35rem;
+  background:rgba(61,139,255,.1);border:1px solid rgba(61,139,255,.25);
+  color:var(--blue);font-size:.75rem;font-weight:600;
+  padding:2px 10px;border-radius:20px;text-decoration:none;transition:.15s;
+}
+.link-pill:hover{background:rgba(61,139,255,.18)}
+
+/* CHECK LIST */
+.checklist{display:flex;flex-direction:column;gap:.4rem;margin-top:.5rem}
+.cl-item{display:flex;align-items:center;gap:.6rem;font-size:.82rem;color:var(--muted);cursor:pointer;padding:.35rem .5rem;border-radius:var(--rs);transition:.15s}
+.cl-item:hover{background:var(--surf2)}
+.cl-item.checked{color:var(--green)}
+.cl-box{width:18px;height:18px;border-radius:4px;border:1.5px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.7rem;transition:.15s}
+.cl-item.checked .cl-box{background:var(--green);border-color:var(--green);color:#000}
+
+/* TABLE */
+.info-table{width:100%;border-collapse:collapse;margin-top:.6rem;font-size:.8rem}
+.info-table th{text-align:left;padding:.55rem .75rem;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);border-bottom:1px solid var(--border)}
+.info-table td{padding:.55rem .75rem;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.5}
+.info-table tr:last-child td{border-bottom:none}
+.info-table tr:hover td{background:var(--surf2)}
+
+/* DONE BANNER */
+.done-banner{
+  background:linear-gradient(135deg,#091A08,#0D2010);
+  border:1px solid rgba(141,198,63,.25);border-radius:var(--r);
+  padding:2.5rem;text-align:center;margin-top:2rem;
+  position:relative;overflow:hidden;
+}
+.done-banner::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
+.done-banner h2{font-family:var(--f-display);font-size:2rem;letter-spacing:3px;margin-bottom:.5rem}
+.done-banner p{font-size:.85rem;color:var(--muted);line-height:1.7;margin-bottom:1.2rem}
+.done-next{display:flex;flex-direction:column;gap:.5rem;max-width:420px;margin:0 auto}
+.next-item{background:var(--surf);border:1px solid var(--border);border-radius:var(--rs);padding:.75rem 1rem;display:flex;align-items:center;gap:.75rem;text-align:left}
+.ni-ico{font-size:1.1rem;flex-shrink:0}
+.ni-title{font-size:.82rem;font-weight:700}
+.ni-sub{font-size:.7rem;color:var(--muted)}
+
+/* RESPONSIVE */
+@media(max-width:700px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .overview{grid-template-columns:1fr 1fr}
+  .gh-title{font-size:2rem}
+}
+@media(max-width:440px){
+  .overview{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="nav-logo" href="ranketes_landing.html">RANK<em>•</em>ETES</a>
+  <span class="nav-title">Guia de Deploy</span>
+  <div class="nav-right">
+    <a class="nav-btn" href="ranketes_landing.html">← Voltar ao site</a>
+  </div>
+</nav>
+
+<div class="wrapper">
+
+  <!-- HERO -->
+  <div class="guide-hero">
+    <div class="gh-badge">🚀 Guia completo</div>
+    <h1 class="gh-title">COMO COLOCAR O<br><span>RANKETES NO AR</span></h1>
+    <p class="gh-sub">Passo a passo para registrar o domínio, subir o site na Vercel e conectar o banco de dados. Você não precisa saber programar para fazer isso.</p>
+    <div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap">
+      <span style="font-size:.78rem;color:var(--muted)">⏱️ Tempo total estimado: <strong style="color:var(--text)">2-3 horas</strong></span>
+      <span style="font-size:.78rem;color:var(--muted)">💰 Custo inicial: <strong style="color:var(--green)">~R$40/ano</strong></span>
+      <span style="font-size:.78rem;color:var(--muted)">🎓 Nível: <strong style="color:var(--text)">Iniciante</strong></span>
+    </div>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div class="overview">
+    <div class="ov-card" style="--ov-clr:#8DC63F">
+      <div class="ov-num">1</div>
+      <div class="ov-label">Registro.br</div>
+      <div class="ov-sub">Registrar o domínio ranketes.com.br</div>
+      <div class="ov-price">~R$40/ano</div>
+    </div>
+    <div class="ov-card" style="--ov-clr:#3D8BFF">
+      <div class="ov-num">2</div>
+      <div class="ov-label">GitHub</div>
+      <div class="ov-sub">Guardar os arquivos do site</div>
+      <div class="ov-price">Gratuito</div>
+    </div>
+    <div class="ov-card" style="--ov-clr:#9B59FF">
+      <div class="ov-num">3</div>
+      <div class="ov-label">Vercel</div>
+      <div class="ov-sub">Hospedar e publicar o site</div>
+      <div class="ov-price">Gratuito</div>
+    </div>
+    <div class="ov-card" style="--ov-clr:#22C55E">
+      <div class="ov-num">4</div>
+      <div class="ov-label">Supabase</div>
+      <div class="ov-sub">Banco de dados e login</div>
+      <div class="ov-price">Gratuito até 50k usuários</div>
+    </div>
+  </div>
+
+  <!-- LAYOUT -->
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-title">Progresso</div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill" style="width:12%"></div>
+      </div>
+      <div class="sidebar-steps" id="sidebarSteps">
+        <a class="ss-item active" href="#step1" onclick="setActive(1)">
+          <div class="ss-ico">1</div>
+          <div><div class="ss-label">Registro.br</div><div class="ss-phase">Domínio</div></div>
+        </a>
+        <a class="ss-item" href="#step2" onclick="setActive(2)">
+          <div class="ss-ico">2</div>
+          <div><div class="ss-label">GitHub</div><div class="ss-phase">Arquivos</div></div>
+        </a>
+        <a class="ss-item" href="#step3" onclick="setActive(3)">
+          <div class="ss-ico">3</div>
+          <div><div class="ss-label">Vercel — Deploy</div><div class="ss-phase">Hospedagem</div></div>
+        </a>
+        <a class="ss-item" href="#step4" onclick="setActive(4)">
+          <div class="ss-ico">4</div>
+          <div><div class="ss-label">Domínio customizado</div><div class="ss-phase">DNS</div></div>
+        </a>
+        <a class="ss-item" href="#step5" onclick="setActive(5)">
+          <div class="ss-ico">5</div>
+          <div><div class="ss-label">Supabase</div><div class="ss-phase">Banco de dados</div></div>
+        </a>
+        <a class="ss-item" href="#step6" onclick="setActive(6)">
+          <div class="ss-ico">6</div>
+          <div><div class="ss-label">Tudo funcionando</div><div class="ss-phase">Verificação final</div></div>
+        </a>
+      </div>
+    </div>
+
+    <!-- STEPS CONTENT -->
+    <div class="steps-content">
+
+      <!-- ═══ STEP 1 — REGISTRO.BR ═══ -->
+      <div class="step-block active" id="step1">
+        <div class="step-header">
+          <div class="step-badge">1</div>
+          <div class="step-title-wrap">
+            <div class="step-phase">Passo 1 — Domínio</div>
+            <div class="step-title">REGISTRO.BR</div>
+          </div>
+        </div>
+        <div class="step-body">
+          <div class="instr">
+            <div class="instr-num">1</div>
+            <div class="instr-content">
+              <div class="instr-text">Acesse <a href="https://registro.br" target="_blank"><strong>registro.br</strong></a> — é o órgão oficial de domínios .com.br no Brasil. Clique em <strong>"Registre seu domínio"</strong>.</div>
+              <div class="mock-browser">
+                <div class="mb-bar">
+                  <div class="mb-dot" style="background:#FF5F57"></div>
+                  <div class="mb-dot" style="background:#FEBC2E;margin-left:4px"></div>
+                  <div class="mb-dot" style="background:#28C840;margin-left:4px"></div>
+                  <div class="mb-url">registro.br</div>
+                </div>
+                <div class="mb-body">
+                  <div style="background:var(--surf3);border-radius:var(--rs);padding:.9rem;text-align:center">
+                    <div style="font-size:.65rem;color:var(--dim);margin-bottom:.4rem">REGISTRO.BR — NIC.br</div>
+                    <div style="font-size:.85rem;font-weight:600;margin-bottom:.6rem">Registre seu domínio .br</div>
+                    <div style="display:flex;gap:.4rem;max-width:300px;margin:0 auto">
+                      <div style="flex:1;background:var(--surf2);border:1px solid var(--accent);border-radius:var(--rs);padding:.4rem .6rem;font-size:.75rem;font-family:var(--f-mono);color:var(--accent)">ranketes.com.br</div>
+                      <div style="background:var(--accent);color:#000;font-size:.75rem;font-weight:700;padding:.4rem .75rem;border-radius:var(--rs);cursor:pointer">Buscar</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="instr">
+            <div class="instr-num">2</div>
+            <div class="instr-content">
+              <div class="instr-text">Digite <strong>ranketes.com.br</strong> na busca. Se estiver disponível, vai aparecer em verde. Clique em <strong>"Registrar"</strong>.</div>
+              <div class="tip">
+                <div class="tip-ico">💡</div>
+                <div class="tip-text">Se <strong>ranketes.com.br</strong> já estiver registrado por outra pessoa, tente <strong>ranketes.app</strong> ou <strong>getranektes.com.br</strong>. Mas tente o .com.br primeiro.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="instr">
+            <div class="instr-num">3</div>
+            <div class="instr-content">
+              <div class="instr-text">Você vai precisar de um <strong>CPF ou CNPJ</strong> para registrar. Preencha seus dados e finalize o pagamento. O custo é de <strong>aproximadamente R$40 por ano</strong>.</div>
+              <div class="warn-box">
+                <div class="warn-ico">⚠️</div>
+                <div class="warn-text"><strong>Importante:</strong> guarde bem o login e senha do registro.br. Você vai precisar deles no Passo 4 para apontar o domínio para a Vercel.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="instr">
+            <div class="instr-num">4</div>
+            <div class="instr-content">
+              <div class="instr-text">Após o pagamento, o domínio fica <strong>ativo em até 24h</strong>. Na prática costuma ser menos de 1h. Você receberá um e-mail de confirmação.</div>
+              <div class="checklist">
+                <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>Criei conta no registro.br</span></div>
+                <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>Busquei ranketes.com.br e está disponível</span></div>
+                <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>Realizei o pagamento (~R$40)</span></div>
+                <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>Recebi o e-mail de confirmação</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-footer">
+            <span class="step-time">⏱️ ~20 minutos</span>
+            <button class="btn-done" onclick="markDone(1)">✓ Concluí este passo</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ STEP 2 — GITHUB ═══ -->
+      <div class="step-block" id="step2">
+        <div class="step-header">
+          <div class="step-badge">2</div>
+          <div class="step-title-wrap">
+            <div class="step-phase">Passo 2 — Arquivos</div>
+            <div class="step-title">GITHUB</div>
+          </div>
+        </div>
+        <div class="step-body">
+          <div class="instr">
+            <div class="instr-num">1</div>
+            <div class="instr-content">
+              <div class="instr-text">O GitHub é onde vamos guardar os arquivos do site. Pense nele como uma <strong>pasta online compartilhável</strong> — a Vercel vai buscar os arquivos de lá automaticamente. Acesse <a href="https://github.com" target="_blank"><strong>github.com</strong></a> e crie uma conta gratuita.</div>
+            </div>
+          </div>
+
+          <div class="instr">
+            <div class="instr-num">2</div>
+            <div class="instr-content">
+              <div class="instr-text">Após fazer login, clique no botão verde <strong>"New"</strong> (ou <strong>"+ New repository"</strong>) para criar um repositório.</div>
+              <div class="mock-browser">
+                <div class="mb-bar">
+                  <div class="mb-dot" style="background:#FF5F57"></div>
+                  <div class="mb-dot" style="background:#FEBC2E;margin-left:4px"></div>
+                  <div class="mb-dot" style="background:#28C840;margin-left:4px"></div>
+                  <div class="mb-url">github.com/new</div>
+                </div>
+                <div class="mb-body">
+                  <div style="font-size:.8rem;font-weight:700;margin-bottom:.7rem">Create a new repository</div>
+                  <div style="display:flex;flex-direction:column;gap:.45rem">
+                    <div>
+                      <div style="font-size:.68rem;color:var(--muted);margin-bottom:.2rem">Repository name *</div>
+                      <div style="background:var(--surf3);border:1px solid var(--accent);border-radius:var(--rs);padding:.38rem .6rem;font-family:var(--f-mono);font-size:.76rem;color:var(--accent)">ranketes-site</div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:.5rem">
+                      <div style="width:14px;height:14px;border-radius:50%;border:1.5px solid var(--accent);display:flex;align-items:center;justify-content:center"><div style="width:7px;height:7px;border-radius:50%;background:var(--accent)"></div></div>
+                      <span style="font-size:.76rem">Public</span>
+                      <div style="width:14px;height:14px;border-radius:50%;border:1.5px solid var(--border2);margin-left:.5rem"></div>
+                      <span style="font-size:.76rem;color:var(--muted)">Private</span>
+                    </div>
+                    <div style="background:var(--accent);color:#000;font-size:.76rem;font-weight:700;padding:.4rem .75rem;border-radius:var(--rs);cursor:pointer;width:fit-content">Create repository</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="instr">
+            <div class="instr-num">3</div>
+            <div class="instr-content">
+              <div class="instr-text">Preencha assim: <strong>Repository name:</strong> <code style="background:var(--surf3);padding:1px 6px;border-radius:3px;font-family:var(--f-mono);font-size:.8rem">ranketes-site</code> · Visibilidade: <strong>Public</strong> · Clique em <strong>Create repository</strong>.</div>
+            </div>
+          </div>
+
+          <div class="instr">
+            <div class="instr-num">4</div>
+            <div class="instr-content">
+              <div class="instr-text">Agora vamos fazer o upload dos arquivos HTML. Na página do repositório, clique em <strong>"uploading an existing file"</strong> (ou arraste os arquivos diretamente).</div>
+              <div class="tip">
+                <div class="tip-ico">📁</div>
+                <div class="tip-text">Faça o upload de <strong>todos os arquivos HTML do Ranketes</strong> de uma vez: ranketes_landing.html, ranketes_login.html, ranketes_onboarding.html, ranketes_publico.html, ranketes_card.html, ranketes_professor_jailson.html e os painéis. Depois renomeie o <strong>ranketes_landing.html</strong> para <strong>index.html</strong> — este será a página inicial.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="instr">
+            <div class="instr-num">5</div>
+            <div class="instr-content">
+              <div class="instr-text">Após o upload, role a página para baixo e clique em <strong>"Commit changes"</strong> para salvar. Pronto — seus arquivos estão no GitHub!</div>
+              <div class="checklist">
+                <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>Criei conta no GitHub</span></div>
+                <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>Criei o repositório "ranketes-site"</span></div>
+                <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>Fiz upload de todos os arquivos HTML</span></div>
+                <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>Renomeei ranketes_landing.html para index.html</span></div>
+                <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>Cliquei em "Commit changes"</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-footer">
+            <span class="step-time">⏱️ ~15 minutos</span>
+            <button class="btn-done" onclick="markDone(2)">✓ Concluí este passo</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ STEP 3 — VERCEL DEPLOY ═══ -->
+      <div class="step-block" id="step3">
+        <div class="step-header">
+          <div class="step-badge">3</div>
+          <div class="step-title-wrap">
+            <div class="step-phase">Passo 3 — Hospedagem</div>
+            <div class="step-title">VERCEL — DEPLOY</div>
+          </div>
+        </div>
+        <div class="step-body">
+          <div class="instr">
+            <div class="instr-num">1</div>
+            <div class="instr-content">
+              <div class="instr-text">Acesse <a href="https://vercel.com" target="_blank"><strong>vercel.com</strong></a> e clique em <strong>"Start Deploying"</strong>. Faça login com sua conta do <strong>GitHub</strong> — assim a Vercel já acessa seus repositórios automaticamente.</div>
+              <div class="mock-browser">
+                <div class="mb-bar">
+                  <div class="mb-dot" style="background:#FF5F57"></div>
+                  <div class="mb-dot" style="background:#FEBC2E;margin-left:4px"></div>
+                  <div class="mb-dot" style="background:#28C840;margin-left:4px"></div>
+                  <div class="mb-url">vercel.com/new</div>
+                </div>
+                <div class="mb-body">
+                  <div style="font-size:.8rem;font-weight:700;margin-bottom:.75rem">Import Git Repository</div>
+                  <div style="background:var(--surf3);border:1px solid rgba(141,198,63,.3);border-radius:var(--rs);padding:.65rem .85rem;display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem">
+                    <div style="display:flex;align-items:center;gap:.5rem">
+                      <div style="width:20px;height:20px;border-radius:50%;background:var(--surf2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:.65rem">GH</div>
+                      <span style="font-size:.78rem;font-weight:600">ranketes-site</span>
+                    </div>
+                    <div style="background:var(--accent);color:#000;font-size:.72rem;font-weight:700;padding:.28rem .7rem;border-radius:var(--rs);cursor:pointer">Import</div>
+                  </div>
+                  <div style="background:var(--surf2);border:1px solid var(--border);border-radius:var(--rs);padding:.65rem .85rem;display:flex;align-items:center;justify-content:space-between;opacity:.5">
+                    <div style="display:flex;align-items:center;gap:.5rem">
+                      <div style="width:20px;height:20px;border-radius:50%;background:var(--surf3);display:flex;align-items:center;justify-content:center;font-size:.65rem;color:var(--muted)">GH</div>
+                      <span style="font-size:.78rem">outro-projeto</span>
+                    </div>
+                    <div style="background:var(--surf3);color:var(--muted);font-size:.72rem;font-weight:700;padding:.28rem .7rem;border-radius:var(--rs)">Import</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="instr">
+            <div class="instr-num">2</div>
+            <div class="instr-content">
+              <div class="instr-text">A Vercel vai listar seus repositórios. Clique em <strong>"Import"</strong> ao lado de <strong>ranketes-site</strong>.</div>
+            </div>
+          </div>
+
+          <div class="instr">
+            <div class="instr-num">3</div>
+            <div class="instr-content">
+              <div class="instr-text">Na tela de configuração, <strong>não mexa em nada</strong>. Apenas clique no botão azul <strong>"Deploy"</strong>. A Vercel detecta automaticamente que são arquivos HTML simples.</div>
+              <div class="mock-browser">
+                <div class="mb-bar">
+                  <div class="mb-dot" style="background:#FF5F57"></div>
+                  <div class="mb-dot" style="background:#FEBC2E;margin-left:4px"></div>
+                  <div class="mb-dot" style="background:#28C840;margin-left:4px"></div>
+                  <div class="mb-url">vercel.com/deploy</div>
+                </div>
+                <div class="mb-body">
+                  <div style="font-size:.8rem;font-weight:700;margin-bottom:.6rem">Configure Project</div>
+                  <div style="display:flex;flex-direction:column;gap:.4rem;margin-bottom:.8rem;font-size:.75rem;color:var(--muted)">
+                    <div style="display:flex;justify-content:space-between"><span>Framework Preset</span><span style="color:var(--text)">Other</span></div>
+                    <div style="display:flex;justify-content:space-between"><span>Root Directory</span><span style="color:var(--text)">./</span></div>
+                    <div style="display:flex;justify-content:space-between"><span>Output Directory</span><span style="color:var(--text)">./</span></div>
+                  </div>
+                  <div style="background:var(--blue);color:#fff;font-size:.78rem;font-weight:700;padding:.5rem;border-radius:var(--rs);text-align:center;cursor:pointer">Deploy</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="instr">
+            <div class="instr-num">4</div>
+            <div class="instr-content">
+              <div class="instr-text">A Vercel vai processar em <strong>30-60 segundos</strong>. Quando terminar, vai mostrar uma tela de sucesso com fogos de artifício 🎉 e um link provisório tipo <strong>ranketes-site.vercel.app</strong>. Clique para ver seu site no ar!</div>
+              <div class="tip">
+                <div class="tip-ico">🎉</div>
+                <div class="tip-text">Neste momento o site já está <strong>online e acessível para qualquer pessoa</strong> pelo link da Vercel. O próximo passo só troca esse link pelo seu domínio ranketes.com.br.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="instr">
+            <div class="instr-num">5</div>
+            <div class="instr-content">
+              <div class="instr-text"><strong>Bônus automático:</strong> a cada vez que você atualizar um arquivo no GitHub (subir uma versão nova do HTML), a Vercel vai republicar o site automaticamente em segundos. Sem precisar fazer nada.</div>
+              <div class="checklist">
+                <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>Criei conta na Vercel com login do GitHub</span></div>
+                <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>Importei o repositório ranketes-site</span></div>
+                <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>Cliquei em Deploy</span></div>
+                <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>Site abriu no link .vercel.app ✓</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-footer">
+            <span class="step-time">⏱️ ~10 minutos</span>
+            <button class="btn-done" onclick="markDone(3)">✓ Concluí este passo</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ STEP 4 — DNS ═══ -->
+      <div class="step-block" id="step4">
+        <div class="step-header">
+          <div class="step-badge">4</div>
+          <div class="step-title-wrap">
+            <div class="step-phase">Passo 4 — DNS</div>
+            <div class="step-title">CONECTAR O DOMÍNIO</div>
+          </div>
+        </div>
+        <div class="step-body">
+          <div class="instr">
+            <div class="instr-num">1</div>
+            <div class="instr-content">
+              <div class="instr-text">No painel da Vercel, abra seu projeto e vá em <strong>Settings → Domains</strong>. Digite <strong>ranketes.com.br</strong> e clique em <strong>Add</strong>.</div>
+              <div class="mock-browser">
+                <div class="mb-bar">
+                  <div class="mb-dot" style="background:#FF5F57"></div>
+                  <div class="mb-dot" style="background:#FEBC2E;margin-left:4px"></div>
+                  <div class="mb-dot" style="background:#28C840;margin-left:4px"></div>
+                  <div class="mb-url">vercel.com/ranketes/settings/domains</div>
+                </div>
+                <div class="mb-body">
+                  <div style="font-size:.8rem;font-weight:700;margin-bottom:.6rem">Domains</div>
+                  <div style="display:flex;gap:.4rem;margin-bottom:.75rem">
+                    <div style="flex:1;background:var(--surf3);border:1px solid var(--accent);border-radius:var(--rs);padding:.38rem .6rem;font-family:var(--f-mono);font-size:.75rem;color:var(--accent)">ranketes.com.br</div>
+                    <div style="background:var(--blue);color:#fff;font-size:.75rem;font-weight:700;padding:.38rem .8rem;border-radius:var(--rs);cursor:pointer">Add</div>
+                  </div>
+                  <div style="background:var(--surf2);border:1px solid rgba(255,184,0,.3);border-radius:var(--rs);padding:.65rem .8rem">
+                    <div style="font-size:.7rem;color:var(--warn);font-weight:700;margin-bottom:.3rem">⚠️ Configure DNS</div>
+                    <div style="font-size:.72rem;color:var(--muted)">Add the following records to your DNS provider</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="instr">
+            <div class="instr-num">2</div>
+            <div class="instr-content">
+              <div class="instr-text">A Vercel vai mostrar os registros DNS que você precisa adicionar. Anote os valores — vão ser parecidos com estes:</div>
+              <table class="info-table">
+                <thead><tr><th>Tipo</th><th>Nome</th><th>Valor</th></tr></thead>
+                <tbody>
+                  <tr><td><code style="font-family:var(--f-mono);font-size:.78rem">A</code></td><td><code style="font-family:var(--f-mono);font-size:.78rem">@</code></td><td><code style="font-family:var(--f-mono);font-size:.78rem;color:var(--accent)">76.76.21.21</code></td></tr>
+                  <tr><td><code style="font-family:var(--f-mono);font-size:.78rem">CNAME</code></td><td><code style="font-family:var(--f-mono);font-size:.78rem">www</code></td><td><code style="font-family:var(--f-mono);font-size:.78rem;color:var(--accent)">cname.vercel-dns.com</code></td></tr>
+                </tbody>
+              </table>
+              <div class="warn-box" style="margin-top:.6rem">
+                <div class="warn-ico">⚠️</div>
+                <div class="warn-text"><strong>Use os valores que a Vercel mostrar para você</strong>, não os da tabela acima — podem ser diferentes. Copie exatamente o que aparecer na tela.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="instr">
+            <div class="instr-num">3</div>
+            <div class="instr-content">
+              <div class="instr-text">Agora volte ao <a href="https://registro.br" target="_blank"><strong>registro.br</strong></a>, faça login, abra o domínio <strong>ranketes.com.br</strong> e vá em <strong>"DNS"</strong> ou <strong>"Configurar DNS"</strong>.</div>
+            </div>
+          </div>
+
+          <div class="instr">
+            <div class="instr-num">4</div>
+            <div class="instr-content">
+              <div class="instr-text">Adicione os dois registros que a Vercel indicou (tipo A e CNAME). Salve. O processo de propagação leva de <strong>5 minutos a 48 horas</strong> — na maioria das vezes é menos de 1 hora.</div>
+              <div class="tip">
+                <div class="tip-ico">🔍</div>
+                <div class="tip-text">Para verificar se o domínio já está apontando corretamente, acesse <a href="https://dnschecker.org" target="_blank" style="color:var(--blue)">dnschecker.org</a> e busque por <strong>ranketes.com.br</strong>. Quando aparecer o IP da Vercel nos resultados, está funcionando.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="instr">
+            <div class="instr-num">5</div>
+            <div class="instr-content">
+              <div class="instr-text">Quando a propagação terminar, a Vercel vai gerar automaticamente um <strong>certificado HTTPS gratuito</strong> para seu site. Isso significa que vai aparecer o cadeado 🔒 no navegador — essencial para segurança e confiança dos usuários.</div>
+              <div class="checklist">
+                <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>Adicionei o domínio na Vercel (Settings → Domains)</span></div>
+                <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>Anotei os registros DNS da Vercel</span></div>
+                <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>Adicionei os registros no registro.br</span></div>
+                <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>ranketes.com.br abre o site com 🔒 HTTPS</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-footer">
+            <span class="step-time">⏱️ ~30 minutos (+ propagação DNS)</span>
+            <button class="btn-done" onclick="markDone(4)">✓ Concluí este passo</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ STEP 5 — SUPABASE ═══ -->
+      <div class="step-block" id="step5">
+        <div class="step-header">
+          <div class="step-badge">5</div>
+          <div class="step-title-wrap">
+            <div class="step-phase">Passo 5 — Banco de dados</div>
+            <div class="step-title">SUPABASE</div>
+          </div>
+        </div>
+        <div class="step-body">
+          <div class="instr">
+            <div class="instr-num">1</div>
+            <div class="instr-content">
+              <div class="instr-text">O Supabase é o banco de dados do Ranketes — é onde ficam guardados atletas, partidas, rankings, professores etc. Acesse <a href="https://supabase.com" target="_blank"><strong>supabase.com</strong></a> e crie uma conta gratuita (pode entrar com o GitHub).</div>
+              <div class="tip">
+                <div class="tip-ico">🆓</div>
+                <div class="tip-text">O plano gratuito do Supabase suporta até <strong>50.000 usuários ativos por mês</strong> e <strong>500MB de banco de dados</strong>. Mais do que suficiente para o MVP do Ranketes.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="instr">
+            <div class="instr-num">2</div>
+            <div class="instr-content">
+              <div class="instr-text">Clique em <strong>"New Project"</strong>. Configure assim:</div>
+              <div class="mock-browser">
+                <div class="mb-bar">
+                  <div class="mb-dot" style="background:#FF5F57"></div>
+                  <div class="mb-dot" style="background:#FEBC2E;margin-left:4px"></div>
+                  <div class="mb-dot" style="background:#28C840;margin-left:4px"></div>
+                  <div class="mb-url">supabase.com/dashboard/new</div>
+                </div>
+                <div class="mb-body">
+                  <div style="font-size:.8rem;font-weight:700;margin-bottom:.65rem">Create a new project</div>
+                  <div style="display:flex;flex-direction:column;gap:.45rem">
+                    <div><div style="font-size:.66rem;color:var(--muted);margin-bottom:.18rem">Project name</div><div style="background:var(--surf3);border:1px solid var(--accent);border-radius:var(--rs);padding:.36rem .6rem;font-family:var(--f-mono);font-size:.74rem;color:var(--accent)">ranketes</div></div>
+                    <div><div style="font-size:.66rem;color:var(--muted);margin-bottom:.18rem">Database Password</div><div style="background:var(--surf3);border:1px solid var(--border2);border-radius:var(--rs);padding:.36rem .6rem;font-size:.74rem;color:var(--muted)">••••••••••••••</div></div>
+                    <div><div style="font-size:.66rem;color:var(--muted);margin-bottom:.18rem">Region</div><div style="background:var(--surf3);border:1px solid var(--border2);border-radius:var(--rs);padding:.36rem .6rem;font-size:.74rem">South America (São Paulo)</div></div>
+                    <div style="background:var(--green);color:#000;font-size:.76rem;font-weight:700;padding:.45rem;border-radius:var(--rs);text-align:center;cursor:pointer">Create new project</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="instr">
+            <div class="instr-num">3</div>
+            <div class="instr-content">
+              <div class="instr-text">Aguarde ~2 minutos para o projeto ser criado. Depois vá em <strong>Table Editor</strong> (menu lateral) e crie as tabelas principais do Ranketes. Clique em <strong>"New table"</strong> para cada uma:</div>
+              <table class="info-table">
+                <thead><tr><th>Tabela</th><th>O que guarda</th><th>Campos principais</th></tr></thead>
+                <tbody>
+                  <tr><td><code style="font-family:var(--f-mono);font-size:.76rem;color:var(--accent)">usuarios</code></td><td style="color:var(--muted)">Todos os usuários</td><td style="font-size:.74rem;color:var(--muted)">id, email, nome, tipo, criado_em</td></tr>
+                  <tr><td><code style="font-family:var(--f-mono);font-size:.76rem;color:var(--accent)">arenas</code></td><td style="color:var(--muted)">Clubes e arenas</td><td style="font-size:.74rem;color:var(--muted)">id, nome, cidade, estado, plano</td></tr>
+                  <tr><td><code style="font-family:var(--f-mono);font-size:.76rem;color:var(--accent)">atletas</code></td><td style="color:var(--muted)">Perfil esportivo</td><td style="font-size:.74rem;color:var(--muted)">id, usuario_id, arena_id, pontos, categoria</td></tr>
+                  <tr><td><code style="font-family:var(--f-mono);font-size:.76rem;color:var(--accent)">partidas</code></td><td style="color:var(--muted)">Registro de jogos</td><td style="font-size:.74rem;color:var(--muted)">id, vencedor_id, perdedor_id, placar, data</td></tr>
+                  <tr><td><code style="font-family:var(--f-mono);font-size:.76rem;color:var(--accent)">professores</code></td><td style="color:var(--muted)">Perfil do professor</td><td style="font-size:.74rem;color:var(--muted)">id, usuario_id, bio, preco_avulsa, arena_id</td></tr>
+                  <tr><td><code style="font-family:var(--f-mono);font-size:.76mm;color:var(--accent)">torneios</code></td><td style="color:var(--muted)">Torneios e chaves</td><td style="font-size:.74rem;color:var(--muted)">id, arena_id, nome, formato, status</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="instr">
+            <div class="instr-num">4</div>
+            <div class="instr-content">
+              <div class="instr-text">Vá em <strong>Authentication → Providers</strong> e ative o login por <strong>Email</strong>. Isso vai permitir que atletas e professores criem conta com e-mail e senha.</div>
+              <div class="tip">
+                <div class="tip-ico">🔑</div>
+                <div class="tip-text">O Supabase já vem com sistema de login, recuperação de senha e tokens de segurança prontos. Você <strong>não precisa programar isso do zero</strong> — só ativar.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="instr">
+            <div class="instr-num">5</div>
+            <div class="instr-content">
+              <div class="instr-text">Vá em <strong>Settings → API</strong> e anote a <strong>Project URL</strong> e a <strong>anon public key</strong>. Você vai precisar dessas informações quando integrar o backend com o site.</div>
+              <div class="code-block">
+<button class="copy-code" onclick="copyCode(this)">Copiar</button>
+<span class="comment">// Exemplo das credenciais que você vai encontrar em Settings → API</span>
+<br/><span class="keyword">const</span> supabaseUrl = <span class="string">'https://xxxxxxxxxxx.supabase.co'</span>
+<br/><span class="keyword">const</span> supabaseKey = <span class="string">'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'</span>
+<br/>
+<br/><span class="comment">// Guarde esses valores — você vai usá-los no próximo passo</span>
+              </div>
+              <div class="checklist">
+                <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>Criei conta no Supabase</span></div>
+                <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>Criei o projeto "ranketes" na região São Paulo</span></div>
+                <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>Criei as 6 tabelas principais</span></div>
+                <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>Ativei o login por Email em Authentication</span></div>
+                <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>Anotei a Project URL e a anon key</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-footer">
+            <span class="step-time">⏱️ ~30 minutos</span>
+            <button class="btn-done" onclick="markDone(5)">✓ Concluí este passo</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ STEP 6 — VERIFICAÇÃO ═══ -->
+      <div class="step-block" id="step6">
+        <div class="step-header">
+          <div class="step-badge">6</div>
+          <div class="step-title-wrap">
+            <div class="step-phase">Passo 6 — Verificação final</div>
+            <div class="step-title">TUDO FUNCIONANDO</div>
+          </div>
+        </div>
+        <div class="step-body">
+          <div class="instr">
+            <div class="instr-num">✓</div>
+            <div class="instr-content">
+              <div class="instr-text">Verifique cada um destes itens. Todos precisam estar funcionando antes de divulgar o site:</div>
+              <div class="checklist">
+                <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>🌐 <strong>ranketes.com.br</strong> abre a landing page</span></div>
+                <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>🔒 Cadeado HTTPS aparece no navegador</span></div>
+                <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>📱 Site funciona no celular (mobile)</span></div>
+                <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>🔗 Todos os links entre páginas funcionam</span></div>
+                <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>📸 instagram.com/ranketes abre o perfil</span></div>
+                <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>⚡ Site carrega rápido (menos de 3 segundos)</span></div>
+                <div class="cl-item" onclick="toggleCheck(this)"><div class="cl-box">✓</div><span>🗄️ Supabase está conectado e tabelas criadas</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-footer">
+            <span class="step-time">⏱️ ~10 minutos</span>
+            <button class="btn-done" onclick="markDone(6)">🚀 Site no ar!</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- DONE BANNER -->
+      <div class="done-banner" id="doneBanner" style="display:none">
+        <div style="font-size:3rem;margin-bottom:.75rem">🚀</div>
+        <h2>RANKETES NO AR!</h2>
+        <p>Site publicado em <strong style="color:var(--accent)">ranketes.com.br</strong>, banco de dados configurado, HTTPS ativo. O próximo passo é conectar o backend para o login e o registro de partidas funcionarem de verdade.</p>
+        <div class="done-next">
+          <div class="next-item">
+            <div class="ni-ico">🔌</div>
+            <div><div class="ni-title">Próximo: Conectar login</div><div class="ni-sub">Integrar Supabase Auth com os formulários do site</div></div>
+          </div>
+          <div class="next-item">
+            <div class="ni-ico">🏆</div>
+            <div><div class="ni-title">Depois: Ranking automático</div><div class="ni-sub">Cálculo ELO ao registrar uma partida</div></div>
+          </div>
+          <div class="next-item">
+            <div class="ni-ico">💰</div>
+            <div><div class="ni-title">Mais tarde: Pagamentos</div><div class="ni-sub">Pix via Mercado Pago para professores</div></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /steps-content -->
+  </div><!-- /layout -->
+</div><!-- /wrapper -->
+
+<script>
+const totalSteps = 6;
+let doneSteps = new Set();
+
+function setActive(n) {
+  document.querySelectorAll('.step-block').forEach((b, i) => {
+    b.classList.remove('active');
+    if (i + 1 === n) b.classList.add('active');
+  });
+  document.querySelectorAll('.ss-item').forEach((item, i) => {
+    item.classList.remove('active');
+    if (i + 1 === n) item.classList.add('active');
+  });
+}
+
+function markDone(n) {
+  doneSteps.add(n);
+  const btn = document.querySelector(`#step${n} .btn-done`);
+  if (btn) { btn.textContent = '✓ Concluído!'; btn.classList.add('done-state'); btn.disabled = true; }
+  
+  const block = document.getElementById(`step${n}`);
+  if (block) block.classList.add('done');
+  
+  const ssItem = document.querySelectorAll('.ss-item')[n - 1];
+  if (ssItem) { ssItem.classList.remove('active'); ssItem.classList.add('done'); }
+  
+  // progress
+  const pct = Math.round((doneSteps.size / totalSteps) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  
+  // activate next
+  if (n < totalSteps) {
+    setTimeout(() => {
+      setActive(n + 1);
+      const next = document.getElementById(`step${n + 1}`);
+      if (next) next.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 400);
+  } else {
+    // all done
+    document.getElementById('doneBanner').style.display = 'block';
+    document.getElementById('doneBanner').scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+function toggleCheck(el) {
+  el.classList.toggle('checked');
+}
+
+function copyCode(btn) {
+  const code = btn.parentElement.textContent.replace('Copiar', '').trim();
+  navigator.clipboard?.writeText(code).catch(() => {});
+  btn.textContent = '✓ Copiado!';
+  setTimeout(() => btn.textContent = 'Copiar', 2000);
+}
+
+// Intersection Observer to highlight active step in sidebar
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      const n = parseInt(id.replace('step', ''));
+      if (!isNaN(n)) {
+        document.querySelectorAll('.ss-item').forEach((item, i) => {
+          if (!doneSteps.has(i + 1)) item.classList.remove('active');
+        });
+        const ssItem = document.querySelectorAll('.ss-item')[n - 1];
+        if (ssItem && !doneSteps.has(n)) ssItem.classList.add('active');
+      }
+    }
+  });
+}, { threshold: 0.3, rootMargin: '-60px 0px -60% 0px' });
+
+document.querySelectorAll('.step-block').forEach(b => observer.observe(b));
+</script>
+</body>
+</html>

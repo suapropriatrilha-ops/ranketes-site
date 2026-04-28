@@ -1,0 +1,27 @@
+{
+  "name": "Ranketes Professor",
+  "short_name": "Ranketes Prof",
+  "description": "Menos planilha, mais aula. Gerencie alunos, agenda e pagamentos.",
+  "start_url": "/ranketes_professor_v2.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#000000",
+  "theme_color": "#F59E0B",
+  "lang": "pt-BR",
+  "categories": ["sports", "business", "productivity"],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

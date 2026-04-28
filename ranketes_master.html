@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Ranketes · Admin Master</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:#07090F;--surf:#0E1018;--surf2:#141720;--surf3:#1A1E2A;
+  --border:#1E2435;--border2:#272F45;--text:#E8EDF8;--muted:#4E5E80;--dim:#313C58;
+  --accent:#E8453A;--accent-d:#C43530;--accent-g:rgba(232,69,58,.09);
+  --c-club:#8DC63F;--c-prof:#F59E0B;--c-athlete:#06B6D4;
+  --blue:#3D8BFF;--danger:#FF4757;--warn:#FFB800;--purple:#9B59FF;--green:#22C55E;
+  --sidebar-w:240px;--topbar-h:56px;
+  --f-display:'Bebas Neue',sans-serif;--f-body:'DM Sans',sans-serif;--f-mono:'Space Mono',monospace;
+  --r:10px;--rs:6px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--f-body);background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(232,69,58,.011) 1px,transparent 1px),linear-gradient(90deg,rgba(232,69,58,.011) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+.shell{display:flex;min-height:100vh;position:relative;z-index:1}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);background:var(--surf);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:300;transition:transform .28s cubic-bezier(.4,0,.2,1)}
+.sidebar-logo{padding:.95rem 1.15rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.5rem}
+.logotype{font-family:var(--f-display);font-size:1.4rem;letter-spacing:3px;color:var(--text)}
+.logotype em{color:var(--accent);font-style:normal}
+.master-badge{margin-left:auto;background:rgba(232,69,58,.15);border:1px solid rgba(232,69,58,.4);color:var(--accent);font-size:.56rem;font-weight:700;padding:2px 7px;border-radius:20px;text-transform:uppercase;letter-spacing:1.2px;white-space:nowrap}
+.admin-card{padding:.8rem 1.15rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.6rem}
+.admin-ava{width:36px;height:36px;border-radius:8px;flex-shrink:0;background:linear-gradient(135deg,var(--accent),var(--accent-d));display:flex;align-items:center;justify-content:center;font-family:var(--f-display);font-size:.9rem;color:#fff}
+.admin-name{font-size:.81rem;font-weight:700}
+.admin-role{font-size:.64rem;color:var(--accent);font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.nav-section{padding:.5rem 0}
+.nav-label{font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--dim);padding:.2rem 1.15rem .3rem}
+.nav-item{display:flex;align-items:center;gap:.55rem;padding:.46rem 1.15rem;cursor:pointer;transition:background .15s,color .15s;border-left:2px solid transparent;color:var(--muted);font-size:.8rem;font-weight:500;user-select:none}
+.nav-item:hover{background:var(--surf2);color:var(--text)}
+.nav-item.active{background:var(--accent-g);border-left-color:var(--accent);color:var(--accent)}
+.nav-item .ico{width:15px;text-align:center;font-size:.82rem;flex-shrink:0}
+.pill{margin-left:auto;font-size:.57rem;font-weight:700;padding:1px 6px;border-radius:20px}
+.pill-red{background:var(--danger);color:#fff}.pill-warn{background:var(--warn);color:#000}.pill-green{background:var(--green);color:#000}
+.sidebar-footer{margin-top:auto;padding:.7rem 1.15rem;border-top:1px solid var(--border);display:flex;align-items:center;gap:.6rem}
+.mini-ava{width:28px;height:28px;border-radius:6px;background:var(--accent-g);border:1px solid rgba(232,69,58,.3);display:flex;align-items:center;justify-content:center;font-size:.68rem;font-weight:700;color:var(--accent);flex-shrink:0}
+
+/* TOPBAR */
+.topbar{height:var(--topbar-h);background:rgba(7,9,15,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);position:fixed;top:0;left:var(--sidebar-w);right:0;z-index:200;display:flex;align-items:center;gap:.9rem;padding:0 1.5rem}
+.hamburger{display:none;background:none;border:none;cursor:pointer;color:var(--text);font-size:1.2rem;padding:.3rem}
+.topbar-title{font-family:var(--f-display);font-size:1.1rem;letter-spacing:2.5px}
+.sep{height:18px;width:1px;background:var(--border)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:.6rem}
+.topbar-search{background:var(--surf2);border:1px solid var(--border);border-radius:var(--rs);display:flex;align-items:center;gap:.4rem;padding:.33rem .7rem;transition:border-color .15s}
+.topbar-search:focus-within{border-color:var(--accent)}
+.topbar-search input{background:none;border:none;outline:none;color:var(--text);font-size:.79rem;width:155px}
+.topbar-search input::placeholder{color:var(--muted)}
+.topbar-btn{width:32px;height:32px;background:var(--surf2);border:1px solid var(--border);border-radius:var(--rs);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s;color:var(--muted);font-size:.84rem;position:relative}
+.topbar-btn:hover{border-color:var(--accent);color:var(--accent)}
+.ndot{position:absolute;top:5px;right:5px;width:6px;height:6px;border-radius:50%;background:var(--danger);border:1.5px solid var(--bg)}
+
+/* MAIN */
+.main{margin-left:var(--sidebar-w);padding-top:var(--topbar-h);min-height:100vh;flex:1}
+.page{display:none;padding:1.5rem 1.4rem;animation:fadeIn .2s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+
+/* LAYOUT */
+.page-header{margin-bottom:1.35rem;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:.75rem}
+.page-header h1{font-family:var(--f-display);font-size:1.6rem;letter-spacing:2px}
+.page-header p{color:var(--muted);font-size:.81rem;margin-top:.15rem}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem}
+
+/* CARD */
+.card{background:var(--surf);border:1px solid var(--border);border-radius:var(--r);padding:1.05rem}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem}
+.card-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)}
+.card-action{font-size:.71rem;color:var(--accent);cursor:pointer;font-weight:600}
+.card-action:hover{text-decoration:underline}
+.divider{height:1px;background:var(--border);margin:.85rem 0}
+
+/* STAT */
+.stat-card{background:var(--surf);border:1px solid var(--border);border-radius:var(--r);padding:.95rem 1.05rem;position:relative;overflow:hidden;transition:border-color .2s,transform .2s;cursor:default}
+.stat-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.stat-card::after{content:'';position:absolute;top:0;right:0;width:50px;height:50px;background:radial-gradient(circle at top right,var(--accent-g),transparent 70%);pointer-events:none}
+.stat-label{font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:.3rem}
+.stat-value{font-family:var(--f-display);font-size:1.85rem;letter-spacing:1px;line-height:1.1}
+.stat-sub{font-size:.68rem;color:var(--muted);margin-top:.18rem}
+.stat-sub .up{color:var(--green)}.stat-sub .down{color:var(--danger)}.stat-sub .warn{color:var(--warn)}
+.stat-ico{position:absolute;top:.85rem;right:.85rem;font-size:1.15rem;opacity:.2}
+
+/* PERSONA STAT */
+.persona-stat{border-radius:var(--r);padding:.95rem 1.05rem;position:relative;overflow:hidden;transition:transform .2s}
+.persona-stat:hover{transform:translateY(-2px)}
+.persona-stat.club{background:rgba(141,198,63,.07);border:1px solid rgba(141,198,63,.18)}
+.persona-stat.prof{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.18)}
+.persona-stat.athlete{background:rgba(6,182,212,.07);border:1px solid rgba(6,182,212,.18)}
+.ps-val{font-family:var(--f-display);font-size:2rem;line-height:1}
+.persona-stat.club .ps-val{color:var(--c-club)}.persona-stat.prof .ps-val{color:var(--c-prof)}.persona-stat.athlete .ps-val{color:var(--c-athlete)}
+.ps-lab{font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:.3rem}
+.ps-sub{font-size:.68rem;color:var(--muted);margin-top:.18rem}
+
+/* BTN */
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.48rem .95rem;border-radius:var(--rs);font-family:var(--f-body);font-size:.79rem;font-weight:600;cursor:pointer;transition:.15s;border:1px solid transparent;white-space:nowrap}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}.btn-primary:hover{background:var(--accent-d)}
+.btn-ghost{background:none;color:var(--muted);border-color:var(--border)}.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn-danger{background:rgba(255,71,87,.1);color:var(--danger);border-color:rgba(255,71,87,.3)}.btn-danger:hover{background:rgba(255,71,87,.18)}
+.btn-green{background:rgba(34,197,94,.1);color:var(--green);border-color:rgba(34,197,94,.3)}.btn-green:hover{background:rgba(34,197,94,.18)}
+.btn-sm{padding:.28rem .65rem;font-size:.72rem}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;gap:.3rem;padding:2px 8px;border-radius:20px;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.badge-red{background:rgba(255,71,87,.12);color:var(--danger);border:1px solid rgba(255,71,87,.25)}
+.badge-green{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.25)}
+.badge-yellow{background:rgba(255,184,0,.12);color:var(--warn);border:1px solid rgba(255,184,0,.25)}
+.badge-gray{background:var(--surf2);color:var(--muted);border:1px solid var(--border)}
+.badge-club{background:rgba(141,198,63,.12);color:var(--c-club);border:1px solid rgba(141,198,63,.25)}
+.badge-prof{background:rgba(245,158,11,.12);color:var(--c-prof);border:1px solid rgba(245,158,11,.25)}
+.badge-athlete{background:rgba(6,182,212,.12);color:var(--c-athlete);border:1px solid rgba(6,182,212,.25)}
+
+/* TABLE */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.78rem}
+thead th{text-align:left;padding:.6rem .8rem;font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);border-bottom:1px solid var(--border);white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--border);transition:background .12s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--surf2)}
+tbody td{padding:.56rem .8rem;color:var(--text);vertical-align:middle}
+
+/* AVATAR */
+.avatar-chip{display:flex;align-items:center;gap:.5rem}
+.avatar{width:28px;height:28px;border-radius:6px;background:var(--surf3);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:.64rem;font-weight:700;color:var(--accent);flex-shrink:0;text-transform:uppercase}
+
+/* PROGRESS */
+.progress{height:5px;background:var(--surf3);border-radius:20px;overflow:hidden;margin-top:.28rem}
+.progress-bar{height:100%;border-radius:20px;transition:width .6s ease}
+
+/* FEED */
+.feed-item{display:flex;gap:.65rem;padding:.62rem 0;border-bottom:1px solid var(--border)}
+.feed-item:last-child{border-bottom:none}
+.feed-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.feed-text{font-size:.78rem;line-height:1.4}
+.feed-time{font-size:.64rem;color:var(--dim);margin-top:.1rem}
+
+/* FORM */
+.form-group{margin-bottom:.82rem}
+.form-label{display:block;font-size:.7rem;font-weight:600;color:var(--muted);margin-bottom:.3rem;text-transform:uppercase;letter-spacing:.5px}
+.form-input{width:100%;background:var(--surf2);border:1px solid var(--border);border-radius:var(--rs);padding:.5rem .76rem;color:var(--text);font-family:var(--f-body);font-size:.81rem;transition:border-color .15s;outline:none}
+.form-input:focus{border-color:var(--accent)}
+.form-input::placeholder{color:var(--dim)}
+select.form-input{cursor:pointer}
+textarea.form-input{resize:vertical;min-height:72px;line-height:1.5}
+
+/* TOGGLE */
+.toggle-wrap{display:flex;background:var(--surf2);border:1px solid var(--border);border-radius:var(--rs);padding:3px;gap:2px}
+.toggle-btn{padding:.27rem .72rem;border-radius:4px;font-size:.72rem;font-weight:600;cursor:pointer;transition:.15s;border:none;background:none;color:var(--muted)}
+.toggle-btn.active{background:var(--accent);color:#fff}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;display:none;align-items:center;justify-content:center;padding:1rem}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surf);border:1px solid var(--border2);border-radius:var(--r);width:100%;max-width:500px;max-height:92vh;overflow-y:auto;animation:modalIn .18s ease}
+@keyframes modalIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+.modal-header{padding:1rem 1.25rem .7rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-family:var(--f-display);font-size:1.1rem;letter-spacing:1.5px}
+.modal-close{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.1rem;line-height:1}
+.modal-close:hover{color:var(--danger)}
+.modal-body{padding:1rem 1.25rem}
+.modal-footer{padding:.7rem 1.25rem 1rem;display:flex;gap:.6rem;justify-content:flex-end}
+
+/* MAP */
+.map-placeholder{background:var(--surf2);border:1px solid var(--border);border-radius:var(--rs);height:110px;display:flex;align-items:center;justify-content:center;font-size:.76rem;color:var(--dim);font-style:italic;position:relative;overflow:hidden}
+.map-placeholder::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(141,198,63,.055) 0%,transparent 60%),radial-gradient(ellipse at 70% 40%,rgba(6,182,212,.055) 0%,transparent 60%)}
+
+/* SIDEBAR OVERLAY */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:250}
+
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* RESPONSIVE */
+@media(max-width:1100px){.grid-4{grid-template-columns:1fr 1fr}}
+@media(max-width:900px){.grid-3{grid-template-columns:1fr 1fr}}
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}
+  .hamburger{display:flex;align-items:center}.topbar{left:0}.main{margin-left:0}
+  .grid-2{grid-template-columns:1fr}.grid-3{grid-template-columns:1fr}.grid-4{grid-template-columns:1fr 1fr}
+  .topbar-search{display:none}.page{padding:1.1rem .9rem}
+}
+@media(max-width:480px){.grid-4{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <span class="logotype">RANK<em>•</em>ETES</span>
+    <span class="master-badge">Master</span>
+  </div>
+  <div class="admin-card">
+    <div class="admin-ava">RA</div>
+    <div><div class="admin-name">Ranketes Admin</div><div class="admin-role">Super Admin</div></div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Visão Geral</div>
+    <div class="nav-item active" onclick="goTo('overview',this)"><span class="ico">◉</span> Overview</div>
+    <div class="nav-item" onclick="goTo('analytics',this)"><span class="ico">📈</span> Analytics</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Usuários</div>
+    <div class="nav-item" onclick="goTo('clubes',this)"><span class="ico" style="color:var(--c-club)">🏟️</span> Clubes & Arenas <span class="pill pill-warn">3</span></div>
+    <div class="nav-item" onclick="goTo('professores',this)"><span class="ico" style="color:var(--c-prof)">🎓</span> Professores</div>
+    <div class="nav-item" onclick="goTo('atletas',this)"><span class="ico" style="color:var(--c-athlete)">🎾</span> Atletas <span class="pill pill-red">5</span></div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Plataforma</div>
+    <div class="nav-item" onclick="goTo('financeiro',this)"><span class="ico">💰</span> Financeiro & MRR</div>
+    <div class="nav-item" onclick="goTo('planos',this)"><span class="ico">📦</span> Planos & Preços</div>
+    <div class="nav-item" onclick="goTo('suporte',this)"><span class="ico">🎧</span> Suporte <span class="pill pill-red">7</span></div>
+    <div class="nav-item" onclick="goTo('comunicados',this)"><span class="ico">📢</span> Comunicados</div>
+  </div>
+  <div class="nav-section">
+    <div class="nav-label">Sistema</div>
+    <div class="nav-item" onclick="goTo('configuracoes',this)"><span class="ico">⚙️</span> Configurações</div>
+    <div class="nav-item" onclick="goTo('logs',this)"><span class="ico">📋</span> Logs</div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="mini-ava">RA</div>
+    <div><div style="font-size:.74rem;font-weight:600">Ranketes Admin</div><div style="font-size:.61rem;color:var(--muted)">v2.1 · São Paulo</div></div>
+  </div>
+</aside>
+
+<div class="topbar">
+  <button class="hamburger" onclick="toggleSidebar()">☰</button>
+  <span class="topbar-title" id="topbarTitle">OVERVIEW</span>
+  <div class="sep"></div>
+  <span style="font-size:.7rem;color:var(--muted)">Plataforma · Brasil</span>
+  <div class="topbar-right">
+    <div class="topbar-search"><span style="font-size:.78rem">🔍</span><input type="text" placeholder="Clube, usuário, ticket..."/></div>
+    <div class="topbar-btn">🔔<span class="ndot"></span></div>
+    <div class="topbar-btn" title="Status">🟢</div>
+    <div class="topbar-btn">⚙️</div>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- ════ OVERVIEW ════ -->
+<div class="page active" id="page-overview">
+  <div class="page-header">
+    <div><h1>Overview da Plataforma</h1><p>Quinta-feira, 24 de abril de 2025 · Dados em tempo real</p></div>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+      <button class="btn btn-ghost btn-sm">📤 Exportar</button>
+      <button class="btn btn-primary btn-sm" onclick="openModal('modalComunicado')">📢 Comunicado Global</button>
+    </div>
+  </div>
+
+  <!-- Persona KPIs -->
+  <div class="grid-3" style="margin-bottom:1rem">
+    <div class="persona-stat club">
+      <div class="ps-lab">Clubes & Arenas</div>
+      <div class="ps-val">47</div>
+      <div class="ps-sub"><span style="color:var(--c-club)">↑3</span> este mês · 3 aguardando aprovação</div>
+      <div style="margin-top:.65rem;display:flex;gap:.65rem;flex-wrap:wrap;font-size:.72rem">
+        <span style="color:var(--muted)">Free: <strong style="color:var(--text)">12</strong></span>
+        <span style="color:var(--muted)">Arena: <strong style="color:var(--c-club)">28</strong></span>
+        <span style="color:var(--muted)">Pro: <strong style="color:var(--c-club)">7</strong></span>
+      </div>
+    </div>
+    <div class="persona-stat prof">
+      <div class="ps-lab">Professores</div>
+      <div class="ps-val">183</div>
+      <div class="ps-sub"><span style="color:var(--c-prof)">↑18</span> este mês · 156 no plano Pro</div>
+      <div style="margin-top:.65rem;display:flex;gap:.65rem;flex-wrap:wrap;font-size:.72rem">
+        <span style="color:var(--muted)">Free: <strong style="color:var(--text)">27</strong></span>
+        <span style="color:var(--muted)">Pro: <strong style="color:var(--c-prof)">156</strong></span>
+      </div>
+    </div>
+    <div class="persona-stat athlete">
+      <div class="ps-lab">Atletas</div>
+      <div class="ps-val">4.821</div>
+      <div class="ps-sub"><span style="color:var(--c-athlete)">↑312</span> este mês · 1.204 Premium</div>
+      <div style="margin-top:.65rem;display:flex;gap:.65rem;flex-wrap:wrap;font-size:.72rem">
+        <span style="color:var(--muted)">Free: <strong style="color:var(--text)">3.617</strong></span>
+        <span style="color:var(--muted)">Premium: <strong style="color:var(--c-athlete)">1.204</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MRR KPIs -->
+  <div class="grid-4" style="margin-bottom:1rem">
+    <div class="stat-card" style="border-color:var(--accent)"><div class="stat-ico">💰</div><div class="stat-label">MRR Total</div><div class="stat-value" style="color:var(--accent)">R$48.7K</div><div class="stat-sub"><span class="up">↑11%</span> vs. março</div></div>
+    <div class="stat-card"><div class="stat-ico">📈</div><div class="stat-label">ARR Projetado</div><div class="stat-value">R$584K</div><div class="stat-sub">baseado no MRR atual</div></div>
+    <div class="stat-card"><div class="stat-ico">🔄</div><div class="stat-label">Churn Rate</div><div class="stat-value" style="color:var(--warn)">2.4%</div><div class="stat-sub"><span class="down">↑0.3%</span> vs. março</div></div>
+    <div class="stat-card"><div class="stat-ico">🎯</div><div class="stat-label">NPS Score</div><div class="stat-value" style="color:var(--green)">72</div><div class="stat-sub"><span class="up">↑4 pts</span> vs. março</div></div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:1rem">
+    <!-- MRR por segmento -->
+    <div class="card">
+      <div class="card-header"><span class="card-title">MRR por Segmento</span><span style="font-family:var(--f-mono);font-size:.76rem;color:var(--accent)">R$48.732</span></div>
+      <div style="display:flex;flex-direction:column;gap:.72rem">
+        <div><div style="display:flex;justify-content:space-between;font-size:.77rem;margin-bottom:.25rem"><span style="display:flex;align-items:center;gap:.4rem"><span style="width:8px;height:8px;border-radius:50%;background:var(--c-athlete);display:inline-block"></span>Atletas Premium</span><span style="font-family:var(--f-mono);color:var(--c-athlete)">R$22.876</span></div><div class="progress"><div class="progress-bar" style="width:47%;background:var(--c-athlete)"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;font-size:.77rem;margin-bottom:.25rem"><span style="display:flex;align-items:center;gap:.4rem"><span style="width:8px;height:8px;border-radius:50%;background:var(--c-club);display:inline-block"></span>Clubes & Arenas</span><span style="font-family:var(--f-mono);color:var(--c-club)">R$17.430</span></div><div class="progress"><div class="progress-bar" style="width:36%;background:var(--c-club)"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;font-size:.77rem;margin-bottom:.25rem"><span style="display:flex;align-items:center;gap:.4rem"><span style="width:8px;height:8px;border-radius:50%;background:var(--c-prof);display:inline-block"></span>Professores</span><span style="font-family:var(--f-mono);color:var(--c-prof)">R$7.644</span></div><div class="progress"><div class="progress-bar" style="width:16%;background:var(--c-prof)"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;font-size:.77rem;margin-bottom:.25rem"><span style="display:flex;align-items:center;gap:.4rem"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block"></span>Add-ons & Taxas</span><span style="font-family:var(--f-mono);color:var(--accent)">R$782</span></div><div class="progress"><div class="progress-bar" style="width:2%;background:var(--accent)"></div></div></div>
+      </div>
+      <div class="divider"></div>
+      <div style="display:flex;gap:1.2rem;flex-wrap:wrap">
+        <div><div style="font-size:.64rem;color:var(--muted)">Ticket médio</div><div style="font-family:var(--f-display);font-size:1.15rem">R$94</div></div>
+        <div><div style="font-size:.64rem;color:var(--muted)">LTV médio</div><div style="font-family:var(--f-display);font-size:1.15rem">R$1.128</div></div>
+        <div><div style="font-size:.64rem;color:var(--muted)">CAC</div><div style="font-family:var(--f-display);font-size:1.15rem">R$38</div></div>
+        <div><div style="font-size:.64rem;color:var(--muted)">LTV/CAC</div><div style="font-family:var(--f-display);font-size:1.15rem;color:var(--green)">29×</div></div>
+      </div>
+    </div>
+
+    <!-- Atividade ao vivo -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Atividade Global — Agora</span>
+        <span style="display:flex;align-items:center;gap:.3rem;font-size:.7rem;color:var(--green)"><span style="width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite"></span>Ao vivo</span>
+      </div>
+      <div class="feed-item"><div class="feed-dot" style="background:var(--c-club)"></div><div><div class="feed-text"><strong style="color:var(--c-club)">Arena Morumbi</strong> se cadastrou — plano Arena Pro</div><div class="feed-time">há 3 min · São Paulo, SP</div></div></div>
+      <div class="feed-item"><div class="feed-dot" style="background:var(--c-athlete)"></div><div><div class="feed-text"><strong style="color:var(--c-athlete)">312 novos atletas</strong> cadastrados hoje</div><div class="feed-time">há 18 min · múltiplas cidades</div></div></div>
+      <div class="feed-item"><div class="feed-dot" style="background:var(--c-prof)"></div><div><div class="feed-text"><strong style="color:var(--c-prof)">Roberto Gomes</strong> ativou plano Professor Pro</div><div class="feed-time">há 34 min · Campinas, SP</div></div></div>
+      <div class="feed-item"><div class="feed-dot" style="background:var(--danger)"></div><div><div class="feed-text"><strong>Arena Centro RJ</strong> abriu ticket urgente — problema pagamento</div><div class="feed-time">há 47 min · Rio de Janeiro</div></div></div>
+      <div class="feed-item"><div class="feed-dot" style="background:var(--accent)"></div><div><div class="feed-text"><strong>1.847 partidas</strong> registradas hoje na plataforma</div><div class="feed-time">há 1h · toda a plataforma</div></div></div>
+    </div>
+  </div>
+
+  <!-- Geo + crescimento -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><span class="card-title">Distribuição Geográfica</span></div>
+      <div class="map-placeholder" style="margin-bottom:.85rem"><span>Mapa de calor · Brasil</span><div style="position:absolute;bottom:.55rem;left:.75rem;display:flex;gap:.4rem;flex-wrap:wrap"><span class="badge badge-club">SP 62%</span><span class="badge badge-athlete">RJ 18%</span><span class="badge badge-prof">MG 8%</span></div></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Estado</th><th>Clubes</th><th>Professores</th><th>Atletas</th><th>MRR</th></tr></thead>
+          <tbody>
+            <tr><td>São Paulo</td><td style="color:var(--c-club)">29</td><td style="color:var(--c-prof)">112</td><td style="color:var(--c-athlete)">2.991</td><td style="font-family:var(--f-mono);font-size:.74rem;color:var(--accent)">R$30.2K</td></tr>
+            <tr><td>Rio de Janeiro</td><td style="color:var(--c-club)">9</td><td style="color:var(--c-prof)">38</td><td style="color:var(--c-athlete)">869</td><td style="font-family:var(--f-mono);font-size:.74rem;color:var(--accent)">R$8.7K</td></tr>
+            <tr><td>Minas Gerais</td><td style="color:var(--c-club)">5</td><td style="color:var(--c-prof)">19</td><td style="color:var(--c-athlete)">386</td><td style="font-family:var(--f-mono);font-size:.74rem;color:var(--accent)">R$3.9K</td></tr>
+            <tr><td>Outros</td><td style="color:var(--c-club)">4</td><td style="color:var(--c-prof)">14</td><td style="color:var(--c-athlete)">575</td><td style="font-family:var(--f-mono);font-size:.74rem;color:var(--accent)">R$5.9K</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><span class="card-title">Crescimento MRR — 2025</span></div>
+      <div style="display:flex;align-items:flex-end;gap:6px;height:95px;margin-bottom:.45rem">
+        <div style="flex:1;background:rgba(141,198,63,.18);border-radius:3px 3px 0 0;height:55%"></div>
+        <div style="flex:1;background:rgba(141,198,63,.32);border-radius:3px 3px 0 0;height:68%"></div>
+        <div style="flex:1;background:rgba(232,69,58,.45);border-radius:3px 3px 0 0;height:90%"></div>
+        <div style="flex:1;background:var(--accent);border-radius:3px 3px 0 0;height:100%"></div>
+      </div>
+      <div style="display:flex;justify-content:space-around;margin-bottom:.7rem">
+        <div style="text-align:center"><div style="font-size:.63rem;color:var(--dim)">Jan</div><div style="font-family:var(--f-mono);font-size:.66rem;color:var(--muted)">R$26.8K</div></div>
+        <div style="text-align:center"><div style="font-size:.63rem;color:var(--dim)">Fev</div><div style="font-family:var(--f-mono);font-size:.66rem;color:var(--muted)">R$33.4K</div></div>
+        <div style="text-align:center"><div style="font-size:.63rem;color:var(--dim)">Mar</div><div style="font-family:var(--f-mono);font-size:.66rem;color:var(--muted)">R$43.9K</div></div>
+        <div style="text-align:center"><div style="font-size:.63rem;color:var(--accent)">Abr</div><div style="font-family:var(--f-mono);font-size:.66rem;color:var(--accent)">R$48.7K</div></div>
+      </div>
+      <div class="divider"></div>
+      <div class="grid-4" style="gap:.6rem">
+        <div><div style="font-size:.62rem;color:var(--muted)">DAU</div><div style="font-family:var(--f-display);font-size:1.1rem">1.847</div></div>
+        <div><div style="font-size:.62rem;color:var(--muted)">MAU</div><div style="font-family:var(--f-display);font-size:1.1rem">4.214</div></div>
+        <div><div style="font-size:.62rem;color:var(--muted)">D30 Ret.</div><div style="font-family:var(--f-display);font-size:1.1rem;color:var(--green)">68%</div></div>
+        <div><div style="font-size:.62rem;color:var(--muted)">Churn</div><div style="font-family:var(--f-display);font-size:1.1rem;color:var(--warn)">2.4%</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ ANALYTICS ════ -->
+<div class="page" id="page-analytics">
+  <div class="page-header"><div><h1>Analytics</h1><p>Engajamento, funil e comportamento</p></div><div class="toggle-wrap"><button class="toggle-btn active">7d</button><button class="toggle-btn">30d</button><button class="toggle-btn">90d</button></div></div>
+  <div class="grid-4" style="margin-bottom:1rem">
+    <div class="stat-card"><div class="stat-ico">👤</div><div class="stat-label">DAU</div><div class="stat-value">1.847</div><div class="stat-sub"><span class="up">↑8%</span> vs. semana passada</div></div>
+    <div class="stat-card"><div class="stat-ico">📅</div><div class="stat-label">MAU</div><div class="stat-value">4.214</div><div class="stat-sub"><span class="up">↑14%</span> vs. mês passado</div></div>
+    <div class="stat-card"><div class="stat-ico">⏱️</div><div class="stat-label">Sessão Média</div><div class="stat-value">8m42s</div><div class="stat-sub"><span class="up">↑1m</span> vs. mês passado</div></div>
+    <div class="stat-card"><div class="stat-ico">🔄</div><div class="stat-label">Retenção D30</div><div class="stat-value" style="color:var(--green)">68%</div><div class="stat-sub">benchmark SaaS: 40%</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><span class="card-title">Ações mais realizadas</span></div>
+      <div style="display:flex;flex-direction:column;gap:.65rem">
+        <div><div style="display:flex;justify-content:space-between;font-size:.77rem;margin-bottom:.22rem"><span>Registrar partida</span><span style="font-family:var(--f-mono);color:var(--c-athlete)">12.483/dia</span></div><div class="progress"><div class="progress-bar" style="width:100%;background:var(--c-athlete)"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;font-size:.77rem;margin-bottom:.22rem"><span>Ver ranking</span><span style="font-family:var(--f-mono);color:var(--c-club)">8.921/dia</span></div><div class="progress"><div class="progress-bar" style="width:71%;background:var(--c-club)"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;font-size:.77rem;margin-bottom:.22rem"><span>Agendar aula</span><span style="font-family:var(--f-mono);color:var(--c-prof)">3.247/dia</span></div><div class="progress"><div class="progress-bar" style="width:26%;background:var(--c-prof)"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;font-size:.77rem;margin-bottom:.22rem"><span>Compartilhar Card</span><span style="font-family:var(--f-mono);color:var(--accent)">1.892/dia</span></div><div class="progress"><div class="progress-bar" style="width:15%;background:var(--accent)"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;font-size:.77rem;margin-bottom:.22rem"><span>Inscrever em torneio</span><span style="font-family:var(--f-mono);color:var(--purple)">847/dia</span></div><div class="progress"><div class="progress-bar" style="width:7%;background:var(--purple)"></div></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Funil de Conversão</span></div>
+      <div style="display:flex;flex-direction:column;gap:.5rem">
+        <div style="background:var(--surf2);border-radius:var(--rs);padding:.6rem .75rem;display:flex;justify-content:space-between;align-items:center"><span style="font-size:.79rem">Visitante único</span><span style="font-family:var(--f-mono);font-size:.79rem">12.400</span></div>
+        <div style="background:var(--surf2);border-radius:var(--rs);padding:.6rem .75rem;display:flex;justify-content:space-between;align-items:center;margin-left:.75rem"><span style="font-size:.79rem">Cadastro (Free)</span><span style="font-family:var(--f-mono);font-size:.79rem">4.821 <span style="font-size:.66rem;color:var(--muted)">(39%)</span></span></div>
+        <div style="background:var(--surf2);border-radius:var(--rs);padding:.6rem .75rem;display:flex;justify-content:space-between;align-items:center;margin-left:1.5rem"><span style="font-size:.79rem">Atleta ativo</span><span style="font-family:var(--f-mono);font-size:.79rem">3.108 <span style="font-size:.66rem;color:var(--muted)">(64%)</span></span></div>
+        <div style="background:var(--surf2);border-radius:var(--rs);padding:.6rem .75rem;display:flex;justify-content:space-between;align-items:center;margin-left:2.25rem;border:1px solid rgba(6,182,212,.2)"><span style="font-size:.79rem;color:var(--c-athlete)">Upgrade Premium</span><span style="font-family:var(--f-mono);font-size:.79rem;color:var(--c-athlete)">1.204 <span style="font-size:.66rem;color:var(--muted)">(39%)</span></span></div>
+        <div style="background:var(--surf2);border-radius:var(--rs);padding:.6rem .75rem;display:flex;justify-content:space-between;align-items:center;margin-left:3rem;border:1px solid rgba(245,158,11,.18)"><span style="font-size:.79rem;color:var(--c-prof)">Contrata professor</span><span style="font-family:var(--f-mono);font-size:.79rem;color:var(--c-prof)">389 <span style="font-size:.66rem;color:var(--muted)">(32%)</span></span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ CLUBES ════ -->
+<div class="page" id="page-clubes">
+  <div class="page-header"><div><h1>Clubes & Arenas</h1><p>47 ativos · 3 aguardando aprovação</p></div><div style="display:flex;gap:.5rem"><button class="btn btn-ghost btn-sm">📤 Exportar</button><button class="btn btn-primary btn-sm" onclick="openModal('modalNovoClube')">+ Novo Clube</button></div></div>
+  <div class="card" style="border-color:var(--warn);margin-bottom:1rem">
+    <div class="card-header"><span class="card-title" style="color:var(--warn)">⚠️ Aprovações Pendentes (3)</span></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Arena</th><th>Responsável</th><th>Cidade</th><th>Plano</th><th>Cadastro</th><th></th></tr></thead>
+        <tbody>
+          <tr><td><div class="avatar-chip"><div class="avatar" style="color:var(--c-club)">AM</div><div><div style="font-size:.79rem;font-weight:600">Arena Morumbi</div></div></div></td><td style="font-size:.76rem">João Costa</td><td style="font-size:.75rem;color:var(--muted)">São Paulo, SP</td><td><span class="badge badge-club">Arena Pro</span></td><td style="font-size:.73rem;color:var(--muted)">Hoje 14:22</td><td style="display:flex;gap:.3rem"><button class="btn btn-green btn-sm">✓</button><button class="btn btn-ghost btn-sm">Ver</button><button class="btn btn-danger btn-sm">✕</button></td></tr>
+          <tr><td><div class="avatar-chip"><div class="avatar" style="color:var(--c-club)">CB</div><div><div style="font-size:.79rem;font-weight:600">Club Barra Tennis</div></div></div></td><td style="font-size:.76rem">Marina Lima</td><td style="font-size:.75rem;color:var(--muted)">Rio de Janeiro, RJ</td><td><span class="badge badge-club">Arena</span></td><td style="font-size:.73rem;color:var(--muted)">Ontem</td><td style="display:flex;gap:.3rem"><button class="btn btn-green btn-sm">✓</button><button class="btn btn-ghost btn-sm">Ver</button><button class="btn btn-danger btn-sm">✕</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">Todos os Clubes</span><div style="display:flex;gap:.4rem"><select class="form-input" style="width:auto;padding:.26rem .55rem;font-size:.72rem"><option>Todos os planos</option><option>Free</option><option>Arena</option><option>Arena Pro</option></select></div></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Arena</th><th>Cidade</th><th>Plano</th><th>Atletas</th><th>Profs.</th><th>MRR</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          <tr><td><div class="avatar-chip"><div class="avatar" style="color:var(--c-club)">AR</div><div><div style="font-size:.79rem;font-weight:600">Arena Ranketes SP</div></div></div></td><td style="font-size:.74rem;color:var(--muted)">São Paulo</td><td><span class="badge badge-club">Arena Pro</span></td><td style="font-family:var(--f-mono);font-size:.74rem;color:var(--c-athlete)">148</td><td style="font-family:var(--f-mono);font-size:.74rem;color:var(--c-prof)">4</td><td style="font-family:var(--f-mono);font-size:.74rem;color:var(--accent)">R$197</td><td><span class="badge badge-green">Ativo</span></td><td><button class="btn btn-ghost btn-sm" onclick="openModal('modalDetalheClube')">Ver</button></td></tr>
+          <tr><td><div class="avatar-chip"><div class="avatar" style="color:var(--c-club)">TS</div><div><div style="font-size:.79rem;font-weight:600">Tennis Santana</div></div></div></td><td style="font-size:.74rem;color:var(--muted)">São Paulo</td><td><span class="badge badge-club">Arena Pro</span></td><td style="font-family:var(--f-mono);font-size:.74rem;color:var(--c-athlete)">201</td><td style="font-family:var(--f-mono);font-size:.74rem;color:var(--c-prof)">6</td><td style="font-family:var(--f-mono);font-size:.74rem;color:var(--accent)">R$197</td><td><span class="badge badge-green">Ativo</span></td><td><button class="btn btn-ghost btn-sm" onclick="openModal('modalDetalheClube')">Ver</button></td></tr>
+          <tr><td><div class="avatar-chip"><div class="avatar" style="color:var(--c-club)">CP</div><div><div style="font-size:.79rem;font-weight:600">Club Paulista</div></div></div></td><td style="font-size:.74rem;color:var(--muted)">São Paulo</td><td><span class="badge badge-club">Arena</span></td><td style="font-family:var(--f-mono);font-size:.74rem;color:var(--c-athlete)">89</td><td style="font-family:var(--f-mono);font-size:.74rem;color:var(--c-prof)">2</td><td style="font-family:var(--f-mono);font-size:.74rem;color:var(--accent)">R$89</td><td><span class="badge badge-green">Ativo</span></td><td><button class="btn btn-ghost btn-sm" onclick="openModal('modalDetalheClube')">Ver</button></td></tr>
+          <tr><td><div class="avatar-chip"><div class="avatar" style="color:var(--muted)">PQ</div><div><div style="font-size:.79rem;font-weight:600">Arena Ibirapuera</div></div></div></td><td style="font-size:.74rem;color:var(--muted)">São Paulo</td><td><span class="badge badge-gray">Free</span></td><td style="font-family:var(--f-mono);font-size:.74rem;color:var(--muted)">11</td><td style="font-family:var(--f-mono);font-size:.74rem;color:var(--muted)">0</td><td style="font-family:var(--f-mono);font-size:.74rem;color:var(--muted)">—</td><td><span class="badge badge-yellow">Trial 12d</span></td><td><button class="btn btn-ghost btn-sm" onclick="openModal('modalDetalheClube')">Ver</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ════ PROFESSORES ════ -->
+<div class="page" id="page-professores">
+  <div class="page-header"><div><h1>Professores</h1><p>183 cadastrados · 156 no plano Pro</p></div><button class="btn btn-ghost btn-sm">📤 Exportar</button></div>
+  <div class="grid-3" style="margin-bottom:1rem">
+    <div class="persona-stat prof"><div class="ps-lab">Total</div><div class="ps-val">183</div><div class="ps-sub"><span style="color:var(--c-prof)">↑18</span> este mês</div></div>
+    <div class="persona-stat prof"><div class="ps-lab">Plano Pro</div><div class="ps-val">156</div><div class="ps-sub">R$7.644 MRR</div></div>
+    <div class="persona-stat prof"><div class="ps-lab">Aulas/mês</div><div class="ps-val">8.420</div><div class="ps-sub">média 46/professor</div></div>
+  </div>
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Professor</th><th>Cidade</th><th>Modalidade</th><th>Alunos</th><th>Aulas/mês</th><th>Avaliação</th><th>Plano</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          <tr><td><div class="avatar-chip"><div class="avatar" style="color:var(--c-prof)">MP</div><div><div style="font-size:.79rem;font-weight:600">Marcos Pereira</div><div style="font-size:.66rem;color:var(--muted)">Arena Ranketes SP</div></div></div></td><td style="font-size:.74rem;color:var(--muted)">São Paulo</td><td style="font-size:.74rem">Tênis, BT</td><td style="font-family:var(--f-mono);font-size:.74rem;color:var(--c-athlete)">12</td><td style="font-family:var(--f-mono);font-size:.74rem;color:var(--muted)">48</td><td style="color:var(--warn);font-size:.76rem">★ 4.9</td><td><span class="badge badge-prof">Pro</span></td><td><span class="badge badge-green">Ativo</span></td><td><button class="btn btn-ghost btn-sm" onclick="openModal('modalDetalheProf')">Ver</button></td></tr>
+          <tr><td><div class="avatar-chip"><div class="avatar" style="color:var(--c-prof)">CL</div><div><div style="font-size:.79rem;font-weight:600">Camila Lima</div><div style="font-size:.66rem;color:var(--muted)">Arena Ranketes SP</div></div></div></td><td style="font-size:.74rem;color:var(--muted)">São Paulo</td><td style="font-size:.74rem">Beach Tennis</td><td style="font-family:var(--f-mono);font-size:.74rem;color:var(--c-athlete)">8</td><td style="font-family:var(--f-mono);font-size:.74rem;color:var(--muted)">32</td><td style="color:var(--warn);font-size:.76rem">★ 4.7</td><td><span class="badge badge-prof">Pro</span></td><td><span class="badge badge-green">Ativo</span></td><td><button class="btn btn-ghost btn-sm" onclick="openModal('modalDetalheProf')">Ver</button></td></tr>
+          <tr><td><div class="avatar-chip"><div class="avatar" style="color:var(--muted)">RF</div><div><div style="font-size:.79rem;font-weight:600">Ricardo Faria</div><div style="font-size:.66rem;color:var(--muted)">Autônomo · Campinas</div></div></div></td><td style="font-size:.74rem;color:var(--muted)">Campinas</td><td style="font-size:.74rem">Tênis</td><td style="font-family:var(--f-mono);font-size:.74rem;color:var(--muted)">3</td><td style="font-family:var(--f-mono);font-size:.74rem;color:var(--muted)">12</td><td style="color:var(--warn);font-size:.76rem">★ 4.5</td><td><span class="badge badge-gray">Free</span></td><td><span class="badge badge-yellow">Trial 5d</span></td><td><button class="btn btn-ghost btn-sm" onclick="openModal('modalDetalheProf')">Ver</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ════ ATLETAS ════ -->
+<div class="page" id="page-atletas">
+  <div class="page-header"><div><h1>Atletas</h1><p>4.821 cadastrados · 5 contas com alerta</p></div><button class="btn btn-ghost btn-sm">📤 Exportar</button></div>
+  <div class="grid-4" style="margin-bottom:1rem">
+    <div class="persona-stat athlete"><div class="ps-lab">Total</div><div class="ps-val">4.821</div><div class="ps-sub"><span style="color:var(--c-athlete)">↑312</span> este mês</div></div>
+    <div class="persona-stat athlete"><div class="ps-lab">Premium</div><div class="ps-val">1.204</div><div class="ps-sub">25% do total · R$22.8K</div></div>
+    <div class="persona-stat athlete"><div class="ps-lab">Ativos 30d</div><div class="ps-val">3.108</div><div class="ps-sub">64% engajados</div></div>
+    <div class="persona-stat athlete"><div class="ps-lab">Partidas/dia</div><div class="ps-val">1.847</div><div class="ps-sub">média plataforma</div></div>
+  </div>
+  <div class="card" style="border-color:var(--danger);margin-bottom:1rem">
+    <div class="card-header"><span class="card-title" style="color:var(--danger)">🚨 Contas com Alerta (5)</span></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Atleta</th><th>Motivo</th><th>Reports</th><th>Data</th><th></th></tr></thead>
+        <tbody>
+          <tr><td><div class="avatar-chip"><div class="avatar">XX</div><div style="font-size:.78rem">Usuário #4481</div></div></td><td style="font-size:.75rem;color:var(--danger)">Placar manipulado</td><td style="font-family:var(--f-mono);font-size:.75rem;color:var(--danger)">5</td><td style="font-size:.72rem;color:var(--muted)">22/04</td><td style="display:flex;gap:.3rem"><button class="btn btn-ghost btn-sm">Investigar</button><button class="btn btn-danger btn-sm">Suspender</button></td></tr>
+          <tr><td><div class="avatar-chip"><div class="avatar">YY</div><div style="font-size:.78rem">Usuário #3892</div></div></td><td style="font-size:.75rem;color:var(--warn)">Linguagem inapropriada</td><td style="font-family:var(--f-mono);font-size:.75rem;color:var(--warn)">2</td><td style="font-size:.72rem;color:var(--muted)">23/04</td><td style="display:flex;gap:.3rem"><button class="btn btn-ghost btn-sm">Investigar</button><button class="btn btn-danger btn-sm">Suspender</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">Top Atletas da Plataforma</span></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Atleta</th><th>Clube</th><th>Pontos</th><th>Partidas</th><th>Plano</th><th></th></tr></thead>
+        <tbody>
+          <tr><td style="font-family:var(--f-display);color:var(--warn)">1</td><td><div class="avatar-chip"><div class="avatar" style="color:var(--c-athlete)">CT</div><div><div style="font-size:.79rem;font-weight:600">Carlos Torres</div></div></div></td><td style="font-size:.74rem;color:var(--muted)">Tennis Santana</td><td style="font-family:var(--f-mono);color:var(--c-athlete)">2104</td><td style="font-size:.74rem;color:var(--muted)">55</td><td><span class="badge badge-athlete">Premium</span></td><td><button class="btn btn-ghost btn-sm">Ver</button></td></tr>
+          <tr><td style="font-family:var(--f-display);color:#AAB4C4">2</td><td><div class="avatar-chip"><div class="avatar" style="color:var(--c-athlete)">FM</div><div><div style="font-size:.79rem;font-weight:600">Felipe Moura</div></div></div></td><td style="font-size:.74rem;color:var(--muted)">Club Paulista</td><td style="font-family:var(--f-mono);color:var(--c-athlete)">1980</td><td style="font-size:.74rem;color:var(--muted)">48</td><td><span class="badge badge-athlete">Premium</span></td><td><button class="btn btn-ghost btn-sm">Ver</button></td></tr>
+          <tr><td style="font-family:var(--f-display);color:#CD7F32">3</td><td><div class="avatar-chip"><div class="avatar" style="color:var(--c-athlete)">LM</div><div><div style="font-size:.79rem;font-weight:600">Lucas Martins</div></div></div></td><td style="font-size:.74rem;color:var(--muted)">Arena Ranketes SP</td><td style="font-family:var(--f-mono);color:var(--c-athlete)">1840</td><td style="font-size:.74rem;color:var(--muted)">40</td><td><span class="badge badge-athlete">Premium</span></td><td><button class="btn btn-ghost btn-sm">Ver</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ════ FINANCEIRO ════ -->
+<div class="page" id="page-financeiro">
+  <div class="page-header"><div><h1>Financeiro & MRR</h1><p>Receita recorrente e inadimplência</p></div><button class="btn btn-ghost btn-sm">📤 Relatório</button></div>
+  <div class="grid-4" style="margin-bottom:1rem">
+    <div class="stat-card" style="border-color:var(--accent)"><div class="stat-ico">💰</div><div class="stat-label">MRR</div><div class="stat-value" style="color:var(--accent)">R$48.7K</div><div class="stat-sub"><span class="up">↑11%</span> vs. março</div></div>
+    <div class="stat-card"><div class="stat-ico">⏳</div><div class="stat-label">Inadimplente</div><div class="stat-value" style="color:var(--danger)">R$2.1K</div><div class="stat-sub">23 contas em atraso</div></div>
+    <div class="stat-card"><div class="stat-ico">📅</div><div class="stat-label">Renovações 7d</div><div class="stat-value">184</div><div class="stat-sub">nos próximos 7 dias</div></div>
+    <div class="stat-card"><div class="stat-ico">📊</div><div class="stat-label">Projeção Maio</div><div class="stat-value">R$54.2K</div><div class="stat-sub"><span class="up">↑11%</span> estimado</div></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><span class="card-title">MRR por Plano</span></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Plano</th><th>Usuários</th><th>Preço</th><th>MRR</th><th>%</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge badge-athlete">Atleta Premium</span></td><td style="font-family:var(--f-mono)">1.204</td><td style="font-family:var(--f-mono);font-size:.73rem">R$19</td><td style="font-family:var(--f-mono);color:var(--c-athlete)">R$22.876</td><td><div style="width:70px"><div class="progress"><div class="progress-bar" style="width:47%;background:var(--c-athlete)"></div></div><div style="font-size:.63rem;color:var(--muted);margin-top:2px">47%</div></div></td></tr>
+            <tr><td><span class="badge badge-club">Arena</span></td><td style="font-family:var(--f-mono)">28</td><td style="font-family:var(--f-mono);font-size:.73rem">R$89</td><td style="font-family:var(--f-mono);color:var(--c-club)">R$2.492</td><td><div style="width:70px"><div class="progress"><div class="progress-bar" style="width:5%;background:var(--c-club)"></div></div><div style="font-size:.63rem;color:var(--muted);margin-top:2px">5%</div></div></td></tr>
+            <tr><td><span class="badge badge-club">Arena Pro</span></td><td style="font-family:var(--f-mono)">7</td><td style="font-family:var(--f-mono);font-size:.73rem">R$197</td><td style="font-family:var(--f-mono);color:var(--c-club)">R$1.379</td><td><div style="width:70px"><div class="progress"><div class="progress-bar" style="width:3%;background:var(--c-club)"></div></div><div style="font-size:.63rem;color:var(--muted);margin-top:2px">3%</div></div></td></tr>
+            <tr><td><span class="badge badge-prof">Professor Pro</span></td><td style="font-family:var(--f-mono)">156</td><td style="font-family:var(--f-mono);font-size:.73rem">R$49</td><td style="font-family:var(--f-mono);color:var(--c-prof)">R$7.644</td><td><div style="width:70px"><div class="progress"><div class="progress-bar" style="width:16%;background:var(--c-prof)"></div></div><div style="font-size:.63rem;color:var(--muted);margin-top:2px">16%</div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title" style="color:var(--danger)">⚠️ Inadimplências</span><button class="btn btn-ghost btn-sm" onclick="openModal('modalEmailBlast')">📧 Cobrança em massa</button></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Conta</th><th>Plano</th><th>Valor</th><th>Atraso</th><th></th></tr></thead>
+          <tbody>
+            <tr><td style="font-size:.78rem">Arena Centro RJ</td><td><span class="badge badge-club">Arena Pro</span></td><td style="font-family:var(--f-mono);color:var(--danger)">R$197</td><td><span class="badge badge-red">45d</span></td><td><button class="btn btn-danger btn-sm">Suspender</button></td></tr>
+            <tr><td style="font-size:.78rem">Tennis Leblon</td><td><span class="badge badge-club">Arena</span></td><td style="font-family:var(--f-mono);color:var(--danger)">R$89</td><td><span class="badge badge-red">30d</span></td><td><button class="btn btn-danger btn-sm">Suspender</button></td></tr>
+            <tr><td style="font-size:.78rem">41 atletas Premium</td><td><span class="badge badge-athlete">Premium</span></td><td style="font-family:var(--f-mono);color:var(--danger)">R$779</td><td><span class="badge badge-yellow">7–14d</span></td><td><button class="btn btn-ghost btn-sm">Auto lembrete</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ PLANOS ════ -->
+<div class="page" id="page-planos">
+  <div class="page-header"><div><h1>Planos & Preços</h1><p>Gerencie os planos da plataforma</p></div><button class="btn btn-primary btn-sm" onclick="openModal('modalEditarPlano')">✏️ Editar Planos</button></div>
+  <div class="grid-3" style="margin-bottom:1rem">
+    <div style="background:rgba(6,182,212,.07);border:1px solid rgba(6,182,212,.18);border-radius:var(--r);padding:1rem">
+      <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.55rem"><span style="font-size:1rem">🎾</span><div style="font-family:var(--f-display);font-size:.95rem;color:var(--c-athlete)">Atleta Premium</div></div>
+      <div style="font-family:var(--f-mono);font-size:.82rem;color:var(--c-athlete);margin-bottom:.35rem">R$19/mês</div>
+      <div style="font-family:var(--f-display);font-size:1.9rem;color:var(--c-athlete);line-height:1">1.204</div>
+      <div style="font-size:.66rem;color:var(--muted);margin-bottom:.65rem">usuários ativos</div>
+      <div style="font-size:.72rem;color:var(--muted);line-height:1.6">Card completo · Histórico full · Notificações</div>
+    </div>
+    <div style="background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.18);border-radius:var(--r);padding:1rem">
+      <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.55rem"><span style="font-size:1rem">🎓</span><div style="font-family:var(--f-display);font-size:.95rem;color:var(--c-prof)">Professor Pro</div></div>
+      <div style="font-family:var(--f-mono);font-size:.82rem;color:var(--c-prof);margin-bottom:.35rem">R$49/mês</div>
+      <div style="font-family:var(--f-display);font-size:1.9rem;color:var(--c-prof);line-height:1">156</div>
+      <div style="font-size:.66rem;color:var(--muted);margin-bottom:.65rem">professores ativos</div>
+      <div style="font-size:.72rem;color:var(--muted);line-height:1.6">Agenda ilimitada · Pagamentos · Reposições</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:.65rem">
+      <div style="background:rgba(141,198,63,.07);border:1px solid rgba(141,198,63,.18);border-radius:var(--rs);padding:.8rem">
+        <div style="display:flex;align-items:center;gap:.4rem;margin-bottom:.35rem"><span style="font-size:.85rem">🏟️</span><div style="font-family:var(--f-display);font-size:.85rem;color:var(--c-club)">Arena — R$89/mês</div></div>
+        <div style="font-family:var(--f-display);font-size:1.4rem;color:var(--c-club)">28 <span style="font-size:.75rem;color:var(--muted);font-family:var(--f-body)">ativos</span></div>
+      </div>
+      <div style="background:rgba(141,198,63,.1);border:1px solid rgba(141,198,63,.28);border-radius:var(--rs);padding:.8rem">
+        <div style="display:flex;align-items:center;gap:.4rem;margin-bottom:.35rem"><span style="font-size:.85rem">🏆</span><div style="font-family:var(--f-display);font-size:.85rem;color:var(--c-club)">Arena Pro — R$197/mês</div></div>
+        <div style="font-family:var(--f-display);font-size:1.4rem;color:var(--c-club)">7 <span style="font-size:.75rem;color:var(--muted);font-family:var(--f-body)">ativos</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">Conversões esta semana</span></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Usuário</th><th>De</th><th>Para</th><th>Data</th><th>Valor</th></tr></thead>
+        <tbody>
+          <tr><td style="font-size:.78rem">Roberto Gomes</td><td><span class="badge badge-gray">Free</span></td><td><span class="badge badge-prof">Professor Pro</span></td><td style="font-size:.72rem;color:var(--muted)">Hoje</td><td style="font-family:var(--f-mono);color:var(--c-prof)">R$49</td></tr>
+          <tr><td style="font-size:.78rem">Arena Morumbi</td><td><span class="badge badge-gray">Free</span></td><td><span class="badge badge-club">Arena Pro</span></td><td style="font-size:.72rem;color:var(--muted)">Hoje</td><td style="font-family:var(--f-mono);color:var(--c-club)">R$197</td></tr>
+          <tr><td style="font-size:.78rem">Ana Beatriz S.</td><td><span class="badge badge-gray">Free</span></td><td><span class="badge badge-athlete">Premium</span></td><td style="font-size:.72rem;color:var(--muted)">Ontem</td><td style="font-family:var(--f-mono);color:var(--c-athlete)">R$19</td></tr>
+          <tr><td style="font-size:.78rem">Club Barra Tennis</td><td><span class="badge badge-club">Arena</span></td><td><span class="badge badge-club">Arena Pro</span></td><td style="font-size:.72rem;color:var(--muted)">22/04</td><td style="font-family:var(--f-mono);color:var(--c-club)">R$108 ↑</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ════ SUPORTE ════ -->
+<div class="page" id="page-suporte">
+  <div class="page-header"><div><h1>Suporte</h1><p>7 tickets abertos · TMA: 4h12m · CSAT: 92%</p></div><button class="btn btn-primary btn-sm" onclick="openModal('modalTicket')">+ Novo Ticket</button></div>
+  <div class="grid-4" style="margin-bottom:1rem">
+    <div class="stat-card" style="border-color:var(--danger)"><div class="stat-ico">🔴</div><div class="stat-label">Urgente</div><div class="stat-value" style="color:var(--danger)">2</div><div class="stat-sub">aguardando +2h</div></div>
+    <div class="stat-card"><div class="stat-ico">🟡</div><div class="stat-label">Em andamento</div><div class="stat-value" style="color:var(--warn)">5</div><div class="stat-sub">respondidos</div></div>
+    <div class="stat-card"><div class="stat-ico">✅</div><div class="stat-label">Resolvidos hoje</div><div class="stat-value" style="color:var(--green)">12</div><div class="stat-sub">satisfação: 4.8/5</div></div>
+    <div class="stat-card"><div class="stat-ico">📊</div><div class="stat-label">CSAT 30d</div><div class="stat-value" style="color:var(--green)">92%</div><div class="stat-sub">meta: 90%</div></div>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">Tickets Abertos</span><div class="toggle-wrap"><button class="toggle-btn active">Todos</button><button class="toggle-btn">Urgentes</button></div></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>Assunto</th><th>Usuário</th><th>Tipo</th><th>Prioridade</th><th>Abertura</th><th></th></tr></thead>
+        <tbody>
+          <tr><td style="font-family:var(--f-mono);font-size:.72rem;color:var(--muted)">#1041</td><td style="font-size:.78rem;font-weight:600">Problema ao processar pagamento Pix</td><td><div class="avatar-chip"><div class="avatar" style="border-radius:4px;color:var(--c-club)">AC</div><div style="font-size:.74rem">Arena Centro RJ</div></div></td><td><span class="badge badge-club">Clube</span></td><td><span class="badge badge-red">🔴 Urgente</span></td><td style="font-size:.72rem;color:var(--muted)">Hoje 10:22</td><td><button class="btn btn-primary btn-sm" onclick="openModal('modalTicket')">Atender</button></td></tr>
+          <tr><td style="font-family:var(--f-mono);font-size:.72rem;color:var(--muted)">#1040</td><td style="font-size:.78rem;font-weight:600">Torneio não aparece no ranking</td><td><div class="avatar-chip"><div class="avatar" style="border-radius:4px;color:var(--c-prof)">MP</div><div style="font-size:.74rem">Marcos Pereira</div></div></td><td><span class="badge badge-prof">Professor</span></td><td><span class="badge badge-red">🔴 Urgente</span></td><td style="font-size:.72rem;color:var(--muted)">Hoje 09:14</td><td><button class="btn btn-ghost btn-sm" onclick="openModal('modalTicket')">Ver</button></td></tr>
+          <tr><td style="font-family:var(--f-mono);font-size:.72rem;color:var(--muted)">#1038</td><td style="font-size:.78rem;font-weight:600">Como configurar reposição automática?</td><td><div class="avatar-chip"><div class="avatar" style="border-radius:4px;color:var(--c-prof)">CL</div><div style="font-size:.74rem">Camila Lima</div></div></td><td><span class="badge badge-prof">Professor</span></td><td><span class="badge badge-yellow">🟡 Normal</span></td><td style="font-size:.72rem;color:var(--muted)">Ontem</td><td><button class="btn btn-ghost btn-sm" onclick="openModal('modalTicket')">Ver</button></td></tr>
+          <tr><td style="font-family:var(--f-mono);font-size:.72rem;color:var(--muted)">#1035</td><td style="font-size:.78rem;font-weight:600">Card não compartilha no iOS</td><td><div class="avatar-chip"><div class="avatar" style="border-radius:4px;color:var(--c-athlete)">LM</div><div style="font-size:.74rem">Lucas Martins</div></div></td><td><span class="badge badge-athlete">Atleta</span></td><td><span class="badge badge-yellow">🟡 Normal</span></td><td style="font-size:.72rem;color:var(--muted)">22/04</td><td><button class="btn btn-ghost btn-sm" onclick="openModal('modalTicket')">Ver</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ════ COMUNICADOS ════ -->
+<div class="page" id="page-comunicados">
+  <div class="page-header"><div><h1>Comunicados</h1><p>Mensagens globais ou segmentadas</p></div><button class="btn btn-primary" onclick="openModal('modalComunicado')">+ Novo Comunicado</button></div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><span class="card-title">Enviar Comunicado</span></div>
+      <div class="form-group"><label class="form-label">Público-alvo</label>
+        <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.3rem">
+          <label style="display:flex;align-items:center;gap:.35rem;font-size:.79rem;cursor:pointer"><input type="checkbox" checked/><span style="color:var(--c-club)">🏟️ Clubes</span></label>
+          <label style="display:flex;align-items:center;gap:.35rem;font-size:.79rem;cursor:pointer"><input type="checkbox" checked/><span style="color:var(--c-prof)">🎓 Professores</span></label>
+          <label style="display:flex;align-items:center;gap:.35rem;font-size:.79rem;cursor:pointer"><input type="checkbox" checked/><span style="color:var(--c-athlete)">🎾 Atletas</span></label>
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Filtro de plano</label><select class="form-input"><option>Todos</option><option>Apenas pagantes</option><option>Apenas Free</option></select></div>
+      <div class="form-group"><label class="form-label">Título</label><input class="form-input" placeholder="Ex: Nova funcionalidade disponível!"/></div>
+      <div class="form-group"><label class="form-label">Mensagem</label><textarea class="form-input" rows="4" placeholder="Conteúdo..."></textarea></div>
+      <div class="form-group"><label class="form-label">Canal</label>
+        <div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.3rem">
+          <label style="display:flex;align-items:center;gap:.35rem;font-size:.79rem;cursor:pointer"><input type="checkbox" checked/> Push</label>
+          <label style="display:flex;align-items:center;gap:.35rem;font-size:.79rem;cursor:pointer"><input type="checkbox" checked/> E-mail</label>
+          <label style="display:flex;align-items:center;gap:.35rem;font-size:.79rem;cursor:pointer"><input type="checkbox"/> Banner no app</label>
+        </div>
+      </div>
+      <div style="display:flex;gap:.5rem"><button class="btn btn-ghost btn-sm">Rascunho</button><button class="btn btn-primary">📢 Enviar agora</button></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">Histórico</span></div>
+      <div style="display:flex;flex-direction:column;gap:.5rem">
+        <div style="background:var(--surf2);border-radius:var(--rs);padding:.65rem .8rem;border-left:3px solid var(--accent)"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:.35rem;margin-bottom:.25rem"><span style="font-size:.79rem;font-weight:600">Novo módulo de Reposições disponível!</span><span class="badge badge-green">4.821 enviados</span></div><div style="font-size:.68rem;color:var(--muted)">Push + E-mail · Todos · 20/04/2025</div></div>
+        <div style="background:var(--surf2);border-radius:var(--rs);padding:.65rem .8rem;border-left:3px solid var(--c-club)"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:.35rem;margin-bottom:.25rem"><span style="font-size:.79rem;font-weight:600">Inter-Clubes: novo desafio disponível</span><span class="badge badge-club">47 clubes</span></div><div style="font-size:.68rem;color:var(--muted)">Push · Arena Pro · 15/04/2025</div></div>
+        <div style="background:var(--surf2);border-radius:var(--rs);padding:.65rem .8rem;border-left:3px solid var(--c-prof)"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:.35rem;margin-bottom:.25rem"><span style="font-size:.79rem;font-weight:600">Dica: configure seu perfil público</span><span class="badge badge-prof">183 professores</span></div><div style="font-size:.68rem;color:var(--muted)">E-mail · Professores Free · 08/04/2025</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ CONFIGURAÇÕES ════ -->
+<div class="page" id="page-configuracoes">
+  <div class="page-header"><h1>Configurações do Sistema</h1><p>Parâmetros globais da plataforma</p></div>
+  <div class="grid-2">
+    <div>
+      <div class="card" style="margin-bottom:1rem">
+        <div class="card-header"><span class="card-title">Parâmetros do Ranking</span></div>
+        <div class="form-group"><label class="form-label">Sistema de pontuação padrão</label><select class="form-input"><option selected>ELO Adaptado</option><option>Pontos fixos</option></select></div>
+        <div class="form-group"><label class="form-label">Pontos base vitória — Cat. A</label><input class="form-input" value="30" type="number"/></div>
+        <div class="form-group"><label class="form-label">Pontos base vitória — Cat. B</label><input class="form-input" value="20" type="number"/></div>
+        <div class="form-group"><label class="form-label">Pontos base vitória — Cat. C</label><input class="form-input" value="12" type="number"/></div>
+        <div style="font-size:.72rem;color:var(--muted);padding:.6rem;background:var(--surf2);border-radius:var(--rs);margin-bottom:.8rem">💡 Cada clube pode configurar multiplicadores sobre essa base.</div>
+        <button class="btn btn-primary btn-sm">Salvar</button>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Limites & Regras</span></div>
+        <div class="form-group"><label class="form-label">Trial gratuito (dias)</label><input class="form-input" value="30" type="number"/></div>
+        <div class="form-group"><label class="form-label">Reposição máxima (dias)</label><input class="form-input" value="90" type="number"/></div>
+        <button class="btn btn-primary btn-sm">Salvar</button>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:1rem">
+        <div class="card-header"><span class="card-title">Status da Plataforma</span></div>
+        <div style="display:flex;flex-direction:column;gap:.6rem">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:.52rem .68rem;background:var(--surf2);border-radius:var(--rs)"><span style="font-size:.8rem">API Principal</span><span style="display:flex;align-items:center;gap:.35rem;font-size:.73rem;color:var(--green)"><span style="width:6px;height:6px;border-radius:50%;background:var(--green)"></span>Operacional</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:.52rem .68rem;background:var(--surf2);border-radius:var(--rs)"><span style="font-size:.8rem">Gateway de Pagamento</span><span style="display:flex;align-items:center;gap:.35rem;font-size:.73rem;color:var(--green)"><span style="width:6px;height:6px;border-radius:50%;background:var(--green)"></span>Operacional</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:.52rem .68rem;background:var(--surf2);border-radius:var(--rs)"><span style="font-size:.8rem">Push Notifications</span><span style="display:flex;align-items:center;gap:.35rem;font-size:.73rem;color:var(--warn)"><span style="width:6px;height:6px;border-radius:50%;background:var(--warn)"></span>Degradado</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:.52rem .68rem;background:var(--surf2);border-radius:var(--rs)"><span style="font-size:.8rem">Storage / CDN</span><span style="display:flex;align-items:center;gap:.35rem;font-size:.73rem;color:var(--green)"><span style="width:6px;height:6px;border-radius:50%;background:var(--green)"></span>Operacional</span></div>
+        </div>
+        <div style="margin-top:.75rem;font-size:.7rem;color:var(--muted)">Uptime: <strong style="color:var(--green)">99.97%</strong> · Último incidente: 12/03/2025</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Versão & Deploy</span></div>
+        <div style="display:flex;flex-direction:column;gap:.45rem;font-size:.77rem">
+          <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Versão atual</span><span style="font-family:var(--f-mono)">v2.1.4</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Último deploy</span><span style="font-family:var(--f-mono)">23/04/2025 22:14</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Ambiente</span><span class="badge badge-green">Produção</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Banco</span><span style="font-family:var(--f-mono)">PostgreSQL 15</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ LOGS ════ -->
+<div class="page" id="page-logs">
+  <div class="page-header"><h1>Logs do Sistema</h1><p>Auditoria de ações críticas</p></div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">Eventos Recentes</span><div style="display:flex;gap:.4rem"><select class="form-input" style="width:auto;padding:.26rem .55rem;font-size:.72rem"><option>Todos</option><option>Erros</option><option>Pagamentos</option><option>Admin</option></select><input class="form-input" type="date" value="2025-04-24" style="width:auto;padding:.26rem .55rem;font-size:.72rem"/></div></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Hora</th><th>Evento</th><th>Usuário / Sistema</th><th>Detalhe</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td style="font-family:var(--f-mono);font-size:.7rem;color:var(--muted)">14:22:18</td><td style="font-size:.77rem">Novo clube cadastrado</td><td style="font-size:.74rem">Arena Morumbi</td><td style="font-size:.72rem;color:var(--muted)">Plano Arena Pro · SP</td><td><span class="badge badge-green">OK</span></td></tr>
+          <tr><td style="font-family:var(--f-mono);font-size:.7rem;color:var(--muted)">13:58:04</td><td style="font-size:.77rem">Pagamento processado</td><td style="font-size:.74rem">Roberto Gomes</td><td style="font-size:.72rem;color:var(--muted)">Professor Pro · R$49</td><td><span class="badge badge-green">OK</span></td></tr>
+          <tr><td style="font-family:var(--f-mono);font-size:.7rem;color:var(--muted)">13:12:33</td><td style="font-size:.77rem">Falha no push</td><td style="font-size:.74rem">Sistema</td><td style="font-size:.72rem;color:var(--danger)">Timeout FCM · 142 falhas</td><td><span class="badge badge-red">Erro</span></td></tr>
+          <tr><td style="font-family:var(--f-mono);font-size:.7rem;color:var(--muted)">12:44:11</td><td style="font-size:.77rem">Conta suspensa</td><td style="font-size:.74rem">Admin: Carlos A.</td><td style="font-size:.72rem;color:var(--muted)">Usuário #4481 — manipulação</td><td><span class="badge badge-yellow">Manual</span></td></tr>
+          <tr><td style="font-family:var(--f-mono);font-size:.7rem;color:var(--muted)">11:30:00</td><td style="font-size:.77rem">Comunicado enviado</td><td style="font-size:.74rem">Admin: RA</td><td style="font-size:.72rem;color:var(--muted)">4.821 usuários · Push + e-mail</td><td><span class="badge badge-green">OK</span></td></tr>
+          <tr><td style="font-family:var(--f-mono);font-size:.7rem;color:var(--muted)">09:00:00</td><td style="font-size:.77rem">Backup automático</td><td style="font-size:.74rem">Sistema</td><td style="font-size:.72rem;color:var(--muted)">PostgreSQL · 2.4GB · S3</td><td><span class="badge badge-green">OK</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<!-- MODAIS -->
+<div class="modal-overlay" id="modalComunicado">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">COMUNICADO GLOBAL</span><button class="modal-close" onclick="closeModal('modalComunicado')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Público</label><div style="display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.3rem"><label style="display:flex;align-items:center;gap:.35rem;font-size:.79rem;cursor:pointer"><input type="checkbox" checked/><span style="color:var(--c-club)">Clubes</span></label><label style="display:flex;align-items:center;gap:.35rem;font-size:.79rem;cursor:pointer"><input type="checkbox" checked/><span style="color:var(--c-prof)">Professores</span></label><label style="display:flex;align-items:center;gap:.35rem;font-size:.79rem;cursor:pointer"><input type="checkbox" checked/><span style="color:var(--c-athlete)">Atletas</span></label></div></div>
+      <div class="form-group"><label class="form-label">Título</label><input class="form-input" placeholder="Assunto..."/></div>
+      <div class="form-group"><label class="form-label">Mensagem</label><textarea class="form-input" rows="4" placeholder="Conteúdo..."></textarea></div>
+      <div class="form-group"><label class="form-label">Canal</label><div style="display:flex;gap:.6rem;margin-top:.3rem"><label style="display:flex;align-items:center;gap:.35rem;font-size:.79rem;cursor:pointer"><input type="checkbox" checked/> Push</label><label style="display:flex;align-items:center;gap:.35rem;font-size:.79rem;cursor:pointer"><input type="checkbox" checked/> E-mail</label></div></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modalComunicado')">Cancelar</button><button class="btn btn-primary">📢 Enviar para 5.051 usuários</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalDetalheClube">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">ARENA RANKETES SP</span><button class="modal-close" onclick="closeModal('modalDetalheClube')">✕</button></div>
+    <div class="modal-body">
+      <div style="display:flex;gap:.7rem;margin-bottom:.9rem;flex-wrap:wrap">
+        <div style="background:var(--surf2);border:1px solid rgba(141,198,63,.2);border-radius:var(--rs);padding:.65rem .8rem;flex:1;min-width:80px;text-align:center"><div style="font-size:.6rem;color:var(--dim)">Atletas</div><div style="font-family:var(--f-display);font-size:1.25rem;color:var(--c-club)">148</div></div>
+        <div style="background:var(--surf2);border:1px solid rgba(245,158,11,.2);border-radius:var(--rs);padding:.65rem .8rem;flex:1;min-width:80px;text-align:center"><div style="font-size:.6rem;color:var(--dim)">Professores</div><div style="font-family:var(--f-display);font-size:1.25rem;color:var(--c-prof)">4</div></div>
+        <div style="background:var(--surf2);border:1px solid rgba(232,69,58,.15);border-radius:var(--rs);padding:.65rem .8rem;flex:1;min-width:80px;text-align:center"><div style="font-size:.6rem;color:var(--dim)">MRR</div><div style="font-family:var(--f-display);font-size:1.25rem;color:var(--accent)">R$197</div></div>
+      </div>
+      <div class="form-group"><label class="form-label">Plano</label><select class="form-input"><option>Arena Pro</option><option>Arena</option><option>Free</option></select></div>
+      <div class="form-group"><label class="form-label">Status</label><select class="form-input"><option>Ativo</option><option>Suspenso</option><option>Trial</option></select></div>
+      <div class="form-group"><label class="form-label">Observação interna</label><textarea class="form-input" rows="2" placeholder="Nota interna..."></textarea></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modalDetalheClube')">Fechar</button><button class="btn btn-danger btn-sm">Suspender</button><button class="btn btn-primary">Salvar</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalDetalheProf">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">MARCOS PEREIRA</span><button class="modal-close" onclick="closeModal('modalDetalheProf')">✕</button></div>
+    <div class="modal-body">
+      <div style="display:flex;gap:.7rem;margin-bottom:.9rem;flex-wrap:wrap">
+        <div style="background:var(--surf2);border:1px solid rgba(245,158,11,.2);border-radius:var(--rs);padding:.65rem .8rem;flex:1;text-align:center"><div style="font-size:.6rem;color:var(--dim)">Alunos</div><div style="font-family:var(--f-display);font-size:1.25rem;color:var(--c-prof)">12</div></div>
+        <div style="background:var(--surf2);border:1px solid rgba(245,158,11,.2);border-radius:var(--rs);padding:.65rem .8rem;flex:1;text-align:center"><div style="font-size:.6rem;color:var(--dim)">Aulas/mês</div><div style="font-family:var(--f-display);font-size:1.25rem;color:var(--c-prof)">48</div></div>
+        <div style="background:var(--surf2);border:1px solid rgba(245,158,11,.2);border-radius:var(--rs);padding:.65rem .8rem;flex:1;text-align:center"><div style="font-size:.6rem;color:var(--dim)">Nota</div><div style="font-family:var(--f-display);font-size:1.25rem;color:var(--warn)">4.9⭐</div></div>
+      </div>
+      <div class="form-group"><label class="form-label">Plano</label><select class="form-input"><option selected>Professor Pro</option><option>Free</option><option>Suspenso</option></select></div>
+      <div class="form-group"><label class="form-label">Clube vinculado</label><input class="form-input" value="Arena Ranketes SP"/></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modalDetalheProf')">Fechar</button><button class="btn btn-danger btn-sm">Suspender</button><button class="btn btn-primary">Salvar</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalTicket">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">TICKET #1041</span><button class="modal-close" onclick="closeModal('modalTicket')">✕</button></div>
+    <div class="modal-body">
+      <div style="background:rgba(255,71,87,.06);border:1px solid rgba(255,71,87,.2);border-radius:var(--rs);padding:.7rem;margin-bottom:.9rem"><div style="font-size:.77rem;font-weight:700;color:var(--danger);margin-bottom:.25rem">Arena Centro RJ — Problema ao processar pagamento Pix</div><div style="font-size:.72rem;color:var(--muted)">Hoje 10:22 · Urgente · Arena Pro</div></div>
+      <div style="font-size:.8rem;color:var(--text);line-height:1.55;margin-bottom:.9rem">"Tentamos renovar o plano via Pix e o QR Code expirou. Agora o sistema diz que há pagamento pendente. Plano vence amanhã."</div>
+      <div class="form-group"><label class="form-label">Resposta</label><textarea class="form-input" rows="3" placeholder="Escreva sua resposta..."></textarea></div>
+      <div class="form-group"><label class="form-label">Ação interna</label><select class="form-input"><option>Nenhuma</option><option>Resetar pagamento pendente</option><option>Estender trial 7 dias</option><option>Escalar para Dev</option></select></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modalTicket')">Cancelar</button><button class="btn btn-green btn-sm">✓ Resolvido</button><button class="btn btn-primary">Enviar</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalNovoClube">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">NOVO CLUBE</span><button class="modal-close" onclick="closeModal('modalNovoClube')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Nome da Arena</label><input class="form-input" placeholder="Ex: Arena Ranketes Campinas"/></div>
+      <div class="grid-2"><div class="form-group"><label class="form-label">Cidade</label><input class="form-input" placeholder="Campinas"/></div><div class="form-group"><label class="form-label">Estado</label><select class="form-input"><option>SP</option><option>RJ</option><option>MG</option></select></div></div>
+      <div class="form-group"><label class="form-label">E-mail do responsável</label><input class="form-input" type="email" placeholder="admin@arena.com"/></div>
+      <div class="form-group"><label class="form-label">Plano inicial</label><select class="form-input"><option>Free</option><option>Arena</option><option>Arena Pro</option></select></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modalNovoClube')">Cancelar</button><button class="btn btn-primary">Criar Clube</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalEditarPlano">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">EDITAR PLANOS</span><button class="modal-close" onclick="closeModal('modalEditarPlano')">✕</button></div>
+    <div class="modal-body">
+      <div style="background:rgba(232,69,58,.07);border:1px solid rgba(232,69,58,.25);border-radius:var(--rs);padding:.6rem;margin-bottom:.85rem;font-size:.73rem;color:var(--accent)">⚠️ Altera preços apenas para <strong>novos cadastros</strong>.</div>
+      <div class="grid-2">
+        <div class="form-group"><label class="form-label" style="color:var(--c-athlete)">Atleta Premium (R$/mês)</label><input class="form-input" value="19"/></div>
+        <div class="form-group"><label class="form-label" style="color:var(--c-prof)">Professor Pro (R$/mês)</label><input class="form-input" value="49"/></div>
+        <div class="form-group"><label class="form-label" style="color:var(--c-club)">Arena (R$/mês)</label><input class="form-input" value="89"/></div>
+        <div class="form-group"><label class="form-label" style="color:var(--c-club)">Arena Pro (R$/mês)</label><input class="form-input" value="197"/></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modalEditarPlano')">Cancelar</button><button class="btn btn-primary">Salvar</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalEmailBlast">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">COBRANÇA EM MASSA</span><button class="modal-close" onclick="closeModal('modalEmailBlast')">✕</button></div>
+    <div class="modal-body">
+      <div style="background:var(--surf2);border-radius:var(--rs);padding:.7rem;margin-bottom:.9rem;font-size:.79rem">Cobrança para <strong style="color:var(--accent)">23 contas inadimplentes</strong> · total <strong style="color:var(--danger)">R$2.108</strong></div>
+      <div class="form-group"><label class="form-label">Tom</label><select class="form-input"><option>Amigável (1º lembrete)</option><option>Formal (2º aviso)</option><option>Urgente (suspensão iminente)</option></select></div>
+      <div class="form-group"><label class="form-label">Prazo</label><select class="form-input"><option>3 dias</option><option selected>7 dias</option><option>15 dias</option></select></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modalEmailBlast')">Cancelar</button><button class="btn btn-primary">📧 Enviar para 23 contas</button></div>
+  </div>
+</div>
+
+<script>
+function goTo(pageId,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const page=document.getElementById('page-'+pageId);
+  if(page)page.classList.add('active');
+  if(el)el.classList.add('active');
+  const titles={overview:'OVERVIEW',analytics:'ANALYTICS',clubes:'CLUBES & ARENAS',professores:'PROFESSORES',atletas:'ATLETAS',financeiro:'FINANCEIRO & MRR',planos:'PLANOS & PREÇOS',suporte:'SUPORTE',comunicados:'COMUNICADOS',configuracoes:'CONFIGURAÇÕES',logs:'LOGS'};
+  document.getElementById('topbarTitle').textContent=titles[pageId]||pageId.toUpperCase();
+  closeSidebar();window.scrollTo(0,0);
+}
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').style.display=document.getElementById('sidebar').classList.contains('open')?'block':'none';
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').style.display='none';
+}
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.modal-overlay').forEach(o=>{o.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open')})});
+document.querySelectorAll('.toggle-wrap').forEach(wrap=>{wrap.querySelectorAll('.toggle-btn').forEach(btn=>{btn.addEventListener('click',()=>{wrap.querySelectorAll('.toggle-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active')})})});
+</script>
+</body>
+</html>
