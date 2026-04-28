@@ -1766,8 +1766,8 @@ async function carregarAulas() {
     if (!alunos || alunos.length === 0) {
       document.getElementById('proxAulas').innerHTML = '<div class="empty"><div class="empty-ico">📅</div><div class="empty-title">Sem aulas agendadas</div><div class="empty-sub">Conecte-se ao seu professor</div></div>'
       document.getElementById('aulasLista').innerHTML = '<div class="empty"><div class="empty-ico">📅</div><div class="empty-title">Sem aulas</div><div class="empty-sub">Conecte-se com seu professor</div></div>'
-      document.getElementById('kpiAulas').textContent = '0'
-      document.getElementById('kpiCardAulas').style.display = 'none'
+      const _kA0 = document.getElementById('kpiAulas'); if (_kA0) _kA0.textContent = '0'
+      const _kCA0 = document.getElementById('kpiCardAulas'); if (_kCA0) _kCA0.style.display = 'none'
       return
     }
     
@@ -1785,9 +1785,9 @@ async function carregarAulas() {
     if (error) { console.warn('aulas:', error); return }
     
     const lista = aulas || []
-    document.getElementById('kpiAulas').textContent = lista.length
+    const _kA = document.getElementById('kpiAulas'); if (_kA) _kA.textContent = lista.length
     // Só mostra card se tem aulas E tem vínculo
-    document.getElementById('kpiCardAulas').style.display = lista.length > 0 ? 'flex' : 'none'
+    const _kCA = document.getElementById('kpiCardAulas'); if (_kCA) _kCA.style.display = lista.length > 0 ? 'flex' : 'none'
     
     // Próximas 3 (na home)
     const proxHTML = lista.slice(0, 3).map(a => `
@@ -1833,7 +1833,7 @@ async function carregarPagamentos() {
     if (!alunos || alunos.length === 0) {
       document.getElementById('cobrancasAbertas').innerHTML = '<div class="empty"><div class="empty-ico">💰</div><div class="empty-title">Nenhuma cobrança</div><div class="empty-sub">Suas cobranças vão aparecer aqui</div></div>'
       document.getElementById('pagamentosLista').innerHTML = '<div class="empty"><div class="empty-ico">💰</div><div class="empty-title">Nenhum pagamento</div><div class="empty-sub">Cobranças do seu professor vão aparecer aqui</div></div>'
-      document.getElementById('kpiCardCobrancas').style.display = 'none'
+      const _kCC0 = document.getElementById('kpiCardCobrancas'); if (_kCC0) _kCC0.style.display = 'none'
       return
     }
     
@@ -1849,9 +1849,12 @@ async function carregarPagamentos() {
     
     // KPI: total em aberto
     const aberto = cobrancas.filter(c => c.status !== 'pago').reduce((s,c) => s + (c.valor||0), 0)
-    document.getElementById('kpiCobranças').textContent = 'R$' + Math.round(aberto)
+    // IDs antigos (kpiCobranças com cedilha) podem não existir mais — tenta ambos com fallback
+    const _kCo = document.getElementById('kpiCobranças') || document.getElementById('kpiCobrancas')
+    if (_kCo) _kCo.textContent = 'R$' + Math.round(aberto)
     // Só mostra se tem cobrança aberta
-    document.getElementById('kpiCardCobrancas').style.display = aberto > 0 ? 'flex' : 'none'
+    const _kCC = document.getElementById('kpiCardCobrancas')
+    if (_kCC) _kCC.style.display = aberto > 0 ? 'flex' : 'none'
     
     // Home: 3 cobranças em aberto
     const homeAbertas = cobrancas.filter(c => c.status !== 'pago').slice(0, 3)
@@ -3441,7 +3444,17 @@ async function solicitarSeguir(userId, tipo) {
       p_alvo_user_id: userId,
       p_alvo_tipo: tipo
     })
-    if (error) { showToast('Erro: '+error.message, true); return }
+    if (error) {
+      // Erro conhecido de schema: coluna ator_user_id não existe na tabela notificacoes
+      const msg = error.message || ''
+      if (msg.includes('ator_user_id') || msg.includes('notificacoes')) {
+        showToast('Função de seguir indisponível no momento', true)
+        console.warn('Schema notificacoes precisa de ajuste:', msg)
+      } else {
+        showToast('Erro: '+msg, true)
+      }
+      return
+    }
     if (data && data.ok === false) { showToast(data.erro, true); return }
     showToast('✓ Solicitação enviada!', false, 'success')
     await carregarComunidade()
