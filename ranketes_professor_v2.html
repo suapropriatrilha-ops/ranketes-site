@@ -1024,41 +1024,61 @@ setTimeout(() => {
     <div class="modal-handle"></div>
     <div class="modal-header"><span class="modal-title">CONECTAR ALUNO</span><button class="modal-close" onclick="closeModal('modalNovoAluno')">✕</button></div>
     <div class="modal-body">
-      <div style="background:var(--blue-g);border:1px solid rgba(37,99,235,.2);border-radius:var(--rs);padding:.65rem .85rem;font-size:.78rem;color:var(--muted);margin-bottom:.85rem">
-        🔍 Busque por <b>ID público</b>, <b>nome</b>, <b>email</b> ou <b>telefone</b>. O atleta receberá uma solicitação para confirmar.
+      
+      <!-- SEÇÃO 1: Já conectados -->
+      <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:.5rem">
+        🤝 Atletas já conectados com você
       </div>
-      <div class="search-bar" style="margin-bottom:.5rem">
-        <span>🔍</span>
-        <input id="buscaAlunoInput" placeholder="ID, nome, email ou telefone..." oninput="buscarTennistas(this.value)"/>
+      <div id="conectadosLista" style="margin-bottom:.85rem">
+        <div style="font-size:.78rem;color:var(--muted);padding:.5rem 0">Carregando...</div>
       </div>
-      <div id="buscaAlunoResultados" style="margin-bottom:.75rem"><div style="font-size:.78rem;color:var(--muted);padding:.5rem 0">Digite ao menos 2 caracteres (ID, nome, email ou telefone)</div></div>
-      <div style="height:1px;background:var(--border);margin-bottom:.75rem"></div>
-      <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:.5rem">Ou adicionar manualmente</div>
-      <div class="fg"><label class="fl">Nome do aluno *</label><input class="fi" id="novoAlunoNome" placeholder="Nome completo"/></div>
-      <div class="frow">
-        <div class="fg"><label class="fl">WhatsApp</label><input class="fi" id="novoAlunoTel" placeholder="(11) 9xxxx-xxxx" maxlength="15" oninput="mascararTelefone(this)" inputmode="numeric"/></div>
-        <div class="fg"><label class="fl">Gênero</label>
-          <select class="fi" id="novoAlunoGenero"><option value="M">♂ Masculino</option><option value="F">♀ Feminino</option></select>
+      
+      <!-- Toggle: novo aluno -->
+      <div id="novoAlunoToggle" style="text-align:center;margin-bottom:.85rem">
+        <button class="btn btn-ghost btn-sm" onclick="toggleNovoAlunoForm()" style="font-size:.82rem">
+          <span id="novoAlunoToggleLbl">+ Novo aluno (buscar ou cadastro manual)</span>
+        </button>
+      </div>
+      
+      <!-- SEÇÃO 2: Buscar + cadastro manual (oculta por padrão) -->
+      <div id="novoAlunoFormWrap" style="display:none">
+        <div style="background:var(--blue-g);border:1px solid rgba(37,99,235,.2);border-radius:var(--rs);padding:.65rem .85rem;font-size:.78rem;color:var(--muted);margin-bottom:.85rem">
+          🔍 Busque por <b>ID público</b>, <b>nome</b>, <b>email</b> ou <b>telefone</b>. O atleta receberá uma solicitação para confirmar.
+        </div>
+        <div class="search-bar" style="margin-bottom:.5rem">
+          <span>🔍</span>
+          <input id="buscaAlunoInput" placeholder="ID, nome, email ou telefone..." oninput="buscarTennistas(this.value)"/>
+        </div>
+        <div id="buscaAlunoResultados" style="margin-bottom:.75rem"><div style="font-size:.78rem;color:var(--muted);padding:.5rem 0">Digite ao menos 2 caracteres (ID, nome, email ou telefone)</div></div>
+        <div style="height:1px;background:var(--border);margin-bottom:.75rem"></div>
+        <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:.5rem">Ou adicionar manualmente</div>
+        <div class="fg"><label class="fl">Nome do aluno *</label><input class="fi" id="novoAlunoNome" placeholder="Nome completo"/></div>
+        <div class="frow">
+          <div class="fg"><label class="fl">WhatsApp</label><input class="fi" id="novoAlunoTel" placeholder="(11) 9xxxx-xxxx" maxlength="15" oninput="mascararTelefone(this)" inputmode="numeric"/></div>
+          <div class="fg"><label class="fl">Gênero</label>
+            <select class="fi" id="novoAlunoGenero"><option value="M">♂ Masculino</option><option value="F">♀ Feminino</option></select>
+          </div>
+        </div>
+        <div class="frow">
+          <div class="fg"><label class="fl">E-mail</label><input class="fi" id="novoAlunoEmail" type="email" placeholder="email@exemplo.com"/></div>
+          <div class="fg"><label class="fl">Nascimento</label><input class="fi" id="novoAlunoNasc" type="date"/></div>
+        </div>
+        <div class="fg"><label class="fl">Modalidade</label>
+          <select class="fi" id="novoAlunoMod"><option value="tenis">🎾 Tênis</option><option value="beach_tennis">🏖️ Beach Tennis</option><option value="ambas">Ambas</option></select>
+        </div>
+        <div class="fg"><label class="fl">Frequência semanal (referência)</label>
+          <select class="fi" id="novoAlunoFreq">
+            <option value="1">1×/semana</option><option value="2">2×/semana</option>
+            <option value="3">3×/semana</option><option value="4">4×/semana</option>
+          </select>
+        </div>
+        <div style="font-size:.7rem;color:var(--muted);margin:-.4rem 0 .85rem .15rem">💡 Os valores são definidos quando você marca cada aula.</div>
+        <div class="btn-row">
+          <button class="btn btn-ghost" onclick="closeModal('modalNovoAluno')">Cancelar</button>
+          <button class="btn btn-primary" onclick="salvarAluno()">Adicionar aluno</button>
         </div>
       </div>
-      <div class="frow">
-        <div class="fg"><label class="fl">E-mail</label><input class="fi" id="novoAlunoEmail" type="email" placeholder="email@exemplo.com"/></div>
-        <div class="fg"><label class="fl">Nascimento</label><input class="fi" id="novoAlunoNasc" type="date"/></div>
-      </div>
-      <div class="fg"><label class="fl">Modalidade</label>
-        <select class="fi" id="novoAlunoMod"><option value="tenis">🎾 Tênis</option><option value="beach_tennis">🏖️ Beach Tennis</option><option value="ambas">Ambas</option></select>
-      </div>
-      <div class="fg"><label class="fl">Frequência semanal (referência)</label>
-        <select class="fi" id="novoAlunoFreq">
-          <option value="1">1×/semana</option><option value="2">2×/semana</option>
-          <option value="3">3×/semana</option><option value="4">4×/semana</option>
-        </select>
-      </div>
-      <div style="font-size:.7rem;color:var(--muted);margin:-.4rem 0 .85rem .15rem">💡 Os valores são definidos quando você marca cada aula.</div>
-      <div class="btn-row">
-        <button class="btn btn-ghost" onclick="closeModal('modalNovoAluno')">Cancelar</button>
-        <button class="btn btn-primary" onclick="salvarAluno()">Adicionar aluno</button>
-      </div>
+      
     </div>
   </div>
 </div>
@@ -1794,6 +1814,13 @@ function openModal(id) {
     // Limpa lista de busca de tennistas
     const resBusca = document.getElementById('buscaAlunoResultados')
     if (resBusca) resBusca.innerHTML = ''
+    // Esconde form de novo aluno (volta ao estado inicial: lista de conectados)
+    const wrap = document.getElementById('novoAlunoFormWrap')
+    if (wrap) wrap.style.display = 'none'
+    const lbl = document.getElementById('novoAlunoToggleLbl')
+    if (lbl) lbl.textContent = '+ Novo aluno (buscar ou cadastro manual)'
+    // Carrega atletas já conectados
+    if (typeof carregarAtletasConectados === 'function') carregarAtletasConectados()
   }
   // Hook: ao abrir modal de v\u00ednculos, recarrega lista
   if (id === 'modalVinculos') {
@@ -2275,6 +2302,141 @@ function preencherSelectAlunos() {
       baixaSel.innerHTML += `<option value="${p.id}">${p.descricao||p.tipo} — ${formatarReais(p.valor)}</option>`
     })
   }
+}
+
+// ══ CONECTAR ALUNO: lista de já conectados + form ══
+
+function toggleNovoAlunoForm() {
+  const wrap = document.getElementById('novoAlunoFormWrap')
+  const lbl = document.getElementById('novoAlunoToggleLbl')
+  if (!wrap) return
+  const aberto = wrap.style.display !== 'none'
+  wrap.style.display = aberto ? 'none' : 'block'
+  if (lbl) lbl.textContent = aberto ? '+ Novo aluno (buscar ou cadastro manual)' : '− Esconder formulário'
+  if (!aberto) {
+    setTimeout(() => {
+      const inp = document.getElementById('buscaAlunoInput')
+      if (inp) inp.focus()
+    }, 100)
+  }
+}
+
+async function carregarAtletasConectados() {
+  const cont = document.getElementById('conectadosLista')
+  if (!cont) return
+  if (!usuarioAtual?.id) {
+    cont.innerHTML = '<div style="font-size:.78rem;color:var(--muted);padding:.5rem 0">Carregando usuário...</div>'
+    return
+  }
+  
+  try {
+    // Busca solicitações aprovadas (vínculos ativos) onde o professor é eu
+    const { data: vincs, error } = await window._sb.from('vinculos_solicitacoes')
+      .select('id, atleta_id, solicitado_em, respondido_em')
+      .eq('professor_id', usuarioAtual.id)
+      .eq('tipo', 'professor')
+      .eq('status', 'aprovado')
+      .order('respondido_em', { ascending: false })
+    
+    if (error) {
+      console.warn('conectados:', error)
+      cont.innerHTML = `<div style="font-size:.78rem;color:var(--danger-l);padding:.5rem 0">Erro ao carregar: ${error.message}</div>`
+      return
+    }
+    
+    const lista = vincs || []
+    if (lista.length === 0) {
+      cont.innerHTML = `
+        <div style="background:var(--surf2);border:1px dashed var(--border);border-radius:var(--rs);padding:.85rem;text-align:center;font-size:.8rem;color:var(--muted)">
+          Nenhum atleta conectado ainda.<br/>
+          <span style="font-size:.72rem">Use o botão abaixo para buscar ou cadastrar manualmente.</span>
+        </div>`
+      return
+    }
+    
+    // Pega dados dos atletas
+    const atletaIds = lista.map(v => v.atleta_id)
+    const { data: atletas } = await window._sb.from('atletas')
+      .select('id, usuario_id, foto_url, id_publico')
+      .in('id', atletaIds)
+    
+    const userIds = (atletas || []).map(a => a.usuario_id)
+    let usersMap = {}
+    if (userIds.length > 0) {
+      const { data: users } = await window._sb.from('usuarios')
+        .select('id, nome, email, telefone').in('id', userIds)
+      ;(users || []).forEach(u => usersMap[u.id] = u)
+    }
+    const atletasMap = {}
+    ;(atletas || []).forEach(a => { atletasMap[a.id] = { ...a, usuario: usersMap[a.usuario_id] || {} } })
+    
+    // Já é aluno gerenciado? (consulta professor_alunos)
+    const { data: jaAlunos } = await window._sb.from('professor_alunos')
+      .select('atleta_id_vinculado')
+      .eq('professor_id', usuarioAtual.id)
+      .in('atleta_id_vinculado', atletaIds)
+    
+    const idsJaAluno = new Set((jaAlunos || []).map(a => a.atleta_id_vinculado))
+    
+    cont.innerHTML = lista.map(v => {
+      const a = atletasMap[v.atleta_id]
+      if (!a) return ''
+      const u = a.usuario || {}
+      const nome = u.nome || 'Atleta'
+      const ini = (typeof getIniciais === 'function') 
+        ? getIniciais(nome) 
+        : nome.split(' ').filter(Boolean).slice(0,2).map(s=>s[0]||'').join('').toUpperCase() || '?'
+      const jaAluno = idsJaAluno.has(a.id)
+      
+      const botao = jaAluno
+        ? `<span style="font-size:.7rem;color:var(--green-l);font-weight:700;flex-shrink:0;padding:.4rem .65rem;background:rgba(34,197,94,.1);border-radius:8px">✓ Já é aluno</span>`
+        : `<button onclick="adicionarConectadoComoAluno('${a.id}', '${(nome || '').replace(/'/g,"\\'")}')" style="background:var(--amber);color:#000;border:none;padding:.45rem .7rem;border-radius:8px;font-weight:700;font-size:.72rem;cursor:pointer;flex-shrink:0">+ Adicionar</button>`
+      
+      return `
+      <div style="display:flex;align-items:center;gap:.65rem;padding:.6rem .7rem;background:var(--surf);border:1px solid var(--border);border-radius:10px;margin-bottom:.5rem">
+        <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--blue-l));display:flex;align-items:center;justify-content:center;font-family:var(--f-display);font-size:.8rem;color:#fff;flex-shrink:0">${a.foto_url ? `<img src="${a.foto_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover" alt=""/>` : ini}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-weight:700;font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtmlProf(nome)}</div>
+          ${u.email ? `<div style="font-size:.68rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtmlProf(u.email)}</div>` : ''}
+        </div>
+        ${botao}
+      </div>`
+    }).join('')
+  } catch(e) {
+    console.warn('carregarAtletasConectados:', e)
+    cont.innerHTML = `<div style="font-size:.78rem;color:var(--danger-l);padding:.5rem 0">Erro: ${e.message}</div>`
+  }
+}
+
+async function adicionarConectadoComoAluno(atletaId, nome) {
+  if (!usuarioAtual?.id) { showToast('Erro: usuário não carregado', true); return }
+  if (!confirm(`Adicionar ${nome} como aluno gerenciado?`)) return
+  
+  try {
+    const dados = {
+      professor_id: usuarioAtual.id,
+      atleta_id_vinculado: atletaId,
+      nome_manual: nome,
+      modalidade: 'tenis',
+      frequencia: 1,
+      ativo: true,
+      status: 'ativo'
+    }
+    
+    const { error } = await window._sb.from('professor_alunos').insert([dados])
+    if (error) {
+      if (error.code === '23505' || (error.message || '').includes('unique')) {
+        showToast(`${nome} já é seu aluno`, true)
+      } else {
+        showToast('Erro: '+error.message, true)
+      }
+      return
+    }
+    
+    showToast(`✓ ${nome} adicionado!`, false, 'success')
+    await carregarAtletasConectados()
+    if (typeof carregarAlunos === 'function') await carregarAlunos()
+  } catch(e) { showToast('Erro: '+e.message, true) }
 }
 
 async function salvarAluno() {
