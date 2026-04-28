@@ -1,0 +1,40 @@
+{
+  "name": "Ranketes · Plataforma de Esportes de Raquete",
+  "short_name": "Ranketes",
+  "description": "A plataforma completa para arenas, clubes, professores e atletas de tênis e beach tennis. Rankings, agenda, financeiro e muito mais.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#05080F",
+  "theme_color": "#05080F",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "categories": ["sports", "lifestyle", "social"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
