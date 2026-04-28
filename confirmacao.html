@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#020617" />
+<title>Cadastro aprovado | Ranketes</title>
+<link rel="icon" href="logo.PNG" type="image/png" />
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  min-height:100vh;
+  font-family: Arial, Helvetica, sans-serif;
+  background:
+    radial-gradient(circle at top, rgba(34,197,94,.24), transparent 35%),
+    radial-gradient(circle at bottom, rgba(37,99,235,.20), transparent 42%),
+    #020617;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:white;
+  padding:24px;
+}
+.card {
+  width:100%;
+  max-width:470px;
+  background:rgba(15,23,42,.88);
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:30px;
+  padding:28px;
+  text-align:center;
+  box-shadow:0 30px 90px rgba(0,0,0,.60);
+  position:relative;
+  overflow:hidden;
+}
+.card::before {
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:5px;
+  background:linear-gradient(90deg, #22c55e, #facc15, #3b82f6);
+}
+.hero {
+  width:100%;
+  max-width:340px;
+  display:block;
+  margin:8px auto 0;
+  filter:drop-shadow(0 25px 40px rgba(0,0,0,.70)) drop-shadow(0 0 30px rgba(34,197,94,.25));
+  animation:popIn .7s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes popIn {
+  0% { transform:scale(.6) translateY(20px); opacity:0; }
+  100% { transform:scale(1) translateY(0); opacity:1; }
+}
+h1 {
+  font-size:30px;
+  line-height:1.1;
+  margin: 4px 0 12px;
+}
+h1 span { color:#4ade80; }
+.text {
+  color:#cbd5e1;
+  font-size:16px;
+  line-height:1.5;
+  margin-bottom:24px;
+}
+.steps {
+  background:rgba(2,6,23,.58);
+  border:1px solid rgba(148,163,184,.20);
+  border-radius:20px;
+  padding:18px;
+  text-align:left;
+  margin-bottom:24px;
+}
+.steps strong {
+  color:#facc15;
+  font-size:14px;
+  letter-spacing:1px;
+}
+.steps p {
+  color:#e2e8f0;
+  margin-top:12px;
+  font-size:15px;
+}
+.btn {
+  display:block;
+  width:100%;
+  text-decoration:none;
+  border-radius:18px;
+  padding:17px;
+  font-weight:900;
+  font-size:16px;
+  border:none;
+  cursor:pointer;
+  font-family:inherit;
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.primary {
+  background:linear-gradient(135deg, #22c55e, #84cc16, #facc15);
+  color:#052e16;
+  box-shadow:0 16px 35px rgba(34,197,94,.35);
+  margin-bottom:12px;
+}
+.primary:hover { transform:translateY(-2px); box-shadow:0 20px 42px rgba(34,197,94,.45); }
+.secondary {
+  color:#94a3b8;
+  border:1px solid rgba(148,163,184,.22);
+  background:rgba(15,23,42,.70);
+}
+.secondary:hover { color:#fff; border-color:#3b82f6; }
+.help {
+  margin-top:22px;
+  font-size:13px;
+  color:#94a3b8;
+  text-decoration:none;
+  display:block;
+}
+.help:hover { color:#fff; }
+
+/* Estado de erro */
+.error-state { display:none; }
+.error-state.active { display:block; }
+.success-state.hidden { display:none; }
+.error-state h1 span { color:#fbbf24; }
+.error-state .primary {
+  background:linear-gradient(135deg, #f59e0b, #fbbf24, #fde68a);
+  box-shadow:0 16px 35px rgba(245,158,11,.35);
+}
+.error-icon {
+  font-size:80px;
+  margin: 20px 0 10px;
+  display:block;
+  filter:drop-shadow(0 10px 20px rgba(245,158,11,.4));
+}
+</style>
+</head>
+<body>
+  <main class="card">
+    <!-- Estado de sucesso (default) -->
+    <div class="success-state" id="cardSucesso">
+      <img class="hero" src="cadastro-aprovado.png" alt="Ranketes - Cadastro Aprovado" />
+      <h1>Bem-vindo ao <span>Ranketes</span></h1>
+      <p class="text" id="textoSucesso">Seu e-mail foi confirmado com sucesso. Agora é só entrar na sua conta e começar a registrar seus jogos.</p>
+      <div class="steps">
+        <strong>PRÓXIMOS PASSOS</strong>
+        <p>🎾 Complete seu perfil</p>
+        <p>🏆 Registre suas partidas</p>
+        <p>📊 Acompanhe seu histórico</p>
+        <p>🤝 Conecte-se com outros atletas</p>
+      </div>
+      <a class="btn primary" href="ranketes_login.html">Entrar no Ranketes</a>
+      <a class="btn secondary" href="index.html">Voltar para o site</a>
+    </div>
+
+    <!-- Estado de erro (se algo der errado) -->
+    <div class="error-state" id="cardErro">
+      <span class="error-icon">⚠️</span>
+      <h1>Não foi possível <span>confirmar</span></h1>
+      <p class="text" id="erroMsg">O link pode ter expirado ou já ter sido usado. Tente fazer login normalmente — se sua conta já estiver confirmada, vai funcionar.</p>
+      <a class="btn primary" href="ranketes_login.html">Tentar fazer login</a>
+      <a class="btn secondary" href="index.html">Voltar para o site</a>
+    </div>
+
+    <a href="https://wa.me/5511918502709" class="help">Precisa de ajuda? Fale com a gente 💬</a>
+  </main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script>
+// Detecta se o Supabase mandou parâmetros de erro na URL
+(async function() {
+  // Aguarda Supabase carregar
+  let tentativas = 0;
+  while (!window._sb && tentativas < 20) {
+    await new Promise(r => setTimeout(r, 100));
+    tentativas++;
+  }
+
+  // Procura erros tanto em hash quanto query string
+  const hash = window.location.hash.substring(1);
+  const query = window.location.search.substring(1);
+  const params = new URLSearchParams(hash || query);
+
+  const error = params.get('error');
+  const errorCode = params.get('error_code');
+  const errorDesc = params.get('error_description');
+
+  if (error || errorCode) {
+    // Mostra estado de erro
+    document.getElementById('cardSucesso').classList.add('hidden');
+    document.getElementById('cardErro').classList.add('active');
+
+    const msgEl = document.getElementById('erroMsg');
+    if (errorCode === 'otp_expired') {
+      msgEl.textContent = 'O link de confirmação expirou. Tente fazer login — se precisar, peça um novo link de confirmação.';
+    } else if (errorDesc) {
+      msgEl.textContent = decodeURIComponent(errorDesc.replace(/\+/g, ' '));
+    }
+    return;
+  }
+
+  // Se chegou aqui sem erro, é sucesso!
+  // Tenta detectar usuário logado pra mostrar nome (opcional)
+  try {
+    const { data: { user } } = await window._sb.auth.getUser();
+    if (user) {
+      const nome = user.user_metadata?.nome || user.email?.split('@')[0];
+      if (nome) {
+        const textoEl = document.getElementById('textoSucesso');
+        textoEl.innerHTML = `Olá <b style="color:#4ade80">${nome}</b>! Seu e-mail foi confirmado com sucesso. Agora é só entrar na sua conta e começar a registrar seus jogos.`;
+      }
+    }
+  } catch(e) { /* ok, ignora */ }
+})();
+</script>
+</body>
+</html>
