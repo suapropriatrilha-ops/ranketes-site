@@ -2228,15 +2228,57 @@ async function carregarAlunos() {
   if (!usuarioAtual?.id) return  // ainda não carregou
   try {
     if (usuarioAtual.id !== 'dev-prof') {
-      const { data } = await window._sb.from('professor_alunos')
-        .select('*, atleta:atletas(*, usuario:usuarios(nome,email))')
+      // FIX: explicitamos a FK porque a tabela tem 2 colunas pra 'atletas'
+      // (atleta_id e atleta_id_vinculado). Sem o nome da FK, o Supabase erra silenciosamente.
+      const { data, error } = await window._sb.from('professor_alunos')
+        .select('*, atleta:atletas!professor_alunos_atleta_id_fkey(*, usuario:usuarios(nome,email))')
         .eq('professor_id', usuarioAtual.id)
         .eq('ativo', true)
-      alunos = data || []
+      if (error) {
+        console.warn('[carregarAlunos] erro:', error)
+        // Fallback: busca sem o join, depois popula manualmente
+        const { data: alunosBasic } = await window._sb.from('professor_alunos')
+          .select('*')
+          .eq('professor_id', usuarioAtual.id)
+          .eq('ativo', true)
+        
+        if (alunosBasic && alunosBasic.length > 0) {
+          // Pega os atleta_id que têm valor
+          const atletaIds = [...new Set(alunosBasic.filter(a => a.atleta_id).map(a => a.atleta_id))]
+          let atletasMap = {}
+          if (atletaIds.length > 0) {
+            const { data: atletas } = await window._sb.from('atletas')
+              .select('id, usuario_id, foto_url, id_publico')
+              .in('id', atletaIds)
+            const userIds = (atletas || []).map(a => a.usuario_id).filter(Boolean)
+            let usersMap = {}
+            if (userIds.length > 0) {
+              const { data: users } = await window._sb.from('usuarios')
+                .select('id, nome, email').in('id', userIds)
+              ;(users || []).forEach(u => usersMap[u.id] = u)
+            }
+            ;(atletas || []).forEach(a => {
+              atletasMap[a.id] = { ...a, usuario: usersMap[a.usuario_id] || {} }
+            })
+          }
+          alunos = alunosBasic.map(a => ({
+            ...a,
+            atleta: a.atleta_id ? atletasMap[a.atleta_id] : null
+          }))
+        } else {
+          alunos = []
+        }
+      } else {
+        alunos = data || []
+      }
+      console.log('[carregarAlunos]', alunos.length, 'alunos carregados')
     } else {
       alunos = [] // dev mode — sem dados
     }
-  } catch(e) { alunos = [] }
+  } catch(e) { 
+    console.warn('[carregarAlunos] catch:', e)
+    alunos = [] 
+  }
 
   document.getElementById('stat-alunos').textContent = alunos.length
   document.getElementById('profTotalAlunos').textContent = alunos.length
