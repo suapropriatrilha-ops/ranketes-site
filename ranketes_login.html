@@ -572,7 +572,27 @@ async function fazerLogin(email, senha) {
     return
   }
   
-  // 5. Login OK mas não tem nenhum perfil — sugere cadastrar
+  // 5. Login OK mas não tem nenhum perfil
+  // FALLBACK: se o tipo no metadata bate com o tipo selecionado, cria o perfil agora
+  const tipoMeta = data.user.user_metadata?.tipo
+  const nomeMeta = data.user.user_metadata?.nome || data.user.user_metadata?.full_name || ''
+  
+  if (tipoMeta === _tipoSelecionado) {
+    console.log('[login] Criando perfil em fallback:', tipoMeta)
+    await criarPerfilTipo(userId, tipoMeta, nomeMeta)
+    // Tenta de novo após criar
+    const tiposNovo = await detectarTiposPerfil(userId, userEmail)
+    const temAgora = {
+      atleta: tiposNovo.tem_atleta,
+      professor: tiposNovo.tem_professor,
+      arena: tiposNovo.tem_arena
+    }[_tipoSelecionado]
+    if (temAgora) {
+      window.location.href = URLS[_tipoSelecionado]
+      return
+    }
+  }
+  
   setLoading(false)
   mostrarAlerta('warn',
     `🤔 Esse email não tem cadastro como <b>${TITULOS[_tipoSelecionado].titulo.replace('ÁREA D','').replace('A ', '').replace('O ', '').replace('E ARENA / CLUBE', 'ARENA')}</b>.<br><br>` +
@@ -625,16 +645,23 @@ async function fazerCadastro(email, senha, nome) {
 
 async function criarPerfilTipo(userId, tipo, nome) {
   try {
+    // 1) Garante registro em public.usuarios (que os perfis referenciam via FK)
+    await window._sb.from('usuarios').upsert([{
+      id: userId,
+      nome: nome || null,
+      tipo: tipo
+    }], { onConflict: 'id', ignoreDuplicates: false })
+
+    // 2) Cria registro no perfil específico
     if (tipo === 'atleta') {
-      await window._sb.from('atletas').insert([{ usuario_id: userId, ativo: true }])
+      await window._sb.from('atletas').insert([{ usuario_id: userId }])
     } else if (tipo === 'professor') {
       await window._sb.from('professores').insert([{ usuario_id: userId, ativo: true }])
     } else if (tipo === 'arena') {
       await window._sb.from('arenas').insert([{ 
         responsavel_id: userId, 
         nome: nome || 'Arena',
-        tipo: 'arena',
-        ativo: true 
+        tipo: 'arena'
       }])
     }
   } catch (e) {
@@ -709,11 +736,66 @@ async function esqueciSenha() {
   }
 }
 
+// Detecta se o usuário acabou de confirmar o email (vem com #type=signup ou ?type=signup)
+function detectarConfirmacaoEmail() {
+  const hash = window.location.hash.substring(1)
+  const search = window.location.search.substring(1)
+  const params = new URLSearchParams(hash || search)
+  
+  const type = params.get('type')
+  const errorCode = params.get('error_code') || params.get('error')
+  const errorDesc = params.get('error_description')
+  
+  // Erro no link (expirado, já usado, etc)
+  if (errorCode) {
+    let msg = '⚠️ Não foi possível confirmar o email.'
+    if (errorDesc) msg += '<br><br>' + decodeURIComponent(errorDesc.replace(/\+/g, ' '))
+    if (errorCode === 'otp_expired' || (errorDesc || '').includes('expired')) {
+      msg = '⏰ Esse link de confirmação expirou.<br><br>Faça login pra receber um novo email de confirmação.'
+    }
+    mostrarAlerta('warn', msg)
+    // Limpa a URL pra não ficar feio
+    history.replaceState(null, '', window.location.pathname)
+    return true
+  }
+  
+  // Confirmação de cadastro com sucesso
+  if (type === 'signup' || type === 'email') {
+    mostrarAlerta('success', '✓ <b>Email confirmado com sucesso!</b><br>Agora é só entrar com seu email e senha.')
+    // Limpa a URL
+    history.replaceState(null, '', window.location.pathname)
+    return true
+  }
+  
+  // Recuperação de senha
+  if (type === 'recovery') {
+    mostrarAlerta('success', '✓ Link verificado! Defina uma nova senha entrando com qualquer senha — você será redirecionado.')
+    history.replaceState(null, '', window.location.pathname)
+    return true
+  }
+  
+  return false
+}
+
 // Se já estiver logado, redireciona pro app correto
 document.addEventListener('supabase:ready', async () => {
+  // 1. Primeiro, checa se veio de uma confirmação de email
+  const veioDeConfirmacao = detectarConfirmacaoEmail()
+  
   try {
     const { data: { user } } = await window._sb.auth.getUser()
     if (!user) return
+    
+    // Se acabou de confirmar email, NÃO redireciona — deixa ele logar manualmente
+    // (e força signOut pra ele realmente fazer login com senha)
+    if (veioDeConfirmacao) {
+      await window._sb.auth.signOut()
+      // pré-preenche o email se conseguir pegar
+      if (user.email) {
+        document.getElementById('inpEmail').value = user.email
+      }
+      return
+    }
     
     const tipos = await detectarTiposPerfil(user.id, user.email)
     
