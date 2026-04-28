@@ -2105,15 +2105,32 @@ async function compartilharIdNativo() {
 async function carregarPedidosVinculo() {
   if (!usuarioAtual?.id || usuarioAtual.id === 'dev-prof') return
   try {
-    const { data, error } = await window._sb.from('vinculos_solicitacoes')
-      .select('id, atleta_id, mensagem, solicitado_em, atleta:atletas(usuario:usuarios(nome,email,telefone,foto_url))')
-      .eq('professor_id', usuarioAtual.id)
-      .eq('status', 'pendente')
-      .order('solicitado_em', { ascending: false })
+    // Tenta com 'iniciado_por' (filtra só os pedidos que o ATLETA iniciou)
+    let data = null, error = null
+    try {
+      const r = await window._sb.from('vinculos_solicitacoes')
+        .select('id, atleta_id, mensagem, solicitado_em, iniciado_por, atleta:atletas(usuario:usuarios(nome,email,telefone,foto_url))')
+        .eq('professor_id', usuarioAtual.id)
+        .eq('status', 'pendente')
+        .order('solicitado_em', { ascending: false })
+      data = r.data; error = r.error
+    } catch(e) { error = e }
+    
+    // Fallback: schema antigo sem 'iniciado_por'
+    if (error && (error.message || '').includes('iniciado_por')) {
+      const r2 = await window._sb.from('vinculos_solicitacoes')
+        .select('id, atleta_id, mensagem, solicitado_em, atleta:atletas(usuario:usuarios(nome,email,telefone,foto_url))')
+        .eq('professor_id', usuarioAtual.id)
+        .eq('status', 'pendente')
+        .order('solicitado_em', { ascending: false })
+      data = r2.data; error = r2.error
+    }
     
     if (error) { console.warn('vinc:', error.message); return }
     
-    const lista = data || []
+    // Mostra só pedidos iniciados pelo atleta (ou legado sem campo).
+    // Pedidos iniciados pelo próprio professor ficam pro atleta aceitar/recusar.
+    const lista = (data || []).filter(s => !s.iniciado_por || s.iniciado_por === 'atleta')
     const dot = document.getElementById('vincDot')
     if (dot) dot.style.display = lista.length > 0 ? 'block' : 'none'
     
@@ -2401,6 +2418,16 @@ async function solicitarAlunoConectar(atletaId, nome) {
     
     if (error) { showToast('Erro: '+error.message, true); return }
     if (data && data.ok === false) { showToast(data.erro || 'Erro', true); return }
+    
+    // Marca o pedido como iniciado pelo professor (pra que o atleta veja Aceitar/Recusar)
+    // Faz best-effort: ignora erro caso a coluna não exista no schema
+    try {
+      await window._sb.from('vinculos_solicitacoes')
+        .update({ iniciado_por: 'professor' })
+        .eq('atleta_id', atletaId)
+        .eq('professor_id', usuarioAtual.id)
+        .eq('status', 'pendente')
+    } catch(e) { /* coluna pode não existir ainda — sem problema */ }
     
     showToast(`✓ Solicitação enviada para ${nome}!`, false, 'success')
     closeModal('modalNovoAluno')

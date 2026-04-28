@@ -1507,13 +1507,22 @@ async function enviarSolicitacao() {
   const dados = {
     atleta_id: atletaAtual.id,
     tipo: alvoVinculo.tipo,
-    mensagem
+    mensagem,
+    iniciado_por: 'atleta'
   }
   if (alvoVinculo.tipo === 'professor') dados.professor_id = alvoVinculo.id
   if (alvoVinculo.tipo === 'arena') dados.arena_id = alvoVinculo.id
   
   try {
-    const { error } = await window._sb.from('vinculos_solicitacoes').insert([dados])
+    let { error } = await window._sb.from('vinculos_solicitacoes').insert([dados])
+    
+    // Fallback: se a coluna 'iniciado_por' ainda não existir no schema, reenvia sem ela
+    if (error && (error.message || '').includes('iniciado_por')) {
+      delete dados.iniciado_por
+      const r = await window._sb.from('vinculos_solicitacoes').insert([dados])
+      error = r.error
+    }
+    
     if (error) {
       if (error.message?.includes('unique') || error.code === '23505') {
         showToast('Você já enviou um pedido pra essa pessoa', true)
@@ -1538,11 +1547,27 @@ async function carregarConexoes() {
   
   try {
     // 1) Busca solicitações sem fazer join (mais robusto)
-    const { data: vincs, error } = await window._sb.from('vinculos_solicitacoes')
-      .select('id, tipo, status, solicitado_em, mensagem, professor_id, arena_id')
-      .eq('atleta_id', atletaAtual.id)
-      .in('status', ['pendente','aprovado'])
-      .order('solicitado_em', { ascending: false })
+    // Tenta incluir 'iniciado_por' (se a coluna existir, distingue quem iniciou)
+    let vincs = null
+    let error = null
+    try {
+      const r = await window._sb.from('vinculos_solicitacoes')
+        .select('id, tipo, status, solicitado_em, mensagem, professor_id, arena_id, iniciado_por')
+        .eq('atleta_id', atletaAtual.id)
+        .in('status', ['pendente','aprovado'])
+        .order('solicitado_em', { ascending: false })
+      vincs = r.data; error = r.error
+    } catch(e) { error = e }
+    
+    // Fallback: se a coluna 'iniciado_por' não existir, busca sem ela
+    if (error && (error.message || '').includes('iniciado_por')) {
+      const r2 = await window._sb.from('vinculos_solicitacoes')
+        .select('id, tipo, status, solicitado_em, mensagem, professor_id, arena_id')
+        .eq('atleta_id', atletaAtual.id)
+        .in('status', ['pendente','aprovado'])
+        .order('solicitado_em', { ascending: false })
+      vincs = r2.data; error = r2.error
+    }
     
     if (error) { console.warn('conex:', error); return }
     
@@ -1605,15 +1630,38 @@ async function carregarConexoes() {
         const obj = isProf ? v.professor : v.arena
         const nome = isProf ? (obj?.usuario?.nome || 'Professor') : (obj?.nome || 'Arena')
         const ini = getIniciais(nome)
-        return `
-        <div class="conn-card" style="margin:0 0 .6rem;padding:.85rem">
-          <div class="conn-ava ${isProf ? '' : 'arena'}">${ini}</div>
-          <div class="conn-info">
-            <div class="conn-tipo">${isProf ? '🎓 Professor' : '🏟️ Arena'} · <span style="color:var(--amber-l)">⏳ Aguardando</span></div>
-            <div class="conn-nome">${nome}</div>
-          </div>
-          <button class="btn btn-ghost btn-sm" onclick="cancelarPedido('${v.id}')" style="width:auto">✕</button>
-        </div>`
+        // Detecta quem iniciou: se 'iniciado_por' for 'professor' ou 'arena', o pedido veio DELES (atleta precisa aceitar/recusar)
+        // Se for 'atleta' ou null/undefined, comportamento legado: atleta enviou (pode cancelar)
+        const recebido = v.iniciado_por === 'professor' || v.iniciado_por === 'arena'
+        const tipoLabel = isProf ? '🎓 Professor' : '🏟️ Arena'
+        
+        if (recebido) {
+          // Pedido recebido: atleta pode aceitar ou recusar
+          return `
+          <div class="conn-card" style="margin:0 0 .6rem;padding:.85rem;flex-wrap:wrap">
+            <div class="conn-ava ${isProf ? '' : 'arena'}">${ini}</div>
+            <div class="conn-info">
+              <div class="conn-tipo">${tipoLabel} · <span style="color:var(--purple-l)">📨 Te convidou</span></div>
+              <div class="conn-nome">${nome}</div>
+              ${v.mensagem ? `<div style="font-size:.72rem;color:var(--muted);font-style:italic;margin-top:.3rem;line-height:1.3">"${escapeHtml(v.mensagem)}"</div>` : ''}
+            </div>
+            <div style="display:flex;gap:.4rem;flex-shrink:0;width:100%;margin-top:.6rem">
+              <button onclick="recusarVinculoAtleta('${v.id}')" style="flex:1;background:var(--surf2);color:var(--danger-l);border:1px solid var(--border);padding:.5rem .8rem;border-radius:8px;font-weight:700;font-size:.78rem;cursor:pointer">✕ Recusar</button>
+              <button onclick="aceitarVinculoAtleta('${v.id}')" style="flex:1;background:var(--green);color:#000;border:none;padding:.5rem .8rem;border-radius:8px;font-weight:700;font-size:.78rem;cursor:pointer">✓ Aceitar</button>
+            </div>
+          </div>`
+        } else {
+          // Pedido enviado pelo atleta: só pode cancelar
+          return `
+          <div class="conn-card" style="margin:0 0 .6rem;padding:.85rem">
+            <div class="conn-ava ${isProf ? '' : 'arena'}">${ini}</div>
+            <div class="conn-info">
+              <div class="conn-tipo">${tipoLabel} · <span style="color:var(--amber-l)">⏳ Aguardando</span></div>
+              <div class="conn-nome">${nome}</div>
+            </div>
+            <button class="btn btn-ghost btn-sm" onclick="cancelarPedido('${v.id}')" style="width:auto">✕</button>
+          </div>`
+        }
       }).join('')
     }
     
@@ -1649,6 +1697,57 @@ async function cancelarPedido(id) {
       .eq('id', id)
     if (error) { showToast('Erro: '+error.message, true); return }
     showToast('Pedido cancelado')
+    await carregarConexoes()
+  } catch(e) { showToast('Erro: '+e.message, true) }
+}
+
+async function aceitarVinculoAtleta(id) {
+  try {
+    // 1) Tenta via RPC (preferencial — backend valida permissão)
+    let ok = false
+    try {
+      const { data, error } = await window._sb.rpc('aprovar_vinculo', { p_solicitacao_id: id })
+      if (!error && (!data || data.ok !== false)) ok = true
+    } catch(e) { /* segue pro fallback */ }
+    
+    // 2) Fallback: update direto (se RPC não existir ou recusar)
+    if (!ok) {
+      const { error: errUp } = await window._sb.from('vinculos_solicitacoes')
+        .update({ status: 'aprovado', aprovado_em: new Date().toISOString() })
+        .eq('id', id)
+      if (errUp) {
+        // Tenta sem o campo aprovado_em (caso não exista)
+        const { error: errUp2 } = await window._sb.from('vinculos_solicitacoes')
+          .update({ status: 'aprovado' })
+          .eq('id', id)
+        if (errUp2) { showToast('Erro: '+errUp2.message, true); return }
+      }
+    }
+    
+    showToast('✓ Conexão aceita!', false, 'success')
+    await carregarConexoes()
+  } catch(e) { showToast('Erro: '+e.message, true) }
+}
+
+async function recusarVinculoAtleta(id) {
+  if (!confirm('Recusar este pedido de conexão?')) return
+  try {
+    // 1) Tenta via RPC
+    let ok = false
+    try {
+      const { data, error } = await window._sb.rpc('recusar_vinculo', { p_solicitacao_id: id })
+      if (!error && (!data || data.ok !== false)) ok = true
+    } catch(e) { /* segue pro fallback */ }
+    
+    // 2) Fallback: update direto
+    if (!ok) {
+      const { error: errUp } = await window._sb.from('vinculos_solicitacoes')
+        .update({ status: 'recusado' })
+        .eq('id', id)
+      if (errUp) { showToast('Erro: '+errUp.message, true); return }
+    }
+    
+    showToast('Pedido recusado')
     await carregarConexoes()
   } catch(e) { showToast('Erro: '+e.message, true) }
 }
