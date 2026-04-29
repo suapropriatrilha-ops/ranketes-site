@@ -1510,7 +1510,22 @@ async function enviarSolicitacao() {
     mensagem,
     iniciado_por: 'atleta'
   }
-  if (alvoVinculo.tipo === 'professor') dados.professor_id = alvoVinculo.id
+  
+  // FIX: a FK 'professor_id' aponta pra auth.users.id, então precisa do usuario_id
+  if (alvoVinculo.tipo === 'professor') {
+    // Busca o usuario_id real do professor (não o id da tabela professores)
+    const { data: prof, error: errProf } = await window._sb
+      .from('professores')
+      .select('usuario_id')
+      .eq('id', alvoVinculo.id)
+      .single()
+    
+    if (errProf || !prof?.usuario_id) {
+      showToast('Erro ao localizar professor', true)
+      return
+    }
+    dados.professor_id = prof.usuario_id
+  }
   if (alvoVinculo.tipo === 'arena') dados.arena_id = alvoVinculo.id
   
   try {
@@ -1581,9 +1596,10 @@ async function carregarConexoes() {
     let profsMap = {}, arenasMap = {}
     
     if (profIds.length > 0) {
+      // FIX: professor_id agora é usuario_id (FK pra auth.users), então buscamos por usuario_id
       const { data: profs } = await window._sb.from('professores')
         .select('id, id_publico, foto_url, usuario_id')
-        .in('id', profIds)
+        .in('usuario_id', profIds)
       
       const userIds = [...new Set((profs || []).map(p => p.usuario_id))]
       let usersMap = {}
@@ -1594,7 +1610,8 @@ async function carregarConexoes() {
       }
       
       ;(profs || []).forEach(p => {
-        profsMap[p.id] = {
+        // Indexamos pelo usuario_id pra casar com o professor_id da solicitação
+        profsMap[p.usuario_id] = {
           ...p,
           usuario: usersMap[p.usuario_id] || { nome: 'Professor', email: '' }
         }
