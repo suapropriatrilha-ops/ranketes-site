@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover"/>
+<meta name="theme-color" content="#0a0612"/>
+<title>Ranketes — Criar Conta</title>
+<link rel="icon" href="logo.PNG" type="image/png"/>
+<link rel="apple-touch-icon" href="apple-touch-icon.png"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#06040c;
+  --bg2:#0a0612;
+  --bg3:#0f0a1c;
+  --surf:rgba(20,14,36,.55);
+  --surf2:rgba(28,18,48,.5);
+  --border:rgba(139,92,246,.18);
+  --border2:rgba(139,92,246,.32);
+  --border3:rgba(255,255,255,.06);
+  --text:#f3eeff;
+  --muted:#a195bc;
+  --dim:#6a5d8a;
+  --purple:#8b5cf6;
+  --purple-l:#a78bfa;
+  --purple-ll:#c4b5fd;
+  --purple-d:#7c3aed;
+  --purple-bright:#9d6cff;
+  --green:#22c55e;
+  --green-l:#4ade80;
+  --amber:#f59e0b;
+  --amber-l:#fbbf24;
+  --danger:#dc2626;
+  --danger-l:#f87171;
+  --f-display:'Bebas Neue',sans-serif;
+  --f-body:'Inter',sans-serif;
+  --r:24px;
+  --rs:14px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  font-family:var(--f-body);
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:1.25rem;
+  line-height:1.5;
+  overflow-x:hidden;
+  position:relative;
+}
+
+/* Background com glow roxo */
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 50% 0%, rgba(139,92,246,.18), transparent 60%),
+    radial-gradient(ellipse 40% 40% at 0% 30%, rgba(124,58,237,.08), transparent 60%),
+    radial-gradient(ellipse 40% 40% at 100% 30%, rgba(167,139,250,.08), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 50% 100%, rgba(139,92,246,.10), transparent 60%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg2) 50%, var(--bg) 100%);
+  pointer-events:none;
+  z-index:-2;
+}
+
+/* Padrão de pontos sutil */
+body::after{
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image:
+    radial-gradient(circle at 8% 20%, rgba(139,92,246,.06) 1px, transparent 1px),
+    radial-gradient(circle at 92% 80%, rgba(139,92,246,.06) 1px, transparent 1px);
+  background-size: 24px 24px, 24px 24px;
+  pointer-events:none;
+  z-index:-1;
+  opacity:.5;
+}
+
+.wrap{max-width:520px;width:100%;display:flex;flex-direction:column;gap:1rem}
+
+/* Card principal */
+.card{
+  position:relative;
+  background:linear-gradient(180deg, rgba(20,14,36,.7), rgba(15,10,28,.55));
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:2rem 1.6rem 1.6rem;
+  backdrop-filter:blur(20px) saturate(140%);
+  -webkit-backdrop-filter:blur(20px) saturate(140%);
+  box-shadow:
+    0 20px 60px -20px rgba(0,0,0,.6),
+    inset 0 1px 0 rgba(255,255,255,.04),
+    0 0 80px -30px rgba(139,92,246,.18);
+}
+
+/* ====== LOGO ====== */
+.logo-row{
+  display:flex;
+  justify-content:center;
+  margin-bottom:.6rem;
+}
+.logo-row img{
+  width:55%;
+  max-width:240px;
+  height:auto;
+  filter:drop-shadow(0 8px 24px rgba(139,92,246,.35));
+}
+
+/* ====== TÍTULO ====== */
+.title-row{
+  text-align:center;
+  margin-bottom:1.6rem;
+}
+.title-main{
+  font-family:var(--f-display);
+  font-size:2.4rem;
+  letter-spacing:4px;
+  color:var(--purple-l);
+  text-shadow:0 0 30px rgba(139,92,246,.5);
+  margin-bottom:.5rem;
+  line-height:1;
+}
+.title-sub{
+  font-size:.95rem;
+  color:#c5b8e0;
+  font-weight:400;
+}
+
+/* ====== ALERT ====== */
+.alert{
+  padding:.95rem 1rem;
+  border-radius:12px;
+  font-size:.9rem;
+  margin-bottom:1rem;
+  line-height:1.5;
+  display:none;
+}
+.alert.show{display:block}
+.alert.error{
+  background:rgba(220,38,38,.12);
+  border:1px solid rgba(220,38,38,.35);
+  color:var(--danger-l);
+}
+.alert.warn{
+  background:rgba(245,158,11,.12);
+  border:1px solid rgba(245,158,11,.35);
+  color:var(--amber-l);
+}
+.alert.success{
+  background:rgba(34,197,94,.12);
+  border:1px solid rgba(34,197,94,.35);
+  color:var(--green-l);
+}
+.alert a{color:inherit;text-decoration:underline;font-weight:600;cursor:pointer}
+
+/* ====== FORM LABELS ====== */
+.fg{margin-bottom:1.1rem}
+.fl{
+  display:block;
+  font-size:.78rem;
+  color:#b8a8d8;
+  text-transform:uppercase;
+  letter-spacing:1.5px;
+  font-weight:700;
+  margin-bottom:.55rem;
+}
+
+/* ====== DROPDOWN CUSTOMIZADO (TIPO DE CADASTRO) ====== */
+.tipo-wrap{position:relative}
+.tipo-trigger{
+  width:100%;
+  padding:1.05rem 1rem 1.05rem 3rem;
+  background:rgba(20,14,36,.5);
+  border:1.5px solid var(--purple);
+  border-radius:14px;
+  color:var(--text);
+  font-size:1rem;
+  font-family:var(--f-body);
+  cursor:pointer;
+  text-align:left;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:relative;
+  transition:.18s;
+}
+.tipo-trigger:hover{background:rgba(28,18,48,.55)}
+.tipo-trigger.placeholder .tipo-trigger-text{color:#7a6a98}
+.tipo-trigger-icon{
+  position:absolute;
+  left:1.1rem;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:22px;
+  height:22px;
+  color:var(--purple-l);
+  pointer-events:none;
+}
+.tipo-trigger-icon svg{width:100%;height:100%}
+.tipo-trigger-text{
+  flex:1;
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+}
+.tipo-trigger-text .emoji{font-size:1.1rem}
+.tipo-chevron{
+  width:20px;
+  height:20px;
+  color:var(--purple-l);
+  transition:transform .25s ease;
+  flex-shrink:0;
+}
+.tipo-wrap.open .tipo-chevron{transform:rotate(180deg)}
+
+.tipo-options{
+  margin-top:.5rem;
+  background:rgba(20,14,36,.65);
+  border:1.5px solid rgba(139,92,246,.32);
+  border-radius:16px;
+  padding:.4rem;
+  max-height:0;
+  overflow:hidden;
+  opacity:0;
+  transition:max-height .3s ease, opacity .25s ease, margin .3s ease, padding .3s ease;
+}
+.tipo-wrap.open .tipo-options{
+  max-height:400px;
+  opacity:1;
+  padding:.4rem;
+}
+
+.tipo-option{
+  display:flex;
+  align-items:center;
+  gap:1rem;
+  padding:.85rem .9rem;
+  border-radius:12px;
+  cursor:pointer;
+  transition:.15s;
+  border:none;
+  background:transparent;
+  width:100%;
+  text-align:left;
+  font-family:var(--f-body);
+  color:var(--text);
+}
+.tipo-option:hover{background:rgba(139,92,246,.08)}
+.tipo-option.selected{background:rgba(139,92,246,.12)}
+.tipo-option + .tipo-option{
+  border-top:1px solid rgba(139,92,246,.1);
+}
+.tipo-option .ico{
+  font-size:2rem;
+  line-height:1;
+  flex-shrink:0;
+  filter:drop-shadow(0 4px 8px rgba(0,0,0,.3));
+}
+.tipo-option .info{flex:1;min-width:0}
+.tipo-option .nome{
+  font-size:1.05rem;
+  font-weight:700;
+  margin-bottom:.15rem;
+}
+.tipo-option.selected .nome{color:var(--purple-l)}
+.tipo-option .desc{
+  font-size:.85rem;
+  color:var(--muted);
+  line-height:1.35;
+}
+
+/* ====== INPUTS ====== */
+.fi-wrap{position:relative;display:flex;align-items:center}
+.fi-icon{
+  position:absolute;
+  left:1.1rem;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:22px;
+  height:22px;
+  color:var(--purple-l);
+  pointer-events:none;
+}
+.fi-icon svg{width:100%;height:100%}
+.fi{
+  width:100%;
+  padding:1.05rem 1rem 1.05rem 3rem;
+  background:rgba(20,14,36,.5);
+  border:1.5px solid rgba(139,92,246,.25);
+  border-radius:14px;
+  color:var(--text);
+  font-size:1rem;
+  font-family:var(--f-body);
+  transition:.18s;
+}
+.fi:focus{
+  outline:none;
+  border-color:var(--purple-l);
+  background:rgba(28,18,48,.55);
+  box-shadow:0 0 0 3px rgba(139,92,246,.12);
+}
+.fi::placeholder{color:#6a5d8a}
+
+.fi-toggle{
+  position:absolute;
+  right:.85rem;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:34px;
+  height:34px;
+  background:transparent;
+  border:none;
+  cursor:pointer;
+  color:var(--purple-l);
+  border-radius:8px;
+  transition:.15s;
+}
+.fi-toggle:hover{color:var(--purple-ll);background:rgba(139,92,246,.08)}
+.fi-toggle svg{width:22px;height:22px}
+
+/* ====== HINT senha ====== */
+.hint-senha{
+  font-size:.78rem;
+  color:var(--dim);
+  margin-top:.5rem;
+  padding-left:.2rem;
+}
+
+/* ====== BOTÃO PRINCIPAL ====== */
+.btn-submit{
+  width:100%;
+  padding:1.15rem;
+  border-radius:14px;
+  font-weight:700;
+  font-size:1.05rem;
+  letter-spacing:.3px;
+  cursor:pointer;
+  border:none;
+  color:#fff;
+  font-family:var(--f-body);
+  transition:.2s ease;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:.6rem;
+  background:linear-gradient(135deg, var(--purple-d) 0%, var(--purple) 50%, var(--purple-bright) 100%);
+  box-shadow:
+    0 8px 24px -6px rgba(139,92,246,.55),
+    inset 0 1px 0 rgba(255,255,255,.2);
+  margin-top:.4rem;
+  margin-bottom:.4rem;
+}
+.btn-submit:disabled{opacity:.6;cursor:not-allowed}
+.btn-submit:hover:not(:disabled){
+  transform:translateY(-2px);
+  filter:brightness(1.1);
+  box-shadow:
+    0 12px 30px -8px rgba(139,92,246,.7),
+    inset 0 1px 0 rgba(255,255,255,.25);
+}
+.btn-submit:active:not(:disabled){transform:translateY(0)}
+
+/* ====== FOOTER LINKS ====== */
+.foot-link{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:.5rem;
+  padding:.85rem;
+  font-size:.95rem;
+  color:#a195bc;
+  text-decoration:none;
+  cursor:pointer;
+  transition:.15s;
+  border-radius:12px;
+  margin-top:.4rem;
+}
+.foot-link:hover{color:var(--text);background:rgba(139,92,246,.05)}
+.foot-link svg{width:18px;height:18px}
+
+/* ====== CARD FOOT (já tem conta?) ====== */
+.card-foot-login{
+  text-align:center;
+  font-size:.95rem;
+  color:#a195bc;
+  padding-top:.4rem;
+}
+.card-foot-login .link-entrar{
+  color:var(--purple-l);
+  font-weight:600;
+  cursor:pointer;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  gap:.3rem;
+  transition:.15s;
+}
+.card-foot-login .link-entrar:hover{color:var(--purple-ll)}
+
+/* ====== SPINNER ====== */
+.spinner{
+  width:18px;
+  height:18px;
+  border:2.5px solid rgba(255,255,255,.3);
+  border-top-color:#fff;
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+  display:inline-block;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ====== RESPONSIVO ====== */
+@media (max-width:420px){
+  .card{padding:1.5rem 1.2rem 1.4rem}
+  .logo-row img{width:60%}
+  .title-main{font-size:2rem;letter-spacing:3px}
+  .title-sub{font-size:.88rem}
+  .fi,.tipo-trigger{padding:.95rem 1rem .95rem 2.85rem;font-size:.95rem}
+  .btn-submit{padding:1.05rem;font-size:1rem}
+  .tipo-option{padding:.75rem .7rem;gap:.75rem}
+  .tipo-option .ico{font-size:1.7rem}
+  .tipo-option .nome{font-size:.98rem}
+  .tipo-option .desc{font-size:.78rem}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <!-- Logo -->
+    <div class="logo-row">
+      <img src="logo.PNG" alt="Ranketes" onerror="this.style.display='none'"/>
+    </div>
+
+    <!-- Título -->
+    <div class="title-row">
+      <h1 class="title-main">CRIAR CONTA</h1>
+      <p class="title-sub">Comece agora e leve seu jogo ao próximo nível.</p>
+    </div>
+
+    <div class="alert" id="alertBox"></div>
+
+    <!-- Form -->
+    <form id="formCadastro" onsubmit="enviarCadastro(event)">
+
+      <!-- TIPO DE CADASTRO (dropdown customizado) -->
+      <div class="fg">
+        <label class="fl">TIPO DE CADASTRO</label>
+        <div class="tipo-wrap" id="tipoWrap">
+          <button type="button" class="tipo-trigger placeholder" id="tipoTrigger" onclick="toggleTipoDropdown()">
+            <span class="tipo-trigger-icon" id="tipoTriggerIcon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </span>
+            <span class="tipo-trigger-text" id="tipoTriggerText">Selecione o tipo de conta</span>
+            <svg class="tipo-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+
+          <div class="tipo-options" id="tipoOptions">
+            <button type="button" class="tipo-option" data-tipo="atleta" data-emoji="🎾" onclick="selecionarTipo('atleta')">
+              <span class="ico">🎾</span>
+              <span class="info">
+                <div class="nome">Atleta</div>
+                <div class="desc">Participe de jogos, acompanhe seu desempenho e suba no ranking.</div>
+              </span>
+            </button>
+            <button type="button" class="tipo-option" data-tipo="professor" data-emoji="🎓" onclick="selecionarTipo('professor')">
+              <span class="ico">🎓</span>
+              <span class="info">
+                <div class="nome">Professor</div>
+                <div class="desc">Gerencie alunos, crie treinos e acompanhe a evolução.</div>
+              </span>
+            </button>
+            <button type="button" class="tipo-option" data-tipo="arena" data-emoji="🏟️" onclick="selecionarTipo('arena')">
+              <span class="ico">🏟️</span>
+              <span class="info">
+                <div class="nome">Arena</div>
+                <div class="desc">Divulgue sua arena, gerencie horários e organize eventos.</div>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- NOME -->
+      <div class="fg">
+        <label class="fl" for="inpNome" id="lblNome">NOME COMPLETO</label>
+        <div class="fi-wrap">
+          <span class="fi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </span>
+          <input type="text" class="fi" id="inpNome" autocomplete="name" placeholder="Seu nome" required/>
+        </div>
+      </div>
+
+      <!-- EMAIL -->
+      <div class="fg">
+        <label class="fl" for="inpEmail">EMAIL</label>
+        <div class="fi-wrap">
+          <span class="fi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </span>
+          <input type="email" class="fi" id="inpEmail" autocomplete="email" placeholder="seu@email.com" required/>
+        </div>
+      </div>
+
+      <!-- SENHA -->
+      <div class="fg">
+        <label class="fl" for="inpSenha">SENHA</label>
+        <div class="fi-wrap">
+          <span class="fi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </span>
+          <input type="password" class="fi" id="inpSenha" autocomplete="new-password" placeholder="••••••••" required minlength="6"/>
+          <button type="button" class="fi-toggle" onclick="toggleSenha()" aria-label="Mostrar senha">
+            <svg id="iconEye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
+        <div class="hint-senha">Mínimo 6 caracteres</div>
+      </div>
+
+      <button type="submit" class="btn-submit" id="btnSubmit">
+        <span id="btnTexto">Criar conta</span>
+      </button>
+    </form>
+
+    <a class="foot-link" href="index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12,19 5,12 12,5"/></svg>
+      Voltar para o site
+    </a>
+
+    <div class="card-foot-login">
+      Já tem uma conta?
+      <a class="link-entrar" onclick="irParaLogin()">Entrar</a>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<script>
+let _tipoSelecionado = null
+let _processando = false
+
+const URLS = {
+  atleta: 'ranketes_atleta_v1.html',
+  professor: 'ranketes_professor_v2.html',
+  arena: 'ranketes_arena_v2.html'
+}
+
+const TIPO_INFO = {
+  atleta:    { emoji: '🎾', nome: 'Atleta',    nomeLabel: 'NOME COMPLETO' },
+  professor: { emoji: '🎓', nome: 'Professor', nomeLabel: 'NOME COMPLETO' },
+  arena:     { emoji: '🏟️', nome: 'Arena',     nomeLabel: 'NOME DA ARENA' }
+}
+
+// ============================================================
+// DROPDOWN: abrir/fechar
+// ============================================================
+function toggleTipoDropdown() {
+  const wrap = document.getElementById('tipoWrap')
+  wrap.classList.toggle('open')
+}
+
+function fecharTipoDropdown() {
+  document.getElementById('tipoWrap').classList.remove('open')
+}
+
+// Fecha dropdown ao clicar fora
+document.addEventListener('click', (e) => {
+  const wrap = document.getElementById('tipoWrap')
+  if (!wrap.contains(e.target)) fecharTipoDropdown()
+})
+
+// ============================================================
+// SELEÇÃO DE TIPO
+// ============================================================
+function selecionarTipo(tipo) {
+  _tipoSelecionado = tipo
+  const info = TIPO_INFO[tipo]
+
+  // Atualiza o trigger (botão principal)
+  const trigger = document.getElementById('tipoTrigger')
+  const triggerText = document.getElementById('tipoTriggerText')
+  trigger.classList.remove('placeholder')
+  triggerText.innerHTML = `<span class="emoji">${info.emoji}</span><span>${info.nome}</span>`
+
+  // Marca a opção selecionada
+  document.querySelectorAll('.tipo-option').forEach(opt => {
+    opt.classList.toggle('selected', opt.dataset.tipo === tipo)
+  })
+
+  // Atualiza label do nome (Arena vira "NOME DA ARENA")
+  document.getElementById('lblNome').textContent = info.nomeLabel
+  document.getElementById('inpNome').placeholder = tipo === 'arena' ? 'Nome da sua arena' : 'Seu nome'
+
+  // Fecha dropdown
+  fecharTipoDropdown()
+  esconderAlerta()
+}
+
+// ============================================================
+// SENHA: toggle visibilidade
+// ============================================================
+function toggleSenha() {
+  const input = document.getElementById('inpSenha')
+  const icon = document.getElementById('iconEye')
+  const isPwd = input.type === 'password'
+  input.type = isPwd ? 'text' : 'password'
+  if (isPwd) {
+    icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>'
+  } else {
+    icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>'
+  }
+}
+
+// ============================================================
+// ALERT helpers
+// ============================================================
+function mostrarAlerta(tipo, msg) {
+  const el = document.getElementById('alertBox')
+  el.className = 'alert show ' + tipo
+  el.innerHTML = msg
+  el.scrollIntoView({behavior:'smooth', block:'nearest'})
+}
+
+function esconderAlerta() {
+  document.getElementById('alertBox').classList.remove('show')
+}
+
+function setLoading(loading) {
+  _processando = loading
+  const btn = document.getElementById('btnSubmit')
+  const txt = document.getElementById('btnTexto')
+  btn.disabled = loading
+  if (loading) {
+    txt.innerHTML = '<span class="spinner"></span> Aguarde...'
+  } else {
+    txt.textContent = 'Criar conta'
+  }
+}
+
+function irParaLogin() {
+  window.location.href = 'ranketes_login.html'
+}
+
+// ============================================================
+// SUBMIT FORM
+// ============================================================
+async function enviarCadastro(e) {
+  e.preventDefault()
+  if (_processando) return
+
+  const nome = document.getElementById('inpNome').value.trim()
+  const email = document.getElementById('inpEmail').value.trim().toLowerCase()
+  const senha = document.getElementById('inpSenha').value
+
+  if (!_tipoSelecionado) {
+    mostrarAlerta('error', '⚠️ Selecione o tipo de conta antes de continuar')
+    return
+  }
+  if (!nome) {
+    mostrarAlerta('error', 'Preencha seu nome')
+    return
+  }
+  if (!email || !senha) {
+    mostrarAlerta('error', 'Preencha email e senha')
+    return
+  }
+  if (senha.length < 6) {
+    mostrarAlerta('error', 'Senha precisa ter pelo menos 6 caracteres')
+    return
+  }
+
+  setLoading(true)
+  esconderAlerta()
+
+  try {
+    await fazerCadastro(email, senha, nome, _tipoSelecionado)
+  } catch (err) {
+    console.error(err)
+    mostrarAlerta('error', 'Erro inesperado: ' + err.message)
+    setLoading(false)
+  }
+}
+
+// ============================================================
+// CADASTRO
+// ============================================================
+async function fazerCadastro(email, senha, nome, tipo) {
+  // 1. Verifica se email já existe em algum tipo (e-mail é único entre todos)
+  // (não é 100% à prova de race condition, mas evita confusão pro usuário)
+  const jaExiste = await emailJaCadastrado(email)
+  if (jaExiste) {
+    setLoading(false)
+    mostrarAlerta('warn',
+      `⚠️ Esse email já está cadastrado.<br><br>` +
+      `<a onclick="irParaLogin()">→ Entrar com essa conta</a>`
+    )
+    return
+  }
+
+  // 2. signUp no Supabase
+  const { data, error } = await window._sb.auth.signUp({
+    email,
+    password: senha,
+    options: {
+      data: { nome, tipo },
+      emailRedirectTo: 'https://www.ranketes.com.br/confirmacao'
+    }
+  })
+
+  if (error) {
+    setLoading(false)
+    const msg = (error.message || '').toLowerCase()
+    if (msg.includes('already registered') || msg.includes('already exists') || msg.includes('user already')) {
+      mostrarAlerta('warn',
+        `⚠️ Esse email já está cadastrado.<br><br>` +
+        `<a onclick="irParaLogin()">→ Entrar com essa conta</a>`
+      )
+    } else {
+      mostrarAlerta('error', 'Erro ao cadastrar: ' + error.message)
+    }
+    return
+  }
+
+  // 3. Sem session = precisa confirmar email
+  if (data.user && !data.session) {
+    setLoading(false)
+    mostrarAlerta('success',
+      `✓ Conta criada! Verifique seu email <b>${email}</b> para confirmar.<br><br>` +
+      `Depois disso, <a onclick="irParaLogin()">faça login aqui</a>.`
+    )
+    document.getElementById('formCadastro').reset()
+    _tipoSelecionado = null
+    document.getElementById('tipoTriggerText').textContent = 'Selecione o tipo de conta'
+    document.getElementById('tipoTrigger').classList.add('placeholder')
+    document.querySelectorAll('.tipo-option').forEach(o => o.classList.remove('selected'))
+    return
+  }
+
+  // 4. Tem session = login automático após cadastro
+  if (data.session) {
+    await criarPerfilTipo(data.user.id, tipo, nome)
+    window.location.href = URLS[tipo]
+  }
+}
+
+// ============================================================
+// VERIFICAR SE EMAIL JÁ EXISTE
+// ============================================================
+async function emailJaCadastrado(email) {
+  // Tenta via RPC dedicada (se existir no banco)
+  try {
+    const { data, error } = await window._sb.rpc('email_existe', { p_email: email })
+    if (!error && data !== null && data !== undefined) return !!data
+  } catch (e) { /* sem rpc, segue */ }
+
+  // Fallback: tenta consultar tabela usuarios diretamente
+  try {
+    const { data } = await window._sb.from('usuarios')
+      .select('id').eq('email', email).maybeSingle()
+    if (data) return true
+  } catch (e) { /* sem permissão, segue */ }
+
+  // Se nenhum dos dois funcionou, deixa o signUp do Supabase decidir
+  return false
+}
+
+// ============================================================
+// CRIAR PERFIL ESPECÍFICO
+// ============================================================
+async function criarPerfilTipo(userId, tipo, nome) {
+  try {
+    await window._sb.from('usuarios').upsert([{
+      id: userId,
+      nome: nome || null,
+      tipo: tipo
+    }], { onConflict: 'id', ignoreDuplicates: false })
+
+    if (tipo === 'atleta') {
+      await window._sb.from('atletas').insert([{ usuario_id: userId }])
+    } else if (tipo === 'professor') {
+      await window._sb.from('professores').insert([{ usuario_id: userId, ativo: true }])
+    } else if (tipo === 'arena') {
+      await window._sb.from('arenas').insert([{
+        responsavel_id: userId,
+        nome: nome || 'Arena',
+        tipo: 'arena'
+      }])
+    }
+  } catch (e) {
+    console.warn('Erro criando perfil:', e)
+  }
+}
+
+// ============================================================
+// AUTO: se já está logado, manda pra área correta
+// ============================================================
+document.addEventListener('supabase:ready', async () => {
+  try {
+    const { data: { user } } = await window._sb.auth.getUser()
+    if (!user) return
+    // Já logado — não faz sentido ficar na tela de cadastro
+    window.location.href = 'ranketes_login.html'
+  } catch (e) {
+    console.warn('check sessão:', e)
+  }
+})
+</script>
+</body>
+</html>
